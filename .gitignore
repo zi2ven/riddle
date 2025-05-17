@@ -1,0 +1,12 @@
+# CMake
+cmake-build-debug/
+build/
+
+# Idea
+.idea/
+
+# VSCode
+.vscode/
+
+# Test
+tests/
