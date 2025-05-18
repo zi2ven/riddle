@@ -3,6 +3,7 @@
 #include "grammar/GramVisitor.h"
 #include "parser/RiddleLexer.h"
 #include "parser/RiddleParser.h"
+#include "semantic/Analyzer.h"
 
 int main(int argc, const char *argv[]) {
     if (argc < 2) {
@@ -26,6 +27,14 @@ int main(int argc, const char *argv[]) {
     auto tree = parser.program();
     riddle::GramVisitor visitor;
     auto result = visitor.nodeVisit(tree);
+    try {
+        riddle::Analyzer analyzer;
+        analyzer.visit(result);
+    } catch (std::exception &e) {
+        std::cerr << e.what();
+        return 0;
+    }
+
 
     if (result) {
         std::cout << "Parsing succeeded." << std::endl;
