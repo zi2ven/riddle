@@ -75,7 +75,7 @@ public:
 
   class  ProgramContext : public antlr4::ParserRuleContext {
   public:
-    ProgramContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    ProgramContext(ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *EOF();
     std::vector<ExpressionEndContext *> expressionEnd();
@@ -92,7 +92,7 @@ public:
 
   class  ExpressionEndContext : public antlr4::ParserRuleContext {
   public:
-    ExpressionEndContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    ExpressionEndContext(ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     ExpressionContext *expression();
     antlr4::tree::TerminalNode *Semi();
@@ -109,11 +109,11 @@ public:
 
   class  ExpressionContext : public antlr4::ParserRuleContext {
   public:
-    ExpressionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    ExpressionContext(ParserRuleContext *parent, size_t invokingState);
    
     ExpressionContext() = default;
     void copyFrom(ExpressionContext *context);
-    using antlr4::ParserRuleContext::copyFrom;
+    using ParserRuleContext::copyFrom;
 
     virtual size_t getRuleIndex() const override;
 
@@ -124,7 +124,7 @@ public:
   public:
     LoadExprContext(ExpressionContext *ctx);
 
-    RiddleParser::ExpressionContext *obj = nullptr;
+    ExpressionContext *obj = nullptr;
     antlr4::tree::TerminalNode *Star();
     ExpressionContext *expression();
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -137,8 +137,8 @@ public:
   public:
     MemberAccessContext(ExpressionContext *ctx);
 
-    RiddleParser::ExpressionContext *left = nullptr;
-    RiddleParser::ExpressionContext *right = nullptr;
+    ExpressionContext *left = nullptr;
+    ExpressionContext *right = nullptr;
     antlr4::tree::TerminalNode *Dot();
     std::vector<ExpressionContext *> expression();
     ExpressionContext* expression(size_t i);
@@ -152,9 +152,9 @@ public:
   public:
     EqOpContext(ExpressionContext *ctx);
 
-    RiddleParser::ExpressionContext *left = nullptr;
+    ExpressionContext *left = nullptr;
     antlr4::Token *op = nullptr;
-    RiddleParser::ExpressionContext *right = nullptr;
+    ExpressionContext *right = nullptr;
     std::vector<ExpressionContext *> expression();
     ExpressionContext* expression(size_t i);
     antlr4::tree::TerminalNode *Equal();
@@ -169,7 +169,7 @@ public:
   public:
     BracketExprContext(ExpressionContext *ctx);
 
-    RiddleParser::ExpressionContext *value = nullptr;
+    ExpressionContext *value = nullptr;
     antlr4::tree::TerminalNode *LeftBracket();
     antlr4::tree::TerminalNode *RightBracket();
     ExpressionContext *expression();
@@ -183,8 +183,8 @@ public:
   public:
     BitOrContext(ExpressionContext *ctx);
 
-    RiddleParser::ExpressionContext *left = nullptr;
-    RiddleParser::ExpressionContext *right = nullptr;
+    ExpressionContext *left = nullptr;
+    ExpressionContext *right = nullptr;
     antlr4::tree::TerminalNode *Or();
     std::vector<ExpressionContext *> expression();
     ExpressionContext* expression(size_t i);
@@ -198,8 +198,8 @@ public:
   public:
     LogicOrContext(ExpressionContext *ctx);
 
-    RiddleParser::ExpressionContext *left = nullptr;
-    RiddleParser::ExpressionContext *right = nullptr;
+    ExpressionContext *left = nullptr;
+    ExpressionContext *right = nullptr;
     std::vector<antlr4::tree::TerminalNode *> Or();
     antlr4::tree::TerminalNode* Or(size_t i);
     std::vector<ExpressionContext *> expression();
@@ -214,9 +214,9 @@ public:
   public:
     AddOpContext(ExpressionContext *ctx);
 
-    RiddleParser::ExpressionContext *left = nullptr;
+    ExpressionContext *left = nullptr;
     antlr4::Token *op = nullptr;
-    RiddleParser::ExpressionContext *right = nullptr;
+    ExpressionContext *right = nullptr;
     std::vector<ExpressionContext *> expression();
     ExpressionContext* expression(size_t i);
     antlr4::tree::TerminalNode *Add();
@@ -231,9 +231,9 @@ public:
   public:
     CompoundAssignOpContext(ExpressionContext *ctx);
 
-    RiddleParser::ExpressionContext *left = nullptr;
+    ExpressionContext *left = nullptr;
     antlr4::Token *op = nullptr;
-    RiddleParser::ExpressionContext *right = nullptr;
+    ExpressionContext *right = nullptr;
     std::vector<ExpressionContext *> expression();
     ExpressionContext* expression(size_t i);
     antlr4::tree::TerminalNode *Assign();
@@ -258,7 +258,7 @@ public:
     UnaryOpContext(ExpressionContext *ctx);
 
     antlr4::Token *op = nullptr;
-    RiddleParser::ExpressionContext *value = nullptr;
+    ExpressionContext *value = nullptr;
     ExpressionContext *expression();
     antlr4::tree::TerminalNode *Not();
     antlr4::tree::TerminalNode *Add();
@@ -296,8 +296,8 @@ public:
   public:
     ScopeAccessContext(ExpressionContext *ctx);
 
-    RiddleParser::ExpressionContext *left = nullptr;
-    RiddleParser::ExpressionContext *right = nullptr;
+    ExpressionContext *left = nullptr;
+    ExpressionContext *right = nullptr;
     std::vector<antlr4::tree::TerminalNode *> Colon();
     antlr4::tree::TerminalNode* Colon(size_t i);
     std::vector<ExpressionContext *> expression();
@@ -312,9 +312,9 @@ public:
   public:
     RelOpContext(ExpressionContext *ctx);
 
-    RiddleParser::ExpressionContext *left = nullptr;
+    ExpressionContext *left = nullptr;
     antlr4::Token *op = nullptr;
-    RiddleParser::ExpressionContext *right = nullptr;
+    ExpressionContext *right = nullptr;
     std::vector<ExpressionContext *> expression();
     ExpressionContext* expression(size_t i);
     antlr4::tree::TerminalNode *Less();
@@ -331,7 +331,7 @@ public:
   public:
     PointerToContext(ExpressionContext *ctx);
 
-    RiddleParser::ExpressionContext *obj = nullptr;
+    ExpressionContext *obj = nullptr;
     antlr4::tree::TerminalNode *Star();
     ExpressionContext *expression();
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -344,8 +344,8 @@ public:
   public:
     BitAndContext(ExpressionContext *ctx);
 
-    RiddleParser::ExpressionContext *left = nullptr;
-    RiddleParser::ExpressionContext *right = nullptr;
+    ExpressionContext *left = nullptr;
+    ExpressionContext *right = nullptr;
     antlr4::tree::TerminalNode *And();
     std::vector<ExpressionContext *> expression();
     ExpressionContext* expression(size_t i);
@@ -359,8 +359,8 @@ public:
   public:
     LogicAndContext(ExpressionContext *ctx);
 
-    RiddleParser::ExpressionContext *left = nullptr;
-    RiddleParser::ExpressionContext *right = nullptr;
+    ExpressionContext *left = nullptr;
+    ExpressionContext *right = nullptr;
     std::vector<antlr4::tree::TerminalNode *> And();
     antlr4::tree::TerminalNode* And(size_t i);
     std::vector<ExpressionContext *> expression();
@@ -387,9 +387,9 @@ public:
   public:
     MulOpContext(ExpressionContext *ctx);
 
-    RiddleParser::ExpressionContext *left = nullptr;
+    ExpressionContext *left = nullptr;
     antlr4::Token *op = nullptr;
-    RiddleParser::ExpressionContext *right = nullptr;
+    ExpressionContext *right = nullptr;
     std::vector<ExpressionContext *> expression();
     ExpressionContext* expression(size_t i);
     antlr4::tree::TerminalNode *Star();
@@ -405,8 +405,8 @@ public:
   public:
     BitXorContext(ExpressionContext *ctx);
 
-    RiddleParser::ExpressionContext *left = nullptr;
-    RiddleParser::ExpressionContext *right = nullptr;
+    ExpressionContext *left = nullptr;
+    ExpressionContext *right = nullptr;
     antlr4::tree::TerminalNode *Xor();
     std::vector<ExpressionContext *> expression();
     ExpressionContext* expression(size_t i);
@@ -431,7 +431,7 @@ public:
   public:
     CallExprContext(ExpressionContext *ctx);
 
-    RiddleParser::ExpressionContext *obj = nullptr;
+    ExpressionContext *obj = nullptr;
     antlr4::tree::TerminalNode *LeftBracket();
     antlr4::tree::TerminalNode *RightBracket();
     std::vector<ExpressionContext *> expression();
@@ -459,9 +459,9 @@ public:
   public:
     ShiftOpContext(ExpressionContext *ctx);
 
-    RiddleParser::ExpressionContext *left = nullptr;
+    ExpressionContext *left = nullptr;
     antlr4::Token *op = nullptr;
-    RiddleParser::ExpressionContext *right = nullptr;
+    ExpressionContext *right = nullptr;
     std::vector<ExpressionContext *> expression();
     ExpressionContext* expression(size_t i);
     antlr4::tree::TerminalNode *LeftShift();
@@ -476,7 +476,7 @@ public:
   ExpressionContext* expression(int precedence);
   class  StatementContext : public antlr4::ParserRuleContext {
   public:
-    StatementContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    StatementContext(ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     VarDeclContext *varDecl();
     FuncDeclContext *funcDecl();
@@ -500,7 +500,7 @@ public:
 
   class  PackStmtContext : public antlr4::ParserRuleContext {
   public:
-    PackStmtContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    PackStmtContext(ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *Package();
     std::vector<IdContext *> id();
@@ -520,10 +520,10 @@ public:
   class  VarDeclContext : public antlr4::ParserRuleContext {
   public:
     antlr4::Token *varType = nullptr;
-    RiddleParser::IdContext *name = nullptr;
-    RiddleParser::ExpressionContext *type = nullptr;
-    RiddleParser::ExpressionContext *value = nullptr;
-    VarDeclContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    IdContext *name = nullptr;
+    ExpressionContext *type = nullptr;
+    ExpressionContext *value = nullptr;
+    VarDeclContext(ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *Colon();
     antlr4::tree::TerminalNode *Assign();
@@ -546,7 +546,7 @@ public:
 
   class  BlockContext : public antlr4::ParserRuleContext {
   public:
-    BlockContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    BlockContext(ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *LeftCurly();
     antlr4::tree::TerminalNode *RightCurly();
@@ -564,7 +564,7 @@ public:
 
   class  InitListContext : public antlr4::ParserRuleContext {
   public:
-    InitListContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    InitListContext(ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *LeftCurly();
     antlr4::tree::TerminalNode *RightCurly();
@@ -585,7 +585,7 @@ public:
   class  DeclArgsContext : public antlr4::ParserRuleContext {
   public:
     bool isVar = false;
-    DeclArgsContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    DeclArgsContext(ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     std::vector<IdContext *> id();
     IdContext* id(size_t i);
@@ -609,7 +609,7 @@ public:
 
   class  ModifierContext : public antlr4::ParserRuleContext {
   public:
-    ModifierContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    ModifierContext(ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *Static();
     antlr4::tree::TerminalNode *Public();
@@ -628,10 +628,10 @@ public:
 
   class  FuncDeclContext : public antlr4::ParserRuleContext {
   public:
-    RiddleParser::IdContext *name = nullptr;
-    RiddleParser::ExpressionContext *return_type = nullptr;
-    RiddleParser::BlockContext *body = nullptr;
-    FuncDeclContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    IdContext *name = nullptr;
+    ExpressionContext *return_type = nullptr;
+    BlockContext *body = nullptr;
+    FuncDeclContext(ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *Func();
     antlr4::tree::TerminalNode *LeftBracket();
@@ -656,10 +656,10 @@ public:
 
   class  IfStmtContext : public antlr4::ParserRuleContext {
   public:
-    RiddleParser::ExpressionContext *cond = nullptr;
-    RiddleParser::BlockContext *then = nullptr;
-    RiddleParser::BlockContext *else_ = nullptr;
-    IfStmtContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    ExpressionContext *cond = nullptr;
+    BlockContext *then = nullptr;
+    BlockContext *else_ = nullptr;
+    IfStmtContext(ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *If();
     antlr4::tree::TerminalNode *LeftBracket();
@@ -680,9 +680,9 @@ public:
 
   class  WhileStmtContext : public antlr4::ParserRuleContext {
   public:
-    RiddleParser::ExpressionContext *cond = nullptr;
-    RiddleParser::BlockContext *body = nullptr;
-    WhileStmtContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    ExpressionContext *cond = nullptr;
+    BlockContext *body = nullptr;
+    WhileStmtContext(ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *While();
     antlr4::tree::TerminalNode *LeftBracket();
@@ -701,11 +701,11 @@ public:
 
   class  ForStmtContext : public antlr4::ParserRuleContext {
   public:
-    RiddleParser::ExpressionContext *init = nullptr;
-    RiddleParser::ExpressionContext *cond = nullptr;
-    RiddleParser::ExpressionContext *change = nullptr;
-    RiddleParser::BlockContext *body = nullptr;
-    ForStmtContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    ExpressionContext *init = nullptr;
+    ExpressionContext *cond = nullptr;
+    ExpressionContext *change = nullptr;
+    BlockContext *body = nullptr;
+    ForStmtContext(ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *For();
     antlr4::tree::TerminalNode *LeftBracket();
@@ -727,8 +727,8 @@ public:
 
   class  ReturnStmtContext : public antlr4::ParserRuleContext {
   public:
-    RiddleParser::ExpressionContext *result = nullptr;
-    ReturnStmtContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    ExpressionContext *result = nullptr;
+    ReturnStmtContext(ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *Return();
     ExpressionContext *expression();
@@ -744,9 +744,9 @@ public:
 
   class  ClassDeclContext : public antlr4::ParserRuleContext {
   public:
-    RiddleParser::IdContext *name = nullptr;
-    RiddleParser::BlockContext *body = nullptr;
-    ClassDeclContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    IdContext *name = nullptr;
+    BlockContext *body = nullptr;
+    ClassDeclContext(ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *Class();
     IdContext *id();
@@ -763,7 +763,7 @@ public:
 
   class  IdContext : public antlr4::ParserRuleContext {
   public:
-    IdContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    IdContext(ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *Identifier();
 

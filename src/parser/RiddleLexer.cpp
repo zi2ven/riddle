@@ -29,19 +29,19 @@ struct RiddleLexerStaticData final {
   RiddleLexerStaticData& operator=(const RiddleLexerStaticData&) = delete;
   RiddleLexerStaticData& operator=(RiddleLexerStaticData&&) = delete;
 
-  std::vector<antlr4::dfa::DFA> decisionToDFA;
-  antlr4::atn::PredictionContextCache sharedContextCache;
+  std::vector<dfa::DFA> decisionToDFA;
+  atn::PredictionContextCache sharedContextCache;
   const std::vector<std::string> ruleNames;
   const std::vector<std::string> channelNames;
   const std::vector<std::string> modeNames;
   const std::vector<std::string> literalNames;
   const std::vector<std::string> symbolicNames;
-  const antlr4::dfa::Vocabulary vocabulary;
-  antlr4::atn::SerializedATNView serializedATN;
-  std::unique_ptr<antlr4::atn::ATN> atn;
+  const dfa::Vocabulary vocabulary;
+  atn::SerializedATNView serializedATN;
+  std::unique_ptr<atn::ATN> atn;
 };
 
-::antlr4::internal::OnceFlag riddlelexerLexerOnceFlag;
+internal::OnceFlag riddlelexerLexerOnceFlag;
 #if ANTLR4_USE_THREAD_LOCAL_CACHE
 static thread_local
 #endif
@@ -289,9 +289,9 @@ void riddlelexerLexerInitialize() {
   	549,1,0,0,0,549,550,6,84,0,0,550,170,1,0,0,0,15,0,440,450,458,461,468,
   	478,488,501,503,511,517,525,536,547,1,0,1,0
   };
-  staticData->serializedATN = antlr4::atn::SerializedATNView(serializedATNSegment, sizeof(serializedATNSegment) / sizeof(serializedATNSegment[0]));
+  staticData->serializedATN = atn::SerializedATNView(serializedATNSegment, sizeof(serializedATNSegment) / sizeof(serializedATNSegment[0]));
 
-  antlr4::atn::ATNDeserializer deserializer;
+  atn::ATNDeserializer deserializer;
   staticData->atn = deserializer.deserialize(staticData->serializedATN);
 
   const size_t count = staticData->atn->getNumberOfDecisions();
@@ -305,7 +305,7 @@ void riddlelexerLexerInitialize() {
 }
 
 RiddleLexer::RiddleLexer(CharStream *input) : Lexer(input) {
-  RiddleLexer::initialize();
+  initialize();
   _interpreter = new atn::LexerATNSimulator(this, *riddlelexerLexerStaticData->atn, riddlelexerLexerStaticData->decisionToDFA, riddlelexerLexerStaticData->sharedContextCache);
 }
 
@@ -333,7 +333,7 @@ const dfa::Vocabulary& RiddleLexer::getVocabulary() const {
   return riddlelexerLexerStaticData->vocabulary;
 }
 
-antlr4::atn::SerializedATNView RiddleLexer::getSerializedATN() const {
+atn::SerializedATNView RiddleLexer::getSerializedATN() const {
   return riddlelexerLexerStaticData->serializedATN;
 }
 

@@ -1,9 +1,17 @@
 #include <antlr4-runtime.h>
 #include <iostream>
+#include <chrono>
+
+#include "generate/Generate.h"
+#include "grammar/config.h"
 #include "grammar/GramVisitor.h"
 #include "parser/RiddleLexer.h"
 #include "parser/RiddleParser.h"
 #include "semantic/Analyzer.h"
+
+void init() {
+    riddle::globalContext = std::make_shared<llvm::LLVMContext>();
+}
 
 int main(int argc, const char *argv[]) {
     if (argc < 2) {
@@ -27,20 +35,21 @@ int main(int argc, const char *argv[]) {
     auto tree = parser.program();
     riddle::GramVisitor visitor;
     auto result = visitor.nodeVisit(tree);
+    auto startTime = std::chrono::high_resolution_clock::now();
     try {
         riddle::Analyzer analyzer;
         analyzer.visit(result);
+
+        init();
+        riddle::Generate generate;
+        generate.visit(result);
     } catch (std::exception &e) {
         std::cerr << e.what();
         return 0;
     }
+    auto endTime = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> elapsed = endTime - startTime;
 
-
-    if (result) {
-        std::cout << "Parsing succeeded." << std::endl;
-    } else {
-        std::cerr << "Parsing failed." << std::endl;
-    }
-
+    std::cout << "Parsing and analysis took " << std::fixed << elapsed.count() << " milliseconds." << std::endl;
     return 0;
 }

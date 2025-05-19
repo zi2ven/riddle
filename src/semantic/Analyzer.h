@@ -5,6 +5,7 @@
 #include <unordered_set>
 
 #include "nodes.h"
+#include "nodes/NodeVisitor.h"
 
 namespace riddle {
     class SemObject;
@@ -43,5 +44,9 @@ namespace riddle {
         std::any visitObject(ObjectNode *node) override;
 
         std::any visitVarDecl(VarDeclNode *node) override;
+
+        std::any visitArgDecl(ArgDeclNode *node) override;
+
+        std::any visitReturn(ReturnNode *node) override;
     };
 } // riddle

@@ -6,39 +6,10 @@
 
 #include "nodes.h"
 #include "TypeInfo.h"
+#include "semantic/SemObject.h"
 
 namespace riddle {
-    class VarDeclNode;
-    class ObjectNode;
-    class ExprNode;
-    class ProgramNode;
-    class BlockNode;
-    class FuncDeclNode;
-    class IntegerNode;
-    class FloatNode;
-
-    class NodeVisitor {
-    public:
-        virtual ~NodeVisitor() = default;
-
-        virtual std::any visit(ExprNode *node);
-
-        virtual std::any visit(const std::shared_ptr<ExprNode> &node);
-
-        virtual std::any visitProgram(ProgramNode *node) = 0;
-
-        virtual std::any visitBlock(BlockNode *node) = 0;
-
-        virtual std::any visitFuncDecl(FuncDeclNode *node) = 0;
-
-        virtual std::any visitInteger(IntegerNode *node) = 0;
-
-        virtual std::any visitFloat(FloatNode *node) = 0;
-
-        virtual std::any visitObject(ObjectNode *node) = 0;
-
-        virtual std::any visitVarDecl(VarDeclNode *node) = 0;
-    };
+    class NodeVisitor;
 
     class ExprNode {
     public:
@@ -53,9 +24,7 @@ namespace riddle {
 
         std::vector<std::shared_ptr<ExprNode>> body;
 
-        std::any accept(NodeVisitor *visitor) override {
-            return visitor->visitProgram(this);
-        }
+        std::any accept(NodeVisitor *visitor) override;
     };
 
     class BlockNode final : public ExprNode {
@@ -66,9 +35,17 @@ namespace riddle {
 
         explicit BlockNode(std::vector<std::shared_ptr<ExprNode>> body): body(std::move(body)) {}
 
-        std::any accept(NodeVisitor *visitor) override {
-            return visitor->visitBlock(this);
-        }
+        std::any accept(NodeVisitor *visitor) override;
+    };
+
+    class ArgDeclNode final : public ExprNode {
+    public:
+        std::string name;
+        std::shared_ptr<ExprNode> type;
+
+        ArgDeclNode(std::string name, std::shared_ptr<ExprNode> type): name(std::move(name)), type(std::move(type)) {}
+
+        std::any accept(NodeVisitor *visitor) override;
     };
 
     class FuncDeclNode final : public ExprNode {
@@ -76,16 +53,18 @@ namespace riddle {
         std::string name;
         std::shared_ptr<ExprNode> returnType;
         std::shared_ptr<BlockNode> body;
+        std::vector<std::shared_ptr<ArgDeclNode>> args;
         bool isGlobal = true;
+        std::shared_ptr<SemFunction> obj = nullptr;
 
         explicit FuncDeclNode(std::string name,
                               const std::shared_ptr<ExprNode> &return_type,
+                              std::vector<std::shared_ptr<ArgDeclNode>> args,
                               const std::shared_ptr<BlockNode> &body = nullptr): name(std::move(name)),
-                                                                                 returnType(return_type), body(body) {}
+                                                                                 returnType(return_type),
+                                                                                 body(body), args(std::move(args)) {}
 
-        std::any accept(NodeVisitor *visitor) override {
-            return visitor->visitFuncDecl(this);
-        }
+        std::any accept(NodeVisitor *visitor) override;
     };
 
     class IntegerNode final : public ExprNode {
@@ -93,9 +72,7 @@ namespace riddle {
         int value;
         explicit IntegerNode(const int value): value(value) {}
 
-        std::any accept(NodeVisitor *visitor) override {
-            return visitor->visitInteger(this);
-        }
+        std::any accept(NodeVisitor *visitor) override;
     };
 
     class FloatNode final : public ExprNode {
@@ -103,9 +80,7 @@ namespace riddle {
         double value;
         explicit FloatNode(const double value): value(value) {}
 
-        std::any accept(NodeVisitor *visitor) override {
-            return visitor->visitFloat(this);
-        }
+        std::any accept(NodeVisitor *visitor) override;
     };
 
     class ObjectNode final : public ExprNode {
@@ -113,9 +88,7 @@ namespace riddle {
         std::string name;
         explicit ObjectNode(std::string name): name(std::move(name)) {}
 
-        std::any accept(NodeVisitor *visitor) override {
-            return visitor->visitObject(this);
-        }
+        std::any accept(NodeVisitor *visitor) override;
     };
 
     class VarDeclNode final : public ExprNode {
@@ -123,14 +96,22 @@ namespace riddle {
         std::string name;
         std::shared_ptr<ExprNode> type;
         std::shared_ptr<ExprNode> value;
+        std::shared_ptr<SemVariable> obj = nullptr;
 
         VarDeclNode(std::string name,
                     std::shared_ptr<ExprNode> type,
                     std::shared_ptr<ExprNode> value = nullptr): name(std::move(name)), type(std::move(type)),
                                                                 value(std::move(value)) {}
 
-        std::any accept(NodeVisitor *visitor) override {
-            return visitor->visitVarDecl(this);
-        }
+        std::any accept(NodeVisitor *visitor) override;
+    };
+
+    class ReturnNode final : public ExprNode {
+    public:
+        std::shared_ptr<ExprNode> value;
+
+        explicit ReturnNode(std::shared_ptr<ExprNode> value): value(std::move(value)) {}
+
+        std::any accept(NodeVisitor *visitor) override;
     };
 }

@@ -16,8 +16,12 @@ shared_ptr<SemObject> toSNPtr(const shared_ptr<T> &ptr) {
 }
 
 template<typename T>
-constexpr auto cast(const auto &ptr) {
-    return dynamic_pointer_cast<T>(ptr);
+constexpr auto cast(const auto &&ptr) {
+    const auto &&result = dynamic_pointer_cast<T>(ptr);
+    if (result == nullptr) {
+        throw runtime_error("Cast Error");
+    }
+    return result;
 };
 
 template<typename T, typename... Arg>
@@ -59,6 +63,8 @@ namespace riddle {
     Analyzer::Analyzer() {
         joinScope();
         addGlobalObject(make_shared<SemType>("void", getPrimitiveType("void")));
+        addGlobalObject(make_shared<SemType>("int", getPrimitiveType("int")));
+        addGlobalObject(make_shared<SemType>("float", getPrimitiveType("float")));
     }
 
     Analyzer::~Analyzer() {
@@ -81,9 +87,20 @@ namespace riddle {
     }
 
     std::any Analyzer::visitFuncDecl(FuncDeclNode *node) {
-        const auto returnType = cast<SemValue>(objVisit(node->returnType));
+        const auto returnType = cast<SemType>(objVisit(node->returnType));
+
+        const auto obj = make_shared<SemFunction>(node->name, returnType->type);
+        node->obj = obj;
+        addGlobalObject(obj);
+
+        joinScope();
+        for (const auto &i: node->args) {
+            visit(i);
+        }
         visit(node->body);
-        return make<SemFunction>(node->name, returnType->type);
+        leaveScope();
+
+        return nilValue;
     }
 
     std::any Analyzer::visitBlock(BlockNode *node) {
@@ -117,9 +134,24 @@ namespace riddle {
         }
         if (node->type) {
             const auto obj = objVisit(node->type);
+        } else {
+            type = value->type;
         }
-        const auto obj = make<SemVariable>(node->name, type);
+        const auto obj = make_shared<SemVariable>(node->name, type);
+        node->obj = obj;
         addGlobalObject(obj);
+        return nilValue;
+    }
+
+    std::any Analyzer::visitArgDecl(ArgDeclNode *node) {
+        const auto type = cast<SemType>(objVisit(node->type));
+        const auto obj = make_shared<SemVariable>(node->name, type->type);
+        addGlobalObject(obj);
+        return nilValue;
+    }
+
+    std::any Analyzer::visitReturn(ReturnNode *node) {
+        visit(node->value);
         return nilValue;
     }
 } // riddle

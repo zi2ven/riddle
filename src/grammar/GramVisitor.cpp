@@ -29,7 +29,7 @@ shared_ptr<ExprNode> GramVisitor::nodeVisit(antlr4::tree::ParseTree *context) {
     }
 }
 
-std::any GramVisitor::visitExpressionEnd(RiddleParser::ExpressionEndContext *context) {
+any GramVisitor::visitExpressionEnd(RiddleParser::ExpressionEndContext *context) {
     return visit(context->children[0]);
 }
 
@@ -53,12 +53,13 @@ any GramVisitor::visitFuncDecl(RiddleParser::FuncDeclContext *context) {
     shared_ptr<ExprNode> returnType = nullptr;
     if (context->return_type) {
         returnType = nodeVisit(context->return_type);
-    }else {
+    } else {
         returnType = make_shared<ObjectNode>("void");
     }
     const auto body = cast<BlockNode>(nodeVisit(context->body));
+    const auto args = any_cast<vector<shared_ptr<ArgDeclNode>>>(visitDeclArgs(context->declArgs()));
 
-    const auto node = make_shared<FuncDeclNode>(name, returnType, body);
+    const auto node = make_shared<FuncDeclNode>(name, returnType, args, body);
     return toSNPtr(node);
 }
 
@@ -72,20 +73,20 @@ any GramVisitor::visitBlock(RiddleParser::BlockContext *context) {
     return toSNPtr(node);
 }
 
-std::any GramVisitor::visitInteger(RiddleParser::IntegerContext *context) {
+any GramVisitor::visitInteger(RiddleParser::IntegerContext *context) {
     return toSNPtr(make_shared<IntegerNode>(stoi(context->getText())));
 }
 
-std::any GramVisitor::visitFloat(RiddleParser::FloatContext *context) {
+any GramVisitor::visitFloat(RiddleParser::FloatContext *context) {
     return toSNPtr(make_shared<FloatNode>(stod(context->getText())));
 }
 
-std::any GramVisitor::visitObject(RiddleParser::ObjectContext *context) {
+any GramVisitor::visitObject(RiddleParser::ObjectContext *context) {
     return toSNPtr(make_shared<ObjectNode>(context->getText()));
 }
 
-std::any GramVisitor::visitVarDecl(RiddleParser::VarDeclContext *context) {
-    std::string name = context->name->getText();
+any GramVisitor::visitVarDecl(RiddleParser::VarDeclContext *context) {
+    string name = context->name->getText();
     shared_ptr<ExprNode> type = nullptr;
     shared_ptr<ExprNode> value = nullptr;
     if (context->type) {
@@ -95,4 +96,24 @@ std::any GramVisitor::visitVarDecl(RiddleParser::VarDeclContext *context) {
         value = nodeVisit(context->value);
     }
     return toSNPtr(make_shared<VarDeclNode>(name, type, value));
+}
+
+any GramVisitor::visitDeclArgs(RiddleParser::DeclArgsContext *context) {
+    string name;
+    shared_ptr<ExprNode> type = nullptr;
+    vector<shared_ptr<ArgDeclNode>> args;
+    for (const auto i: context->children) {
+        if (i->getTreeType() == antlr4::tree::ParseTreeType::TERMINAL) {
+            continue;
+        }
+        if (antlrcpp::is<RiddleParser::IdContext *>(i)) {
+            name = i->getText();
+        } else {
+            type = nodeVisit(i);
+        }
+        if (!name.empty() && type != nullptr) {
+            args.emplace_back(make_shared<ArgDeclNode>(name, type));
+        }
+    }
+    return args;
 }
