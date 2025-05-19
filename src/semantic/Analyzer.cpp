@@ -5,6 +5,7 @@
 #include "SemObject.h"
 #include "exception/NameError.h"
 #include "exception/SyntaxError.h"
+#include "exception/TypeError.h"
 
 using namespace riddle;
 using namespace std;
@@ -123,6 +124,7 @@ namespace riddle {
         if (obj == symbols.end()) {
             throw NameError(format("name '{}' is not defined", node->name));
         }
+        node->obj = obj->second.top();
         return obj->second.top();
     }
 
@@ -146,12 +148,32 @@ namespace riddle {
     std::any Analyzer::visitArgDecl(ArgDeclNode *node) {
         const auto type = cast<SemType>(objVisit(node->type));
         const auto obj = make_shared<SemVariable>(node->name, type->type);
+        node->obj = obj;
         addGlobalObject(obj);
         return nilValue;
     }
 
     std::any Analyzer::visitReturn(ReturnNode *node) {
-        visit(node->value);
+        if (node->value) {
+            visit(node->value);
+        }
         return nilValue;
+    }
+
+    std::any Analyzer::visitCall(CallNode *node) {
+        const auto obj = objVisit(node->value);
+        if (obj->getKind() != SemObject::Function) {
+            throw TypeError(std::format("'{}' object is not callable", obj->name));
+        }
+        const auto func = dynamic_pointer_cast<SemFunction>(obj);
+        for (const auto &i: node->args) {
+            const auto rel = objVisit(i);
+            const auto value = std::dynamic_pointer_cast<SemValue>(rel);
+            if (value == nullptr) {
+                throw TypeError(std::format("'{}' object not a value", value->name));
+            }
+
+        }
+        return make<SemValue>(func->returnType);
     }
 } // riddle

@@ -42,6 +42,7 @@ namespace riddle {
     public:
         std::string name;
         std::shared_ptr<ExprNode> type;
+        std::shared_ptr<SemVariable> obj;
 
         ArgDeclNode(std::string name, std::shared_ptr<ExprNode> type): name(std::move(name)), type(std::move(type)) {}
 
@@ -86,6 +87,7 @@ namespace riddle {
     class ObjectNode final : public ExprNode {
     public:
         std::string name;
+        std::shared_ptr<SemObject> obj;
         explicit ObjectNode(std::string name): name(std::move(name)) {}
 
         std::any accept(NodeVisitor *visitor) override;
@@ -111,6 +113,18 @@ namespace riddle {
         std::shared_ptr<ExprNode> value;
 
         explicit ReturnNode(std::shared_ptr<ExprNode> value): value(std::move(value)) {}
+
+        std::any accept(NodeVisitor *visitor) override;
+    };
+
+    class CallNode final : public ExprNode {
+    public:
+        std::vector<std::shared_ptr<ExprNode>> args;
+        std::shared_ptr<ExprNode> value;
+
+        explicit CallNode(std::shared_ptr<ExprNode> value,
+                          std::vector<std::shared_ptr<ExprNode>> args = {}): args(std::move(args)),
+                                                                             value(std::move(value)) {}
 
         std::any accept(NodeVisitor *visitor) override;
     };

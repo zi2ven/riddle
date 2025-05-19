@@ -18,5 +18,7 @@ namespace riddle {
         std::any visitObject(RiddleParser::ObjectContext *context) override;
         std::any visitVarDecl(RiddleParser::VarDeclContext *context) override;
         std::any visitDeclArgs(RiddleParser::DeclArgsContext *context) override;
+        std::any visitReturnStmt(RiddleParser::ReturnStmtContext *context) override;
+        std::any visitCallExpr(RiddleParser::CallExprContext *context) override;
     };
 } // riddle

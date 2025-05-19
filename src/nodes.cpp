@@ -38,3 +38,7 @@ std::any VarDeclNode::accept(NodeVisitor *visitor) {
 std::any ReturnNode::accept(NodeVisitor *visitor) {
     return visitor->visitReturn(this);
 }
+
+std::any CallNode::accept(NodeVisitor *visitor) {
+    return visitor->visitCall(this);
+}

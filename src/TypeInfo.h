@@ -16,6 +16,7 @@ namespace riddle {
 
     protected:
         TypeKind kind = Unknown;
+
     public:
         std::string name;
         llvm::Type *type = nullptr;
@@ -28,6 +29,10 @@ namespace riddle {
 
         [[nodiscard]] TypeKind getTypeKind() const {
             return kind;
+        }
+
+        virtual bool equal(TypeInfo *other) {
+            return this->kind == other->kind && this->name == other->name;
         }
     };
 
@@ -48,5 +53,9 @@ namespace riddle {
         }
 
         std::shared_ptr<TypeInfo> getPointerTo() override;
+
+        bool equal(TypeInfo *other) override {
+            return TypeInfo::equal(other) && this->pointe->equal(dynamic_cast<PointerTypeInfo *>(other));
+        }
     };
 }

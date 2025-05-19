@@ -3,6 +3,7 @@
 #include <memory>
 
 namespace riddle {
+    class CallNode;
     class ReturnNode;
     class ArgDeclNode;
     class VarDeclNode;
@@ -39,5 +40,7 @@ namespace riddle {
         virtual std::any visitVarDecl(VarDeclNode *node);
 
         virtual std::any visitReturn(ReturnNode *node);
+
+        virtual std::any visitCall(CallNode* node);
     };
 }

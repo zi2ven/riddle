@@ -3,9 +3,9 @@
 #include <string>
 
 namespace riddle {
-    class NameError final : public std::exception {
+    class TypeError final : public std::exception {
     public:
-        explicit NameError(const std::string &msg) : message("NameError: " + msg) {}
+        explicit TypeError(const std::string &msg) : message("TypeError: " + msg) {}
 
         [[nodiscard]] const char *what() const noexcept override {
             return message.c_str();

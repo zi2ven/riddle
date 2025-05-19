@@ -117,3 +117,24 @@ any GramVisitor::visitDeclArgs(RiddleParser::DeclArgsContext *context) {
     }
     return args;
 }
+
+std::any GramVisitor::visitReturnStmt(RiddleParser::ReturnStmtContext *context) {
+    shared_ptr<ExprNode> value = nullptr;
+    if (context->result) {
+        value = nodeVisit(context->result);
+    }
+    return toSNPtr(make_shared<ReturnNode>(value));
+}
+
+std::any GramVisitor::visitCallExpr(RiddleParser::CallExprContext *context) {
+    const auto value = nodeVisit(context->obj);
+    vector<shared_ptr<ExprNode>> args;
+    for (int i = 1; i < context->children.size(); i++) {
+        const auto tree = context->children[i];
+        if (tree->getTreeType() == antlr4::tree::ParseTreeType::TERMINAL) {
+            continue;
+        }
+        args.emplace_back(nodeVisit(tree));
+    }
+    return toSNPtr(make_shared<CallNode>(value, args));
+}

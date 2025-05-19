@@ -21,8 +21,16 @@ namespace riddle {
 
         std::any visitInteger(IntegerNode *node) override;
 
+        std::any visitFloat(FloatNode *node) override;
+
         std::any visitFuncDecl(FuncDeclNode *node) override;
 
         std::any visitVarDecl(VarDeclNode *node) override;
+
+        std::any visitObject(ObjectNode *node) override;
+
+        std::any visitReturn(ReturnNode *node) override;
+
+        std::any visitCall(CallNode *node) override;
     };
 } // riddle
