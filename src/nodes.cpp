@@ -42,3 +42,7 @@ std::any ReturnNode::accept(NodeVisitor *visitor) {
 std::any CallNode::accept(NodeVisitor *visitor) {
     return visitor->visitCall(this);
 }
+
+std::any ClassDeclNode::accept(NodeVisitor *visitor) {
+    return visitor->visitClassDecl(this);
+}

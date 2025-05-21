@@ -23,23 +23,17 @@ public:
   virtual void enterLoadExpr(RiddleParser::LoadExprContext *ctx) = 0;
   virtual void exitLoadExpr(RiddleParser::LoadExprContext *ctx) = 0;
 
-  virtual void enterMemberAccess(RiddleParser::MemberAccessContext *ctx) = 0;
-  virtual void exitMemberAccess(RiddleParser::MemberAccessContext *ctx) = 0;
-
   virtual void enterEqOp(RiddleParser::EqOpContext *ctx) = 0;
   virtual void exitEqOp(RiddleParser::EqOpContext *ctx) = 0;
 
-  virtual void enterBracketExpr(RiddleParser::BracketExprContext *ctx) = 0;
-  virtual void exitBracketExpr(RiddleParser::BracketExprContext *ctx) = 0;
+  virtual void enterString(RiddleParser::StringContext *ctx) = 0;
+  virtual void exitString(RiddleParser::StringContext *ctx) = 0;
 
   virtual void enterBitOr(RiddleParser::BitOrContext *ctx) = 0;
   virtual void exitBitOr(RiddleParser::BitOrContext *ctx) = 0;
 
   virtual void enterLogicOr(RiddleParser::LogicOrContext *ctx) = 0;
   virtual void exitLogicOr(RiddleParser::LogicOrContext *ctx) = 0;
-
-  virtual void enterAddOp(RiddleParser::AddOpContext *ctx) = 0;
-  virtual void exitAddOp(RiddleParser::AddOpContext *ctx) = 0;
 
   virtual void enterCompoundAssignOp(RiddleParser::CompoundAssignOpContext *ctx) = 0;
   virtual void exitCompoundAssignOp(RiddleParser::CompoundAssignOpContext *ctx) = 0;
@@ -53,20 +47,35 @@ public:
   virtual void enterFloat(RiddleParser::FloatContext *ctx) = 0;
   virtual void exitFloat(RiddleParser::FloatContext *ctx) = 0;
 
+  virtual void enterParenExpr(RiddleParser::ParenExprContext *ctx) = 0;
+  virtual void exitParenExpr(RiddleParser::ParenExprContext *ctx) = 0;
+
+  virtual void enterPointerTo(RiddleParser::PointerToContext *ctx) = 0;
+  virtual void exitPointerTo(RiddleParser::PointerToContext *ctx) = 0;
+
+  virtual void enterLogicAnd(RiddleParser::LogicAndContext *ctx) = 0;
+  virtual void exitLogicAnd(RiddleParser::LogicAndContext *ctx) = 0;
+
+  virtual void enterCallExpr(RiddleParser::CallExprContext *ctx) = 0;
+  virtual void exitCallExpr(RiddleParser::CallExprContext *ctx) = 0;
+
+  virtual void enterShiftOp(RiddleParser::ShiftOpContext *ctx) = 0;
+  virtual void exitShiftOp(RiddleParser::ShiftOpContext *ctx) = 0;
+
+  virtual void enterMemberAccess(RiddleParser::MemberAccessContext *ctx) = 0;
+  virtual void exitMemberAccess(RiddleParser::MemberAccessContext *ctx) = 0;
+
+  virtual void enterAddOp(RiddleParser::AddOpContext *ctx) = 0;
+  virtual void exitAddOp(RiddleParser::AddOpContext *ctx) = 0;
+
   virtual void enterScopeAccess(RiddleParser::ScopeAccessContext *ctx) = 0;
   virtual void exitScopeAccess(RiddleParser::ScopeAccessContext *ctx) = 0;
 
   virtual void enterRelOp(RiddleParser::RelOpContext *ctx) = 0;
   virtual void exitRelOp(RiddleParser::RelOpContext *ctx) = 0;
 
-  virtual void enterPointerTo(RiddleParser::PointerToContext *ctx) = 0;
-  virtual void exitPointerTo(RiddleParser::PointerToContext *ctx) = 0;
-
   virtual void enterBitAnd(RiddleParser::BitAndContext *ctx) = 0;
   virtual void exitBitAnd(RiddleParser::BitAndContext *ctx) = 0;
-
-  virtual void enterLogicAnd(RiddleParser::LogicAndContext *ctx) = 0;
-  virtual void exitLogicAnd(RiddleParser::LogicAndContext *ctx) = 0;
 
   virtual void enterBoolean(RiddleParser::BooleanContext *ctx) = 0;
   virtual void exitBoolean(RiddleParser::BooleanContext *ctx) = 0;
@@ -77,17 +86,14 @@ public:
   virtual void enterBitXor(RiddleParser::BitXorContext *ctx) = 0;
   virtual void exitBitXor(RiddleParser::BitXorContext *ctx) = 0;
 
+  virtual void enterChar(RiddleParser::CharContext *ctx) = 0;
+  virtual void exitChar(RiddleParser::CharContext *ctx) = 0;
+
   virtual void enterStatementExpr(RiddleParser::StatementExprContext *ctx) = 0;
   virtual void exitStatementExpr(RiddleParser::StatementExprContext *ctx) = 0;
 
-  virtual void enterCallExpr(RiddleParser::CallExprContext *ctx) = 0;
-  virtual void exitCallExpr(RiddleParser::CallExprContext *ctx) = 0;
-
   virtual void enterObject(RiddleParser::ObjectContext *ctx) = 0;
   virtual void exitObject(RiddleParser::ObjectContext *ctx) = 0;
-
-  virtual void enterShiftOp(RiddleParser::ShiftOpContext *ctx) = 0;
-  virtual void exitShiftOp(RiddleParser::ShiftOpContext *ctx) = 0;
 
   virtual void enterStatement(RiddleParser::StatementContext *ctx) = 0;
   virtual void exitStatement(RiddleParser::StatementContext *ctx) = 0;

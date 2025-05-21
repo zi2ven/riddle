@@ -46,6 +46,7 @@ namespace riddle {
     std::shared_ptr<PrimitiveTypeInfo> getPrimitiveType(const std::string &name);
 
     class PointerTypeInfo final : public TypeInfo {
+    public:
         std::shared_ptr<TypeInfo> pointe;
 
         explicit PointerTypeInfo(const std::shared_ptr<TypeInfo> &type): TypeInfo("*"), pointe(type) {
@@ -57,5 +58,11 @@ namespace riddle {
         bool equal(TypeInfo *other) override {
             return TypeInfo::equal(other) && this->pointe->equal(dynamic_cast<PointerTypeInfo *>(other));
         }
+    };
+
+    class StructTypeInfo final : public TypeInfo {
+    public:
+        std::vector<std::shared_ptr<TypeInfo>> types;
+        explicit StructTypeInfo(std::vector<std::shared_ptr<TypeInfo>> types): TypeInfo("{}"), types(std::move(types)) {}
     };
 }

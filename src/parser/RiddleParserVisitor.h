@@ -25,17 +25,13 @@ public:
 
     virtual std::any visitLoadExpr(RiddleParser::LoadExprContext *context) = 0;
 
-    virtual std::any visitMemberAccess(RiddleParser::MemberAccessContext *context) = 0;
-
     virtual std::any visitEqOp(RiddleParser::EqOpContext *context) = 0;
 
-    virtual std::any visitBracketExpr(RiddleParser::BracketExprContext *context) = 0;
+    virtual std::any visitString(RiddleParser::StringContext *context) = 0;
 
     virtual std::any visitBitOr(RiddleParser::BitOrContext *context) = 0;
 
     virtual std::any visitLogicOr(RiddleParser::LogicOrContext *context) = 0;
-
-    virtual std::any visitAddOp(RiddleParser::AddOpContext *context) = 0;
 
     virtual std::any visitCompoundAssignOp(RiddleParser::CompoundAssignOpContext *context) = 0;
 
@@ -45,15 +41,25 @@ public:
 
     virtual std::any visitFloat(RiddleParser::FloatContext *context) = 0;
 
+    virtual std::any visitParenExpr(RiddleParser::ParenExprContext *context) = 0;
+
+    virtual std::any visitPointerTo(RiddleParser::PointerToContext *context) = 0;
+
+    virtual std::any visitLogicAnd(RiddleParser::LogicAndContext *context) = 0;
+
+    virtual std::any visitCallExpr(RiddleParser::CallExprContext *context) = 0;
+
+    virtual std::any visitShiftOp(RiddleParser::ShiftOpContext *context) = 0;
+
+    virtual std::any visitMemberAccess(RiddleParser::MemberAccessContext *context) = 0;
+
+    virtual std::any visitAddOp(RiddleParser::AddOpContext *context) = 0;
+
     virtual std::any visitScopeAccess(RiddleParser::ScopeAccessContext *context) = 0;
 
     virtual std::any visitRelOp(RiddleParser::RelOpContext *context) = 0;
 
-    virtual std::any visitPointerTo(RiddleParser::PointerToContext *context) = 0;
-
     virtual std::any visitBitAnd(RiddleParser::BitAndContext *context) = 0;
-
-    virtual std::any visitLogicAnd(RiddleParser::LogicAndContext *context) = 0;
 
     virtual std::any visitBoolean(RiddleParser::BooleanContext *context) = 0;
 
@@ -61,13 +67,11 @@ public:
 
     virtual std::any visitBitXor(RiddleParser::BitXorContext *context) = 0;
 
+    virtual std::any visitChar(RiddleParser::CharContext *context) = 0;
+
     virtual std::any visitStatementExpr(RiddleParser::StatementExprContext *context) = 0;
 
-    virtual std::any visitCallExpr(RiddleParser::CallExprContext *context) = 0;
-
     virtual std::any visitObject(RiddleParser::ObjectContext *context) = 0;
-
-    virtual std::any visitShiftOp(RiddleParser::ShiftOpContext *context) = 0;
 
     virtual std::any visitStatement(RiddleParser::StatementContext *context) = 0;
 

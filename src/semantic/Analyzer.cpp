@@ -1,6 +1,7 @@
 #include "Analyzer.h"
 
 #include <format>
+#include <ranges>
 
 #include "SemObject.h"
 #include "exception/NameError.h"
@@ -101,7 +102,7 @@ namespace riddle {
         visit(node->body);
         leaveScope();
 
-        return nilValue;
+        return toSNPtr(obj);
     }
 
     std::any Analyzer::visitBlock(BlockNode *node) {
@@ -142,7 +143,7 @@ namespace riddle {
         const auto obj = make_shared<SemVariable>(node->name, type);
         node->obj = obj;
         addGlobalObject(obj);
-        return nilValue;
+        return toSNPtr(obj);
     }
 
     std::any Analyzer::visitArgDecl(ArgDeclNode *node) {
@@ -172,8 +173,44 @@ namespace riddle {
             if (value == nullptr) {
                 throw TypeError(std::format("'{}' object not a value", value->name));
             }
-
         }
         return make<SemValue>(func->returnType);
+    }
+
+    std::any Analyzer::visitClassDecl(ClassDeclNode *node) {
+        const auto typeinfo = make_shared<StructTypeInfo>(std::vector<std::shared_ptr<TypeInfo>>{});
+        const auto obj = make_shared<SemClass>(node->name, typeinfo);
+        node->obj = obj;
+        addGlobalObject(obj);
+
+        // member parser
+        int index = 0;
+        for (const auto &i: node->members) {
+            const auto result = objVisit(i);
+            if (const auto var = dynamic_pointer_cast<SemVariable>(result)) {
+                obj->addMember(var, index++);
+            } else {
+                throw runtime_error("Result Not a Variable");
+            }
+        }
+
+        // method parser
+        for (const auto &i: node->methods) {
+            const auto result = objVisit(i);
+            if (const auto func = dynamic_pointer_cast<SemFunction>(result)) {
+                obj->addMethod(func);
+            } else {
+                throw runtime_error("Result Not a Function");
+            }
+        }
+
+        // create typeinfo
+        const auto structType = obj->getStructType();
+        structType->types.resize(index);
+        for (const auto &[idx, var]: obj->members | views::values) {
+            structType->types[idx] = var->type;
+        }
+
+        return toSNPtr(obj);
     }
 } // riddle

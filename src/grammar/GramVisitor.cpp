@@ -138,3 +138,18 @@ std::any GramVisitor::visitCallExpr(RiddleParser::CallExprContext *context) {
     }
     return toSNPtr(make_shared<CallNode>(value, args));
 }
+
+std::any GramVisitor::visitClassDecl(RiddleParser::ClassDeclContext *context) {
+    const auto name = context->name->getText();
+    std::vector<shared_ptr<VarDeclNode>> members;
+    std::vector<shared_ptr<FuncDeclNode>> methods;
+    const auto body = std::dynamic_pointer_cast<BlockNode>(nodeVisit(context->body));
+    for (const auto &i: body->body) {
+        if (const auto varDecl = std::dynamic_pointer_cast<VarDeclNode>(i)) {
+            members.emplace_back(varDecl);
+        } else if (const auto funcDecl = std::dynamic_pointer_cast<FuncDeclNode>(i)) {
+            methods.emplace_back(funcDecl);
+        }
+    }
+    return toSNPtr(make_shared<ClassDeclNode>(name, members, methods));
+}

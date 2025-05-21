@@ -10,12 +10,11 @@ options {
 
 
 program
-    : expressionEnd* EOF
+    : expressionEnd*
     ;
 
 expressionEnd
-    : expression Semi Endl?
-    | Endl
+    : expression Semi
     | Semi
     ;
 
@@ -23,7 +22,7 @@ expression
     : statement                                                                         #statementExpr
     | left=expression Colon Colon right=expression                                      #scopeAccess
     | left=expression Dot right=expression                                              #memberAccess
-    | obj=expression LeftBracket (expression (Comma expression)*)? RightBracket         #callExpr
+    | obj=expression LeftParen (expression (Comma expression)*)? RightParen             #callExpr
     | obj=expression Star                                                               #pointerTo
     | Star obj=expression                                                               #loadExpr
     | op=(Not | Add | Sub | Tilde) value=expression                                     #unaryOp
@@ -43,8 +42,10 @@ expression
     | Decimal                                                                           #integer
     | Float                                                                             #float
     | (True | False)                                                                    #boolean
+    | STRING                                                                            #string
+    | CHAR                                                                              #char
     | id                                                                                #object
-    | LeftBracket value=expression RightBracket                                         #bracketExpr
+    | LeftParen value=expression RightParen                                             #parenExpr
     ;
 
 statement
@@ -90,23 +91,24 @@ modifier
     | Protected
     | Private
     | Override
+    | Extern (STRING)
     ;
 
 funcDecl
-    : (modifier)* Func name=id LeftBracket declArgs RightBracket (Sub Greater return_type=expression)? body=block
-    | (modifier)* Func name=id LeftBracket declArgs RightBracket Sub Greater return_type=expression
+    : (modifier)* Func name=id LeftParen declArgs RightParen (Sub Greater return_type=expression)? body=block
+    | (modifier)* Func name=id LeftParen declArgs RightParen Sub Greater return_type=expression
     ;
 
 ifStmt
-    : If LeftBracket cond=expression RightBracket then=block (Else else=block)?
+    : If LeftParen cond=expression RightParen then=block (Else else=block)?
     ;
 
 whileStmt
-    : While LeftBracket cond=expression RightBracket body=block
+    : While LeftParen cond=expression RightParen body=block
     ;
 
 forStmt
-    : For LeftBracket (init=expression)? Semi (cond=expression)? Semi (change=expression)? RightBracket body=block
+    : For LeftParen (init=expression)? Semi (cond=expression)? Semi (change=expression)? RightParen body=block
     ;
 
 returnStmt

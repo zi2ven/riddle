@@ -128,4 +128,18 @@ namespace riddle {
 
         std::any accept(NodeVisitor *visitor) override;
     };
+
+    class ClassDeclNode final : public ExprNode {
+    public:
+        std::string name;
+        std::vector<std::shared_ptr<VarDeclNode>> members;
+        std::vector<std::shared_ptr<FuncDeclNode>> methods;
+        std::shared_ptr<SemClass> obj;
+
+        explicit ClassDeclNode(std::string name, std::vector<std::shared_ptr<VarDeclNode>> members,
+                               std::vector<std::shared_ptr<FuncDeclNode>> methods)
+            : name(std::move(name)), members(std::move(members)), methods(std::move(methods)) {}
+
+        std::any accept(NodeVisitor *visitor) override;
+    };
 }

@@ -1,4 +1,36 @@
 lexer grammar RiddleLexer;
+
+@lexer::members {
+    /** 判断前一个可见 token 是否允许在行尾插入分号 */
+    bool shouldImplicitSemi() {
+        // 上一个已 emit 的 token
+        antlr4::Token *prev = _lastToken;
+        if (prev == nullptr) return false;
+
+        switch (prev->getType()) {
+            case RiddleLexer::Identifier:
+            case RiddleLexer::Decimal:
+            case RiddleLexer::RightParen:
+            case RiddleLexer::RightBracket:
+            case RiddleLexer::RightCurly:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /** 记录最后一个非隐藏信道 token，用来做上面的判断 */
+    antlr4::Token *_lastToken = nullptr;
+
+    antlr4::Token *emit() override {
+        antlr4::Token *t = Lexer::emit();
+        if (t->getChannel() == antlr4::Token::DEFAULT_CHANNEL) {
+            _lastToken = t;
+        }
+        return t;
+    }
+}
+
 //关键字
 Var:'var';  //可变变量
 Val:'val';  //不可变变量
@@ -18,6 +50,7 @@ False:'false';
 Null:'null';
 Try:'try';
 Catch:'catch';
+Extern: 'extern';
 // 修饰符
 Override: 'override';
 Static:'static';
@@ -29,14 +62,18 @@ Virtual: 'virtual';
 Operator: 'operator';
 //可见字符
 //基本运算符
-LeftBracket:    '(';
-RightBracket:   ')';
-LeftSquare:     '[';
-RightSquare:    ']';
-LeftCurly:      '{';
-RightCurly:     '}';
+Semi
+    : ';'
+    | { shouldImplicitSemi() }? Endl
+    ;
+
+LeftParen : '(' ;
+RightParen : ')' ;
+LeftBracket : '[' ;
+RightBracket : ']' ;
+LeftCurly : '{' ;
+RightCurly : '}' ;
 Colon:          ':';
-Semi:           ';';
 Comma:          ',';
 Equal:          '==';
 NotEqual:       '!=';
@@ -72,7 +109,9 @@ OrAssign:       '|=';
 XorAssign:      '^=';
 
 
-Endl:'\n';
+Endl
+  : '\r'? '\n' -> channel(HIDDEN)
+  ;
 //标识符
 Identifier: [A-Za-z_] [A-Za-z_0-9]*;
 //十六进制
@@ -104,4 +143,4 @@ fragment ESC
 
 LINE_COMMENT : '//' ~[\r\n]* -> channel(HIDDEN) ;
 BLOCK_COMMENT : '/*' .*? '*/' -> channel(HIDDEN) ;
-WHITESPACE : [ \t\r\n]+ -> channel(HIDDEN) ;
+WHITESPACE : [ \t]+ -> channel(HIDDEN) ;

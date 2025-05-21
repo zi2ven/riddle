@@ -27,15 +27,11 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitMemberAccess(RiddleParser::MemberAccessContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
   virtual std::any visitEqOp(RiddleParser::EqOpContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitBracketExpr(RiddleParser::BracketExprContext *ctx) override {
+  virtual std::any visitString(RiddleParser::StringContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -44,10 +40,6 @@ public:
   }
 
   virtual std::any visitLogicOr(RiddleParser::LogicOrContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitAddOp(RiddleParser::AddOpContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -67,6 +59,34 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitParenExpr(RiddleParser::ParenExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitPointerTo(RiddleParser::PointerToContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitLogicAnd(RiddleParser::LogicAndContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitCallExpr(RiddleParser::CallExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitShiftOp(RiddleParser::ShiftOpContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitMemberAccess(RiddleParser::MemberAccessContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitAddOp(RiddleParser::AddOpContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitScopeAccess(RiddleParser::ScopeAccessContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -75,15 +95,7 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitPointerTo(RiddleParser::PointerToContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
   virtual std::any visitBitAnd(RiddleParser::BitAndContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitLogicAnd(RiddleParser::LogicAndContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -99,19 +111,15 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitChar(RiddleParser::CharContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitStatementExpr(RiddleParser::StatementExprContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitCallExpr(RiddleParser::CallExprContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
   virtual std::any visitObject(RiddleParser::ObjectContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitShiftOp(RiddleParser::ShiftOpContext *ctx) override {
     return visitChildren(ctx);
   }
 

@@ -1,11 +1,11 @@
 #pragma once
 #include <memory>
 #include <utility>
-#include <llvm/IR/Function.h>
 
 #include "TypeInfo.h"
 
 namespace llvm {
+    class Function;
     class Value;
 }
 
@@ -62,7 +62,7 @@ namespace riddle {
 
         SemFunction(std::string name, const std::shared_ptr<TypeInfo> &returnType,
                     std::vector<std::shared_ptr<SemVariable>> args = {}): SemObject(std::move(name), Function),
-                                                                     returnType(returnType), args(std::move(args)) {}
+                                                                          returnType(returnType), args(std::move(args)) {}
     };
 
     class SemType : public SemObject {
@@ -74,6 +74,28 @@ namespace riddle {
     };
 
     class SemClass final : public SemType {
+    public:
+        std::unordered_map<std::string, std::pair<int, std::shared_ptr<SemVariable>>> members;
+        std::unordered_map<std::string, std::shared_ptr<SemFunction>> methods;
 
+        explicit SemClass(const std::string &name, const std::shared_ptr<StructTypeInfo> &type): SemType(name, type) {}
+
+        [[nodiscard]] std::shared_ptr<StructTypeInfo> getStructType() const {
+            return std::static_pointer_cast<StructTypeInfo>(type);
+        }
+
+        void addMember(const std::shared_ptr<SemVariable> &member, int index) {
+            if (members.contains(member->name)) {
+                throw std::runtime_error("Member already exists");
+            }
+            members[member->name] = std::make_pair(index, member);
+        }
+
+        void addMethod(const std::shared_ptr<SemFunction> &method) {
+            if (methods.contains(method->name)) {
+                throw std::runtime_error("Method already exists");
+            }
+            methods[method->name] = method;
+        }
     };
 }

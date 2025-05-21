@@ -72,7 +72,17 @@ std::any NodeVisitor::visitReturn(ReturnNode *node) {
 
 std::any NodeVisitor::visitCall(CallNode *node) {
     visit(node->value);
-    for (const auto& i: node->args) {
+    for (const auto &i: node->args) {
+        visit(i);
+    }
+    return {};
+}
+
+std::any NodeVisitor::visitClassDecl(ClassDeclNode *node) {
+    for (const auto &i: node->members) {
+        visit(i);
+    }
+    for (const auto &i: node->methods) {
         visit(i);
     }
     return {};

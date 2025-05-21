@@ -14,25 +14,56 @@ public:
   enum {
     Var = 1, Val = 2, For = 3, While = 4, Continue = 5, Break = 6, If = 7, 
     Else = 8, Func = 9, Return = 10, Import = 11, Package = 12, Class = 13, 
-    True = 14, False = 15, Null = 16, Try = 17, Catch = 18, Override = 19, 
-    Static = 20, Const = 21, Public = 22, Protected = 23, Private = 24, 
-    Virtual = 25, Operator = 26, LeftBracket = 27, RightBracket = 28, LeftSquare = 29, 
-    RightSquare = 30, LeftCurly = 31, RightCurly = 32, Colon = 33, Semi = 34, 
-    Comma = 35, Equal = 36, NotEqual = 37, Assign = 38, Greater = 39, GreaterEqual = 40, 
-    Less = 41, LessEqual = 42, LeftShift = 43, RightShift = 44, Add = 45, 
-    Sub = 46, Star = 47, Div = 48, Mod = 49, Not = 50, And = 51, Or = 52, 
-    Xor = 53, Dot = 54, DoubleQuotes = 55, Quotes = 56, Tilde = 57, AddAssign = 58, 
-    SubAssign = 59, MulAssign = 60, DivAssign = 61, ModAssign = 62, LeftShiftAssign = 63, 
-    RightShiftAssign = 64, AndAssign = 65, OrAssign = 66, XorAssign = 67, 
-    Endl = 68, Identifier = 69, Hexadecimal = 70, Decimal = 71, Octal = 72, 
-    Binary = 73, Float = 74, IntegerSequence = 75, HEX_DIGIT = 76, OCTAL_DIGIT = 77, 
-    BINARY_DIGIT = 78, DIGIT = 79, STRING = 80, CHAR = 81, LINE_COMMENT = 82, 
-    BLOCK_COMMENT = 83, WHITESPACE = 84
+    True = 14, False = 15, Null = 16, Try = 17, Catch = 18, Extern = 19, 
+    Override = 20, Static = 21, Const = 22, Public = 23, Protected = 24, 
+    Private = 25, Virtual = 26, Operator = 27, Semi = 28, LeftParen = 29, 
+    RightParen = 30, LeftBracket = 31, RightBracket = 32, LeftCurly = 33, 
+    RightCurly = 34, Colon = 35, Comma = 36, Equal = 37, NotEqual = 38, 
+    Assign = 39, Greater = 40, GreaterEqual = 41, Less = 42, LessEqual = 43, 
+    LeftShift = 44, RightShift = 45, Add = 46, Sub = 47, Star = 48, Div = 49, 
+    Mod = 50, Not = 51, And = 52, Or = 53, Xor = 54, Dot = 55, DoubleQuotes = 56, 
+    Quotes = 57, Tilde = 58, AddAssign = 59, SubAssign = 60, MulAssign = 61, 
+    DivAssign = 62, ModAssign = 63, LeftShiftAssign = 64, RightShiftAssign = 65, 
+    AndAssign = 66, OrAssign = 67, XorAssign = 68, Endl = 69, Identifier = 70, 
+    Hexadecimal = 71, Decimal = 72, Octal = 73, Binary = 74, Float = 75, 
+    IntegerSequence = 76, HEX_DIGIT = 77, OCTAL_DIGIT = 78, BINARY_DIGIT = 79, 
+    DIGIT = 80, STRING = 81, CHAR = 82, LINE_COMMENT = 83, BLOCK_COMMENT = 84, 
+    WHITESPACE = 85
   };
 
   explicit RiddleLexer(antlr4::CharStream *input);
 
   ~RiddleLexer() override;
+
+
+      /** 判断前一个可见 token 是否允许在行尾插入分号 */
+      bool shouldImplicitSemi() {
+          // 上一个已 emit 的 token
+          antlr4::Token *prev = _lastToken;
+          if (prev == nullptr) return false;
+
+          switch (prev->getType()) {
+              case RiddleLexer::Identifier:
+              case RiddleLexer::Decimal:
+              case RiddleLexer::RightParen:
+              case RiddleLexer::RightBracket:
+              case RiddleLexer::RightCurly:
+                  return true;
+              default:
+                  return false;
+          }
+      }
+
+      /** 记录最后一个非隐藏信道 token，用来做上面的判断 */
+      antlr4::Token *_lastToken = nullptr;
+
+      antlr4::Token *emit() override {
+          antlr4::Token *t = Lexer::emit();
+          if (t->getChannel() == antlr4::Token::DEFAULT_CHANNEL) {
+              _lastToken = t;
+          }
+          return t;
+      }
 
 
   std::string getGrammarFileName() const override;
@@ -49,6 +80,8 @@ public:
 
   const antlr4::atn::ATN& getATN() const override;
 
+  bool sempred(antlr4::RuleContext *_localctx, size_t ruleIndex, size_t predicateIndex) override;
+
   // By default the static state used to implement the lexer is lazily initialized during the first
   // call to the constructor. You can call this function if you wish to initialize the static state
   // ahead of time.
@@ -59,6 +92,7 @@ private:
   // Individual action functions triggered by action() above.
 
   // Individual semantic predicate functions triggered by sempred() above.
+  bool SemiSempred(antlr4::RuleContext *_localctx, size_t predicateIndex);
 
 };
 

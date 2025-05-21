@@ -3,6 +3,10 @@
 #include <memory>
 
 namespace riddle {
+    class ClassDeclNode;
+}
+
+namespace riddle {
     class CallNode;
     class ReturnNode;
     class ArgDeclNode;
@@ -42,5 +46,7 @@ namespace riddle {
         virtual std::any visitReturn(ReturnNode *node);
 
         virtual std::any visitCall(CallNode* node);
+
+        virtual std::any visitClassDecl(ClassDeclNode* node);
     };
 }
