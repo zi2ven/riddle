@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <ranges>
 #include <utility>
 
 #include "TypeInfo.h"
@@ -50,6 +51,7 @@ namespace riddle {
     class SemVariable final : public SemValue {
     public:
         llvm::Value *alloca = nullptr;
+        bool isLocalVar = false;
 
         SemVariable(const std::string &name, const std::shared_ptr<TypeInfo> &type): SemValue(type, name, Variable) {}
     };
@@ -96,6 +98,22 @@ namespace riddle {
                 throw std::runtime_error("Method already exists");
             }
             methods[method->name] = method;
+        }
+
+        std::shared_ptr<SemVariable> getMember(const int index) {
+            for (const auto &[idx, var]: members | std::views::values) {
+                if (idx == index) {
+                    return var;
+                }
+            }
+            throw std::runtime_error("Member not found at index " + std::to_string(index));
+        }
+
+        std::shared_ptr<SemVariable> getMember(const std::string &name) {
+            if (!members.contains(name)) {
+                throw std::runtime_error("Member not found");
+            }
+            return members.at(name).second;
         }
     };
 }

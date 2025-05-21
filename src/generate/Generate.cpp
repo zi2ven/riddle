@@ -21,11 +21,21 @@ namespace riddle {
     }
 
     llvm::Type *Generate::parseType(const shared_ptr<TypeInfo> &type) {
+        if (type == nullptr) {
+            return nullptr;
+        }
         if (type->type) {
             return type->type;
         }
-        if (type->getTypeKind() == TypeInfo::Primitive) {
-            return getPrimitiveType(type->name);
+        switch (type->getTypeKind()) {
+            case TypeInfo::Primitive: {
+                type->type = getPrimitiveType(type->name);
+                return type->type;
+            }
+            case TypeInfo::Struct: {
+                return type->type;
+            }
+            default: break;
         }
         return nullptr;
     }
@@ -91,7 +101,12 @@ namespace riddle {
         switch (node->obj->getKind()) {
             case SemObject::Variable: {
                 const auto var = dynamic_pointer_cast<SemVariable>(node->obj);
-                llvm::Value *value = this->builder.CreateLoad(parseType(var->type), var->alloca);
+                llvm::Value *value;
+                if (var->isLocalVar) {
+                    value = this->builder.CreateLoad(parseType(var->type), var->alloca);
+                } else {
+                    value = var->alloca;
+                }
                 return value;
             }
             case SemObject::Function: {
@@ -124,5 +139,18 @@ namespace riddle {
         }
         llvm::Value *result = builder.CreateCall(value, args);
         return result;
+    }
+
+    std::any Generate::visitClassDecl(ClassDeclNode *node) {
+        vector<llvm::Type *> types;
+        for (const auto &i: node->obj->getStructType()->types) {
+            types.emplace_back(parseType(i));
+        }
+        llvm::StructType *type = llvm::StructType::create(types, node->name);
+        node->obj->type->type = type;
+        for (const auto &i: node->methods) {
+            visit(i);
+        }
+        return {};
     }
 } // riddle

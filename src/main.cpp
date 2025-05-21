@@ -5,7 +5,7 @@
 #include "generate/Generate.h"
 #include "grammar/config.h"
 #include "grammar/GramVisitor.h"
-#include "grammar/parse.h"
+#include "parser/RiddleLexer.h"
 #include "semantic/Analyzer.h"
 
 void init() {

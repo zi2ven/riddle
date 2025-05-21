@@ -137,11 +137,14 @@ namespace riddle {
         }
         if (node->type) {
             const auto obj = objVisit(node->type);
+            const auto ty = std::dynamic_pointer_cast<SemType>(obj);
+            type = ty->type;
         } else {
             type = value->type;
         }
         const auto obj = make_shared<SemVariable>(node->name, type);
         node->obj = obj;
+        obj->isLocalVar = true;
         addGlobalObject(obj);
         return toSNPtr(obj);
     }
