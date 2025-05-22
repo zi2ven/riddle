@@ -22,10 +22,23 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y llvm-19 libantlr4-runtime-dev
+          sudo apt-get install -y llvm-19
+
+      - name: Install vcpkg
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git /home/runner/vcpkg
+          cd /home/runner/vcpkg
+          ./bootstrap-vcpkg.sh
+
+      - name: Install ANTLR4-runtime v4.12
+        run: |
+          /home/runner/vcpkg/vcpkg install antlr4-runtime:x64-linux
+
 
       - name: Configure CMake
-        run: cmake -B build .
+        run: cmake -B build \
+          -DCMAKE_TOOLCHAIN_FILE=/home/runner/vcpkg/scripts/buildsystems/vcpkg.cmake \
+          -DCMAKE_BUILD_TYPE=Release .
 
       - name: Build project
         run: cmake --build build --config Release
