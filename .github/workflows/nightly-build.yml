@@ -30,9 +30,9 @@ jobs:
           cd /home/runner/vcpkg
           ./bootstrap-vcpkg.sh
 
-      - name: Install ANTLR4-runtime v4.12
+      - name: Install ANTLR4-runtime
         run: |
-          /home/runner/vcpkg/vcpkg install antlr4-runtime:x64-linux
+          /home/runner/vcpkg/vcpkg install antlr4:x64-linux
 
 
       - name: Configure CMake
