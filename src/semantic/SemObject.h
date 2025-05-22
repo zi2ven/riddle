@@ -115,5 +115,12 @@ namespace riddle {
             }
             return members.at(name).second;
         }
+
+        int getMemberIndex(const std::string &name) const {
+            if (!members.contains(name)) {
+                throw std::runtime_error("Member not found");
+            }
+            return members.at(name).first;
+        }
     };
 }

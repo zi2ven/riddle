@@ -52,5 +52,7 @@ namespace riddle {
         std::any visitCall(CallNode *node) override;
 
         std::any visitClassDecl(ClassDeclNode *node) override;
+
+        std::any visitMemberAccess(MemberAccessNode *node) override;
     };
 } // riddle

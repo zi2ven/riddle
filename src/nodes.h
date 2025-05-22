@@ -142,4 +142,15 @@ namespace riddle {
 
         std::any accept(NodeVisitor *visitor) override;
     };
+
+    class MemberAccessNode final : public ExprNode {
+    public:
+        std::shared_ptr<ExprNode> left;
+        std::string right;
+        std::shared_ptr<SemClass> theClass = nullptr;
+        std::shared_ptr<SemVariable> childObj;
+        MemberAccessNode(std::shared_ptr<ExprNode> left, std::string right): left(std::move(left)), right(std::move(right)) {}
+
+        std::any accept(NodeVisitor *visitor) override;
+    };
 }

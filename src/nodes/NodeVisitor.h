@@ -3,6 +3,10 @@
 #include <memory>
 
 namespace riddle {
+    class MemberAccessNode;
+}
+
+namespace riddle {
     class ClassDeclNode;
 }
 
@@ -48,5 +52,7 @@ namespace riddle {
         virtual std::any visitCall(CallNode* node);
 
         virtual std::any visitClassDecl(ClassDeclNode* node);
+
+        virtual std::any visitMemberAccess(MemberAccessNode* node);
     };
 }

@@ -5,6 +5,10 @@
 #include <llvm/IR/Type.h>
 
 namespace riddle {
+    class SemClass;
+}
+
+namespace riddle {
     class TypeInfo {
     public:
         enum TypeKind {
@@ -62,6 +66,7 @@ namespace riddle {
 
     class StructTypeInfo final : public TypeInfo {
     public:
+        std::weak_ptr<SemClass> theClass;
         std::vector<std::shared_ptr<TypeInfo>> types;
         explicit StructTypeInfo(std::vector<std::shared_ptr<TypeInfo>> types): TypeInfo("{}"), types(std::move(types)) {
             kind = Struct;

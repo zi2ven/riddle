@@ -1,7 +1,10 @@
 #include "Generate.h"
 
+#include <iostream>
+
 #include "nodes.h"
 #include "grammar/config.h"
+#include "llvm/IR/Verifier.h"
 
 using namespace std;
 
@@ -45,6 +48,12 @@ namespace riddle {
     any Generate::visitProgram(ProgramNode *node) {
         for (const auto &i: node->body) {
             visit(i);
+        }
+        std::string verifyError;
+        llvm::raw_string_ostream errorStream(verifyError);
+        if (llvm::verifyModule(*module, &errorStream)) {
+            errorStream.flush();
+            cerr << "Module verification failed: " + verifyError;
         }
         module->print(llvm::outs(), nullptr);
         return {};
@@ -92,7 +101,7 @@ namespace riddle {
         node->obj->alloca = alloca;
         if (node->value) {
             const auto value = any_cast<llvm::Value *>(visit(node->value));
-            builder.CreateStore(alloca, value);
+            builder.CreateStore(value,alloca);
         }
         return {};
     }
@@ -152,5 +161,18 @@ namespace riddle {
             visit(i);
         }
         return {};
+    }
+
+    std::any Generate::visitMemberAccess(MemberAccessNode *node) {
+        const auto sty = node->theClass->type->type;
+        auto left = std::any_cast<llvm::Value *>(visit(node->left));
+        if (llvm::isa<llvm::LoadInst>(left)) {
+            const auto ld = llvm::dyn_cast<llvm::LoadInst>(left);
+            left = ld->getPointerOperand();
+        }
+        const auto index = node->theClass->getMemberIndex(node->right);
+        const auto member = builder.CreateStructGEP(sty, left, index);
+        llvm::Value *result = builder.CreateLoad(parseType(node->childObj->type), member);
+        return result;
     }
 } // riddle

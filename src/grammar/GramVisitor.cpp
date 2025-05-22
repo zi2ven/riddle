@@ -153,3 +153,9 @@ std::any GramVisitor::visitClassDecl(RiddleParser::ClassDeclContext *context) {
     }
     return toSNPtr(make_shared<ClassDeclNode>(name, members, methods));
 }
+
+std::any GramVisitor::visitMemberAccess(RiddleParser::MemberAccessContext *context) {
+    const auto left = nodeVisit(context->left);
+    const auto right = context->right->getText();
+    return toSNPtr(make_shared<MemberAccessNode>(left, right));
+}

@@ -87,3 +87,8 @@ std::any NodeVisitor::visitClassDecl(ClassDeclNode *node) {
     }
     return {};
 }
+
+std::any NodeVisitor::visitMemberAccess(MemberAccessNode *node) {
+    visit(node->left);
+    return {};
+}

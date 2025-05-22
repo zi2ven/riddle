@@ -213,7 +213,20 @@ namespace riddle {
         for (const auto &[idx, var]: obj->members | views::values) {
             structType->types[idx] = var->type;
         }
+        structType->theClass = obj;
 
         return toSNPtr(obj);
+    }
+
+    std::any Analyzer::visitMemberAccess(MemberAccessNode *node) {
+        const auto obj = objVisit(node->left);
+        const auto theClass = std::dynamic_pointer_cast<StructTypeInfo>(std::dynamic_pointer_cast<SemValue>(obj)->type);
+        if (theClass == nullptr) {
+            throw runtime_error("Left is not a class");
+        }
+        node->theClass = theClass->theClass.lock();
+        const auto child = node->theClass->getMember(node->right);
+        node->childObj = child;
+        return toSNPtr(child);
     }
 } // riddle
