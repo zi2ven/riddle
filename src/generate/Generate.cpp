@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include "nodes.h"
-#include "grammar/config.h"
+#include "config.h"
 #include "llvm/IR/Verifier.h"
 
 using namespace std;
@@ -13,6 +13,7 @@ namespace riddle {
         static const unordered_map<string, llvm::Type *> mp = {
             {"int", builder.getInt32Ty()},
             {"float", builder.getFloatTy()},
+            {"char", builder.getInt8Ty()},
             {"void", builder.getVoidTy()},
         };
 
@@ -23,7 +24,10 @@ namespace riddle {
         return it->second;
     }
 
-    llvm::Type *Generate::parseType(const shared_ptr<TypeInfo> &type) {
+    llvm::Type *Generate::parseType(const shared_ptr<TypeInfo> &type, const size_t depth) { // NOLINT(*-no-recursion)
+        if (depth > MAX_DEPTH) {
+            throw runtime_error("Recursive depth exceeds limit");
+        }
         if (type == nullptr) {
             return nullptr;
         }
@@ -37,6 +41,9 @@ namespace riddle {
             }
             case TypeInfo::Struct: {
                 return type->type;
+            }
+            case TypeInfo::Pointer: {
+                return llvm::PointerType::get(parseType(type->getPointerTo(), depth + 1), 0);
             }
             default: break;
         }
@@ -66,6 +73,11 @@ namespace riddle {
 
     any Generate::visitFloat(FloatNode *node) {
         llvm::Value *value = llvm::ConstantFP::get(builder.getFloatTy(), node->value);
+        return value;
+    }
+
+    std::any Generate::visitChar(CharNode *node) {
+        llvm::Value *value = builder.getInt8(node->value);
         return value;
     }
 
@@ -179,7 +191,7 @@ namespace riddle {
                 return result;
             }
             case MemberAccessNode::Method: {
-                llvm::Value* result = std::dynamic_pointer_cast<SemFunction>(node->childObj)->func;
+                llvm::Value *result = std::dynamic_pointer_cast<SemFunction>(node->childObj)->func;
                 return result;
             }
             default: throw runtime_error("Unknown MemberAccessNode::Type");

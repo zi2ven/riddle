@@ -2,6 +2,8 @@
 #include <any>
 #include <memory>
 
+#include "nodes.h"
+
 namespace riddle {
     class MemberAccessNode;
 }
@@ -43,6 +45,8 @@ namespace riddle {
 
         virtual std::any visitFloat(FloatNode *node);
 
+        virtual std::any visitChar(CharNode *node);
+
         virtual std::any visitObject(ObjectNode *node);
 
         virtual std::any visitVarDecl(VarDeclNode *node);
@@ -54,5 +58,7 @@ namespace riddle {
         virtual std::any visitClassDecl(ClassDeclNode* node);
 
         virtual std::any visitMemberAccess(MemberAccessNode* node);
+
+        virtual std::any visitPointerTo(PointerToNode* node);
     };
 }

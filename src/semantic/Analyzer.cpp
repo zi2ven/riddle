@@ -67,6 +67,7 @@ namespace riddle {
         addGlobalObject(make_shared<SemType>("void", getPrimitiveType("void")));
         addGlobalObject(make_shared<SemType>("int", getPrimitiveType("int")));
         addGlobalObject(make_shared<SemType>("float", getPrimitiveType("float")));
+        addGlobalObject(make_shared<SemType>("char", getPrimitiveType("char")));
     }
 
     Analyzer::~Analyzer() {
@@ -118,6 +119,10 @@ namespace riddle {
 
     std::any Analyzer::visitInteger(IntegerNode *node) {
         return make<SemValue>(getPrimitiveType("int"));
+    }
+
+    std::any Analyzer::visitChar(CharNode *node) {
+        return make<SemValue>(getPrimitiveType("char"));
     }
 
     std::any Analyzer::visitObject(ObjectNode *node) {
@@ -238,5 +243,14 @@ namespace riddle {
             return toSNPtr(child);
         }
         throw runtime_error("Right Not Member or Method");
+    }
+
+    std::any Analyzer::visitPointerTo(PointerToNode *node) {
+        const auto obj = objVisit(node->type);
+        if (const auto type = std::dynamic_pointer_cast<SemType>(obj)) {
+            const auto typeinfo = make_shared<PointerTypeInfo>(type->type);
+            return make<SemType>("*", typeinfo);
+        }
+        throw runtime_error("Object not a type");
     }
 } // riddle

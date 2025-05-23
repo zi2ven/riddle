@@ -12,7 +12,7 @@ namespace riddle {
 
         llvm::Type *getPrimitiveType(const std::string &name);
 
-        llvm::Type *parseType(const std::shared_ptr<TypeInfo> &type);
+        llvm::Type *parseType(const std::shared_ptr<TypeInfo> &type, size_t depth = 0);
 
     public:
         Generate();
@@ -22,6 +22,8 @@ namespace riddle {
         std::any visitInteger(IntegerNode *node) override;
 
         std::any visitFloat(FloatNode *node) override;
+
+        std::any visitChar(CharNode *node) override;
 
         std::any visitFuncDecl(FuncDeclNode *node) override;
 

@@ -41,6 +41,8 @@ namespace riddle {
 
         std::any visitInteger(IntegerNode *node) override;
 
+        std::any visitChar(CharNode *node) override;
+
         std::any visitObject(ObjectNode *node) override;
 
         std::any visitVarDecl(VarDeclNode *node) override;
@@ -54,5 +56,7 @@ namespace riddle {
         std::any visitClassDecl(ClassDeclNode *node) override;
 
         std::any visitMemberAccess(MemberAccessNode *node) override;
+
+        std::any visitPointerTo(PointerToNode *node) override;
     };
 } // riddle

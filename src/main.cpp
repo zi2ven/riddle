@@ -3,7 +3,7 @@
 #include <chrono>
 
 #include "generate/Generate.h"
-#include "grammar/config.h"
+#include "generate/config.h"
 #include "grammar/GramVisitor.h"
 #include "parser/RiddleLexer.h"
 #include "semantic/Analyzer.h"
@@ -23,6 +23,7 @@ int main(int argc, const char *argv[]) {
         std::cerr << "Error: Unable to open file " << argv[1] << std::endl;
         return 1;
     }
+    auto startTime = std::chrono::high_resolution_clock::now();
     std::stringstream buffer;
     buffer << in.rdbuf();
     std::string code = buffer.str();
@@ -34,7 +35,6 @@ int main(int argc, const char *argv[]) {
     auto tree = parser.program();
     riddle::GramVisitor visitor;
     auto result = visitor.nodeVisit(tree);
-    auto startTime = std::chrono::high_resolution_clock::now();
     try {
         riddle::Analyzer analyzer;
         analyzer.visit(result);

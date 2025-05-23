@@ -16,6 +16,37 @@ constexpr auto cast(const auto &ptr) {
     return dynamic_pointer_cast<T>(ptr);
 };
 
+char parseCharLiteral(const std::string &body) {
+    // 普通单字符
+    if (body.size() == 1 && body[0] != '\\') {
+        return body[0];
+    }
+    // 转义结构：以 '\' 开头
+    if (body.size() >= 2 && body[0] == '\\') {
+        switch (body[1]) {
+            case 'n': return '\n';
+            case 't': return '\t';
+            case 'r': return '\r';
+            case '\\': return '\\';
+            case '\'': return '\'';
+            case '"': return '"';
+            case '0': return '\0';
+            case 'x': // 16 进制：\xhh
+            {
+                // 取出 “hh” 部分
+                const std::string hex = body.substr(2);
+                int val;
+                std::istringstream iss(hex);
+                iss >> std::hex >> val;
+                if (!iss.fail()) return static_cast<char>(val);
+                break;
+            }
+            default: break;
+        }
+    }
+    throw std::invalid_argument("Unsupported escape sequence: " + body);
+}
+
 shared_ptr<ExprNode> GramVisitor::nodeVisit(antlr4::tree::ParseTree *context) {
     const auto result = visit(context);
     try {
@@ -79,6 +110,12 @@ any GramVisitor::visitInteger(RiddleParser::IntegerContext *context) {
 
 any GramVisitor::visitFloat(RiddleParser::FloatContext *context) {
     return toSNPtr(make_shared<FloatNode>(stod(context->getText())));
+}
+
+std::any GramVisitor::visitChar(RiddleParser::CharContext *context) {
+    auto lit = context->getText();
+    lit = lit.substr(1, lit.size() - 2);
+    return toSNPtr(make_shared<CharNode>(parseCharLiteral(lit)));
 }
 
 any GramVisitor::visitObject(RiddleParser::ObjectContext *context) {
@@ -158,4 +195,9 @@ std::any GramVisitor::visitMemberAccess(RiddleParser::MemberAccessContext *conte
     const auto left = nodeVisit(context->left);
     const auto right = context->right->getText();
     return toSNPtr(make_shared<MemberAccessNode>(left, right));
+}
+
+std::any GramVisitor::visitPointerTo(RiddleParser::PointerToContext *context) {
+    const auto type = nodeVisit(context->obj);
+    return toSNPtr(make_shared<PointerToNode>(type));
 }

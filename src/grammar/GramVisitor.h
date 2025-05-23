@@ -22,6 +22,8 @@ namespace riddle {
 
         std::any visitFloat(RiddleParser::FloatContext *context) override;
 
+        std::any visitChar(RiddleParser::CharContext *context) override;
+
         std::any visitObject(RiddleParser::ObjectContext *context) override;
 
         std::any visitVarDecl(RiddleParser::VarDeclContext *context) override;
@@ -35,5 +37,7 @@ namespace riddle {
         std::any visitClassDecl(RiddleParser::ClassDeclContext *context) override;
 
         std::any visitMemberAccess(RiddleParser::MemberAccessContext *context) override;
+
+        std::any visitPointerTo(RiddleParser::PointerToContext *context) override;
     };
 } // riddle

@@ -27,6 +27,10 @@ std::any FloatNode::accept(NodeVisitor *visitor) {
     return visitor->visitFloat(this);
 }
 
+std::any CharNode::accept(NodeVisitor *visitor) {
+    return visitor->visitChar(this);
+}
+
 std::any ObjectNode::accept(NodeVisitor *visitor) {
     return visitor->visitObject(this);
 }
@@ -49,4 +53,8 @@ std::any ClassDeclNode::accept(NodeVisitor *visitor) {
 
 std::any MemberAccessNode::accept(NodeVisitor *visitor) {
     return visitor->visitMemberAccess(this);
+}
+
+std::any PointerToNode::accept(NodeVisitor *visitor) {
+    return visitor->visitPointerTo(this);
 }

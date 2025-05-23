@@ -53,6 +53,10 @@ std::any NodeVisitor::visitFloat(FloatNode *node) {
     return {};
 }
 
+std::any NodeVisitor::visitChar(CharNode *node) {
+    return {};
+}
+
 std::any NodeVisitor::visitObject(ObjectNode *node) {
     return {};
 }
@@ -90,5 +94,10 @@ std::any NodeVisitor::visitClassDecl(ClassDeclNode *node) {
 
 std::any NodeVisitor::visitMemberAccess(MemberAccessNode *node) {
     visit(node->left);
+    return {};
+}
+
+std::any NodeVisitor::visitPointerTo(PointerToNode *node) {
+    visit(node->type);
     return {};
 }

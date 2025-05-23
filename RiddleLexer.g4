@@ -10,6 +10,11 @@ lexer grammar RiddleLexer;
         switch (prev->getType()) {
             case RiddleLexer::Identifier:
             case RiddleLexer::Decimal:
+            case RiddleLexer::STRING:
+            case RiddleLexer::CHAR:
+            case RiddleLexer::Assign:
+            case RiddleLexer::Equal:
+            case RiddleLexer::Return:
             case RiddleLexer::RightParen:
             case RiddleLexer::RightBracket:
             case RiddleLexer::RightCurly:

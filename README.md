@@ -6,7 +6,7 @@
 ![Static Badge](https://img.shields.io/badge/C%2B%2B-20-green?logo=C%2B%2B)
 ![Static Badge](https://img.shields.io/badge/LLVM-20-purple?logo=LLVm)
 
-![](https://starchart.cc/wangziwenhk/Riddle-Language.svg)
+![](https://starchart.cc/wangziwenhk/riddle.svg)
 轻便，灵活，现代化的编程语言。
 
 Riddle Language 是一个内存安全的编程语言，用于修复 C/C++ 的不足之处而出现。

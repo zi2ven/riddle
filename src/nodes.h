@@ -84,6 +84,14 @@ namespace riddle {
         std::any accept(NodeVisitor *visitor) override;
     };
 
+    class CharNode final : public ExprNode {
+    public:
+        char value;
+        explicit CharNode(const char value): value(value) {}
+
+        std::any accept(NodeVisitor *visitor) override;
+    };
+
     class ObjectNode final : public ExprNode {
     public:
         std::string name;
@@ -157,6 +165,16 @@ namespace riddle {
         std::shared_ptr<SemClass> theClass = nullptr;
         std::shared_ptr<SemObject> childObj;
         MemberAccessNode(std::shared_ptr<ExprNode> left, std::string right): left(std::move(left)), right(std::move(right)) {}
+
+        std::any accept(NodeVisitor *visitor) override;
+    };
+
+    // only for types
+    class PointerToNode final : public ExprNode {
+    public:
+        std::shared_ptr<ExprNode> type;
+
+        explicit PointerToNode(std::shared_ptr<ExprNode> type): type(std::move(type)) {}
 
         std::any accept(NodeVisitor *visitor) override;
     };
