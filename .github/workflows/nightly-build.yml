@@ -4,6 +4,9 @@ on:
     - cron: '0 0 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -47,4 +50,21 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: nightly-build
-          path: build/
+          path: build/riddlec
+
+      - name: Generate nightly tag
+        run: echo "TAG=nightly-$(date +'%Y%m%d')-${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      - name: Zip binary
+        run: |
+          cd build
+          zip riddlec-linux-amd64.zip riddlec
+
+      - name: Create prerelease
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.TAG }}
+          name: Nightly Build
+          prerelease: true          # 标记为预发布
+          generate_release_notes: false
+          files: build/riddlec-linux-amd64.zip
