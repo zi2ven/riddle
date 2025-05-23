@@ -145,10 +145,17 @@ namespace riddle {
 
     class MemberAccessNode final : public ExprNode {
     public:
+        enum Type : char {
+            Member,
+            Method,
+            Unknown,
+        };
+
+        Type type = Unknown;
         std::shared_ptr<ExprNode> left;
         std::string right;
         std::shared_ptr<SemClass> theClass = nullptr;
-        std::shared_ptr<SemVariable> childObj;
+        std::shared_ptr<SemObject> childObj;
         MemberAccessNode(std::shared_ptr<ExprNode> left, std::string right): left(std::move(left)), right(std::move(right)) {}
 
         std::any accept(NodeVisitor *visitor) override;

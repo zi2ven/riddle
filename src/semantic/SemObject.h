@@ -109,7 +109,7 @@ namespace riddle {
             throw std::runtime_error("Member not found at index " + std::to_string(index));
         }
 
-        std::shared_ptr<SemVariable> getMember(const std::string &name) {
+        std::shared_ptr<SemVariable> getMember(const std::string &name) const {
             if (!members.contains(name)) {
                 throw std::runtime_error("Member not found");
             }
@@ -121,6 +121,21 @@ namespace riddle {
                 throw std::runtime_error("Member not found");
             }
             return members.at(name).first;
+        }
+
+        std::shared_ptr<SemFunction> getMethod(const std::string &name) const {
+            if (!methods.contains(name)) {
+                throw std::runtime_error("Method not found");
+            }
+            return methods.at(name);
+        }
+
+        bool hasMember(const std::string &name) const {
+            return members.contains(name);
+        }
+
+        bool hasMethod(const std::string &name) const {
+            return methods.contains(name);
         }
     };
 }

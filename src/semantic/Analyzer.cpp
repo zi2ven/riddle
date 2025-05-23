@@ -225,8 +225,18 @@ namespace riddle {
             throw runtime_error("Left is not a class");
         }
         node->theClass = theClass->theClass.lock();
-        const auto child = node->theClass->getMember(node->right);
-        node->childObj = child;
-        return toSNPtr(child);
+        if (node->theClass->hasMember(node->right)) {
+            node->type = MemberAccessNode::Member;
+            const auto child = node->theClass->getMember(node->right);
+            node->childObj = child;
+            return toSNPtr(child);
+        }
+        if (node->theClass->hasMethod(node->right)) {
+            node->type = MemberAccessNode::Method;
+            const auto child = node->theClass->getMethod(node->right);
+            node->childObj = child;
+            return toSNPtr(child);
+        }
+        throw runtime_error("Right Not Member or Method");
     }
 } // riddle

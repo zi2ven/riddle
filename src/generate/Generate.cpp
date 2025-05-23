@@ -101,7 +101,7 @@ namespace riddle {
         node->obj->alloca = alloca;
         if (node->value) {
             const auto value = any_cast<llvm::Value *>(visit(node->value));
-            builder.CreateStore(value,alloca);
+            builder.CreateStore(value, alloca);
         }
         return {};
     }
@@ -166,13 +166,23 @@ namespace riddle {
     std::any Generate::visitMemberAccess(MemberAccessNode *node) {
         const auto sty = node->theClass->type->type;
         auto left = std::any_cast<llvm::Value *>(visit(node->left));
-        if (llvm::isa<llvm::LoadInst>(left)) {
-            const auto ld = llvm::dyn_cast<llvm::LoadInst>(left);
-            left = ld->getPointerOperand();
+        switch (node->type) {
+            case MemberAccessNode::Member: {
+                if (llvm::isa<llvm::LoadInst>(left)) {
+                    const auto ld = llvm::dyn_cast<llvm::LoadInst>(left);
+                    left = ld->getPointerOperand();
+                }
+                const auto index = node->theClass->getMemberIndex(node->right);
+                const auto member = builder.CreateStructGEP(sty, left, index);
+                const auto type = parseType(std::dynamic_pointer_cast<SemVariable>(node->childObj)->type);
+                llvm::Value *result = builder.CreateLoad(type, member);
+                return result;
+            }
+            case MemberAccessNode::Method: {
+                llvm::Value* result = std::dynamic_pointer_cast<SemFunction>(node->childObj)->func;
+                return result;
+            }
+            default: throw runtime_error("Unknown MemberAccessNode::Type");
         }
-        const auto index = node->theClass->getMemberIndex(node->right);
-        const auto member = builder.CreateStructGEP(sty, left, index);
-        llvm::Value *result = builder.CreateLoad(parseType(node->childObj->type), member);
-        return result;
     }
 } // riddle
