@@ -32,13 +32,13 @@ jobs:
 
       - name: Install ANTLR4-runtime
         run: |
-          /home/runner/vcpkg/vcpkg install antlr4:x64-linux-release
-
+          /home/runner/vcpkg/vcpkg install antlr4:x64-linux-dynamic
 
       - name: Configure CMake
-        run: cmake -B build \
+        run: |
+          cmake -S . -B build \
           -DCMAKE_TOOLCHAIN_FILE=/home/runner/vcpkg/scripts/buildsystems/vcpkg.cmake \
-          -DCMAKE_BUILD_TYPE=Release .
+          -DVCPKG_TARGET_TRIPLET=x64-linux-dynamic
 
       - name: Build project
         run: cmake --build build --config Release
