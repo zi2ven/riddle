@@ -39,5 +39,7 @@ namespace riddle {
         std::any visitMemberAccess(RiddleParser::MemberAccessContext *context) override;
 
         std::any visitPointerTo(RiddleParser::PointerToContext *context) override;
+
+        std::any visitParenExpr(RiddleParser::ParenExprContext *context) override;
     };
 } // riddle

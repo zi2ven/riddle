@@ -5,6 +5,7 @@
 #include "generate/Generate.h"
 #include "generate/config.h"
 #include "grammar/GramVisitor.h"
+#include "nodes/NodePrinter.h"
 #include "parser/RiddleLexer.h"
 #include "semantic/Analyzer.h"
 
@@ -27,6 +28,7 @@ int main(int argc, const char *argv[]) {
     std::stringstream buffer;
     buffer << in.rdbuf();
     std::string code = buffer.str();
+    code.push_back('\n');
     antlr4::ANTLRInputStream input(code);
     RiddleLexer lexer(&input);
     antlr4::CommonTokenStream tokens(&lexer);
@@ -35,10 +37,13 @@ int main(int argc, const char *argv[]) {
     auto tree = parser.program();
     riddle::GramVisitor visitor;
     auto result = visitor.nodeVisit(tree);
+
     try {
         riddle::Analyzer analyzer;
         analyzer.visit(result);
 
+        // riddle::NodePrinter printer;
+        // std::cout << std::any_cast<std::string>(printer.visit(result));
         init();
         riddle::Generate generate;
         generate.visit(result);

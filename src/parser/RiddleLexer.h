@@ -47,8 +47,6 @@ public:
               case RiddleLexer::Decimal:
               case RiddleLexer::STRING:
               case RiddleLexer::CHAR:
-              case RiddleLexer::Assign:
-              case RiddleLexer::Equal:
               case RiddleLexer::Return:
               case RiddleLexer::RightParen:
               case RiddleLexer::RightBracket:

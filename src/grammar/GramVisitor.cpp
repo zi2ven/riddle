@@ -150,6 +150,8 @@ any GramVisitor::visitDeclArgs(RiddleParser::DeclArgsContext *context) {
         }
         if (!name.empty() && type != nullptr) {
             args.emplace_back(make_shared<ArgDeclNode>(name, type));
+            name.clear();
+            type = nullptr;
         }
     }
     return args;
@@ -200,4 +202,8 @@ std::any GramVisitor::visitMemberAccess(RiddleParser::MemberAccessContext *conte
 std::any GramVisitor::visitPointerTo(RiddleParser::PointerToContext *context) {
     const auto type = nodeVisit(context->obj);
     return toSNPtr(make_shared<PointerToNode>(type));
+}
+
+std::any GramVisitor::visitParenExpr(RiddleParser::ParenExprContext *context) {
+    return visit(context->value);
 }
