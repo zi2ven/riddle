@@ -3,6 +3,7 @@
 #include <format>
 #include <ranges>
 
+#include "Operators.h"
 #include "SemObject.h"
 #include "exception/NameError.h"
 #include "exception/SyntaxError.h"
@@ -147,6 +148,9 @@ namespace riddle {
         } else {
             type = value->type;
         }
+        if (type == getPrimitiveType("void")) {
+            throw TypeError("The type 'void' cannot be used as a type for local variables");
+        }
         const auto obj = make_shared<SemVariable>(node->name, type);
         node->obj = obj;
         obj->isLocalVar = true;
@@ -252,5 +256,21 @@ namespace riddle {
             return make<SemType>("*", typeinfo);
         }
         throw runtime_error("Object not a type");
+    }
+
+    std::any Analyzer::visitBinaryOp(BinaryOpNode *node) {
+        // 内置的
+        const auto left = std::dynamic_pointer_cast<SemValue>(objVisit(node->left));
+        const auto right = std::dynamic_pointer_cast<SemValue>(objVisit(node->right));
+        node->leftType = left->type;
+        node->rightType = right->type;
+        if (left == nullptr)throw runtime_error("Left must be a Value");
+        if (right == nullptr)throw runtime_error("Right must be a Value");
+        if (op::isBuiltinBinary(left->type, right->type)) {
+            node->type = OpNode::Builtin;
+            return make<SemValue>(op::getBuiltinBinary(left->type, right->type, node->op));
+        }
+        node->type = OpNode::Custom;
+        return make<SemValue>(getPrimitiveType("void"));
     }
 } // riddle

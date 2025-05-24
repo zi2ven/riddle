@@ -41,5 +41,7 @@ namespace riddle {
         std::any visitPointerTo(RiddleParser::PointerToContext *context) override;
 
         std::any visitParenExpr(RiddleParser::ParenExprContext *context) override;
+
+        std::any visitAddOp(RiddleParser::AddOpContext *context) override;
     };
 } // riddle

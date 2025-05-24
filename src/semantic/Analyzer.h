@@ -58,5 +58,7 @@ namespace riddle {
         std::any visitMemberAccess(MemberAccessNode *node) override;
 
         std::any visitPointerTo(PointerToNode *node) override;
+
+        std::any visitBinaryOp(BinaryOpNode *node) override;
     };
 } // riddle

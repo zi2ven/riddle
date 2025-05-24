@@ -101,3 +101,9 @@ std::any NodeVisitor::visitPointerTo(PointerToNode *node) {
     visit(node->type);
     return {};
 }
+
+std::any NodeVisitor::visitBinaryOp(BinaryOpNode *node) {
+    visit(node->left);
+    visit(node->right);
+    return {};
+}

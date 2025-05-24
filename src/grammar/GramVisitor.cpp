@@ -207,3 +207,10 @@ std::any GramVisitor::visitPointerTo(RiddleParser::PointerToContext *context) {
 std::any GramVisitor::visitParenExpr(RiddleParser::ParenExprContext *context) {
     return visit(context->value);
 }
+
+std::any GramVisitor::visitAddOp(RiddleParser::AddOpContext *context) {
+    const auto left = nodeVisit(context->left);
+    const auto right = nodeVisit(context->right);
+    const auto op = context->op->getText();
+    return toSNPtr(make_shared<BinaryOpNode>(left, right, op));
+}

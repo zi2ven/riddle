@@ -60,5 +60,7 @@ namespace riddle {
         virtual std::any visitMemberAccess(MemberAccessNode* node);
 
         virtual std::any visitPointerTo(PointerToNode* node);
+
+        virtual std::any visitBinaryOp(BinaryOpNode* node);
     };
 }

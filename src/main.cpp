@@ -42,8 +42,6 @@ int main(int argc, const char *argv[]) {
         riddle::Analyzer analyzer;
         analyzer.visit(result);
 
-        // riddle::NodePrinter printer;
-        // std::cout << std::any_cast<std::string>(printer.visit(result));
         init();
         riddle::Generate generate;
         generate.visit(result);

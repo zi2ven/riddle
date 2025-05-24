@@ -178,4 +178,31 @@ namespace riddle {
 
         std::any accept(NodeVisitor *visitor) override;
     };
+
+    class OpNode : public ExprNode {
+    public:
+        enum OpType {
+            Builtin,
+            Custom,
+            Unknown,
+        };
+
+        OpType type = Unknown;
+    };
+
+    class BinaryOpNode final : public OpNode {
+    public:
+        std::shared_ptr<ExprNode> left, right;
+        std::shared_ptr<TypeInfo> leftType, rightType;
+        std::string op;
+        std::shared_ptr<SemFunction> func;
+
+
+        BinaryOpNode(std::shared_ptr<ExprNode> left,
+                     std::shared_ptr<ExprNode> right,
+                     std::string op): left(std::move(left)), right(std::move(right)),
+                                      op(std::move(op)) {}
+
+        std::any accept(NodeVisitor *visitor) override;
+    };
 }

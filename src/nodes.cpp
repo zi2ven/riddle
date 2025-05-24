@@ -58,3 +58,7 @@ std::any MemberAccessNode::accept(NodeVisitor *visitor) {
 std::any PointerToNode::accept(NodeVisitor *visitor) {
     return visitor->visitPointerTo(this);
 }
+
+std::any BinaryOpNode::accept(NodeVisitor *visitor) {
+    return visitor->visitBinaryOp(this);
+}

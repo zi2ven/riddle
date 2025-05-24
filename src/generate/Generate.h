@@ -27,6 +27,8 @@ namespace riddle {
 
         std::any visitFuncDecl(FuncDeclNode *node) override;
 
+        std::any visitBlock(BlockNode *node) override;
+
         std::any visitVarDecl(VarDeclNode *node) override;
 
         std::any visitObject(ObjectNode *node) override;
@@ -38,5 +40,7 @@ namespace riddle {
         std::any visitClassDecl(ClassDeclNode *node) override;
 
         std::any visitMemberAccess(MemberAccessNode *node) override;
+
+        std::any visitBinaryOp(BinaryOpNode *node) override;
     };
 } // riddle

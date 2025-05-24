@@ -1,4 +1,5 @@
 #pragma once
+#include <format>
 #include <memory>
 #include <string>
 #include <utility>
@@ -40,6 +41,17 @@ namespace riddle {
         }
     };
 
+    // Primitives Type List
+    const static std::vector<std::string> primitives = {
+        "int",
+        "float",
+        "double",
+        "bool",
+        "short",
+        "char",
+        "void"
+    };
+
     class PrimitiveTypeInfo final : public TypeInfo {
     public:
         explicit PrimitiveTypeInfo(const std::string &name): TypeInfo(name) {
@@ -68,6 +80,7 @@ namespace riddle {
     public:
         std::weak_ptr<SemClass> theClass;
         std::vector<std::shared_ptr<TypeInfo>> types;
+
         explicit StructTypeInfo(std::vector<std::shared_ptr<TypeInfo>> types): TypeInfo("{}"), types(std::move(types)) {
             kind = Struct;
         }

@@ -4,6 +4,7 @@
 
 #include "nodes.h"
 #include "config.h"
+#include "OperatorImpl.h"
 #include "llvm/IR/Verifier.h"
 
 using namespace std;
@@ -107,6 +108,13 @@ namespace riddle {
         return {};
     }
 
+    std::any Generate::visitBlock(BlockNode *node) {
+        for (const auto &i: node->body) {
+            visit(i);
+        }
+        return {};
+    }
+
     any Generate::visitVarDecl(VarDeclNode *node) {
         const auto type = parseType(node->obj->type);
         const auto alloca = builder.CreateAlloca(type);
@@ -196,5 +204,23 @@ namespace riddle {
             }
             default: throw runtime_error("Unknown MemberAccessNode::Type");
         }
+    }
+
+    std::any Generate::visitBinaryOp(BinaryOpNode *node) {
+        const auto left = std::any_cast<llvm::Value *>(visit(node->left));
+        const auto right = std::any_cast<llvm::Value *>(visit(node->right));
+        llvm::Value *result = nullptr;
+        switch (node->type) {
+            case OpNode::Custom: {
+                const auto func = node->func->func;
+                result = builder.CreateCall(func, {left, right});
+            }
+            case OpNode::Builtin: {
+                const auto func = op::getOpImpl(node->leftType, node->rightType, node->op);
+                return func(left, right, builder);
+            }
+            default: break;
+        }
+        return result;
     }
 } // riddle
