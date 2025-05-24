@@ -10,12 +10,11 @@ message(STATUS "LLVM Version ${LLVM_PACKAGE_VERSION}")
 
 include_directories(${LLVM_INCLUDE_DIRS})
 
-file(GLOB_RECURSE SOURCES "src/*.cpp")
+file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.h")
 
 add_executable(riddlec ${SOURCES})
 
-target_include_directories(riddlec PRIVATE ${LLVM_INCLUDE_DIRS} ${ANTLR4_INCLUDE_DIR})
-target_include_directories(riddlec PRIVATE src/ ${ANTLR4_INCLUDE_DIR})
+target_include_directories(riddlec PUBLIC ${LLVM_INCLUDE_DIRS} ${ANTLR4_INCLUDE_DIR} src/)
 
 set(llvm_components core irreader support analysis passes codegen target mc object linker option)
 llvm_map_components_to_libnames(llvm_libs ${llvm_components})

@@ -7,26 +7,32 @@ using namespace riddle;
 using namespace std;
 
 static unordered_map<string, std::shared_ptr<TypeInfo>> builtinOps;
-static bool isInited = false;
 
 namespace {
     void init() {
+        static bool isInited = false;
         if (isInited) {
             return;
         }
         isInited = true;
         builtinOps.clear();
         for (auto i: primitives) {
-            builtinOps.emplace(std::format("{}_{}_{}", i, i, '+'), getPrimitiveType(i));
+            for (auto j: op::operators) {
+                builtinOps.emplace(std::format("{}_{}_{}", i, i, j), getPrimitiveType(i));
+            }
+        }
+        for (auto j: op::logic_operators) {
+            builtinOps.emplace(std::format("{}_{}_{}", "bool", "bool", j), getPrimitiveType("bool"));
         }
     }
 }
 
+inline bool isBuiltinBinary(const std::shared_ptr<TypeInfo> &left, const std::shared_ptr<TypeInfo> &right) {
+    return left->getTypeKind() == TypeInfo::Primitive && right->getTypeKind() == TypeInfo::Primitive;
+}
 
 std::shared_ptr<TypeInfo> op::getBuiltinBinary(const std::shared_ptr<TypeInfo> &left, const std::shared_ptr<TypeInfo> &right, const std::string &op) {
-    if (!isInited) {
-        init();
-    }
+    init();
     if (!isBuiltinBinary(left, right)) {
         return nullptr;
     }

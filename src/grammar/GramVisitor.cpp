@@ -208,9 +208,36 @@ std::any GramVisitor::visitParenExpr(RiddleParser::ParenExprContext *context) {
     return visit(context->value);
 }
 
-std::any GramVisitor::visitAddOp(RiddleParser::AddOpContext *context) {
-    const auto left = nodeVisit(context->left);
-    const auto right = nodeVisit(context->right);
-    const auto op = context->op->getText();
+#define binaryOp() \
+    const auto left = nodeVisit(context->left); \
+    const auto right = nodeVisit(context->right); \
+    const auto op = context->op->getText(); \
     return toSNPtr(make_shared<BinaryOpNode>(left, right, op));
+
+std::any GramVisitor::visitAddOp(RiddleParser::AddOpContext *context) {
+    binaryOp()
+}
+
+std::any GramVisitor::visitLogicAnd(RiddleParser::LogicAndContext *context) {
+    binaryOp()
+}
+
+std::any GramVisitor::visitLogicOr(RiddleParser::LogicOrContext *context) {
+    binaryOp()
+}
+
+std::any GramVisitor::visitEqOp(RiddleParser::EqOpContext *context) {
+    binaryOp()
+}
+
+std::any GramVisitor::visitBitAnd(RiddleParser::BitAndContext *context) {
+    binaryOp()
+}
+
+std::any GramVisitor::visitBitOr(RiddleParser::BitOrContext *context) {
+    binaryOp()
+}
+
+std::any GramVisitor::visitBitXor(RiddleParser::BitXorContext *context) {
+    binaryOp()
 }

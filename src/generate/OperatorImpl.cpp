@@ -9,20 +9,81 @@
 namespace riddle::op {
     using KeyType = std::tuple<std::string, std::string, std::string>;
 
-    static std::map<KeyType, opFunc> opMap = {
-        {
-            std::make_tuple("int", "int", "+"), [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<>& builder) -> llvm::Value * {
-                return builder.CreateAdd(lhs, rhs);
-            }
-        },
-        {
-            std::make_tuple("float", "float", "+"), [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<>& builder) -> llvm::Value * {
-                return builder.CreateFAdd(lhs, rhs);
-            }
-        }
-    };
+    static std::map<KeyType, opFunc> opMap = {};
+} // namespace riddle::op
 
+namespace {
+    using namespace riddle::op;
+
+    void initSignedInteger(const std::string &typeName) {
+        opMap.emplace(std::tuple{typeName, typeName, "+"}, [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
+            return builder.CreateAdd(lhs, rhs);
+        });
+        opMap.emplace(std::tuple{typeName, typeName, "-"}, [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
+            return builder.CreateSub(lhs, rhs);
+        });
+        opMap.emplace(std::tuple{typeName, typeName, "*"}, [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
+            return builder.CreateMul(lhs, rhs);
+        });
+        opMap.emplace(std::tuple{typeName, typeName, "/"}, [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
+            return builder.CreateSDiv(lhs, rhs);
+        });
+        opMap.emplace(std::tuple{typeName, typeName, "%"}, [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
+            return builder.CreateSRem(lhs, rhs);
+        });
+        opMap.emplace(std::tuple{typeName, typeName, "<<"}, [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
+            return builder.CreateShl(lhs, rhs);
+        });
+        opMap.emplace(std::tuple{typeName, typeName, ">>"}, [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
+            return builder.CreateAShr(lhs, rhs);
+        });
+        opMap.emplace(std::tuple{typeName, typeName, "&"}, [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
+            return builder.CreateAnd(lhs, rhs);
+        });
+        opMap.emplace(std::tuple{typeName, typeName, "|"}, [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
+            return builder.CreateOr(lhs, rhs);
+        });
+        opMap.emplace(std::tuple{typeName, typeName, "^"}, [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
+            return builder.CreateXor(lhs, rhs);
+        });
+        opMap.emplace(std::tuple{typeName, typeName, "="}, [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
+            return builder.CreateStore(rhs, lhs);
+        });
+        opMap.emplace(std::tuple{typeName, typeName, "=="}, [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
+            return builder.CreateICmpEQ(lhs, rhs);
+        });
+        opMap.emplace(std::tuple{typeName, typeName, "!="}, [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
+            return builder.CreateICmpNE(lhs, rhs);
+        });
+    }
+
+    void initUnsignedInteger(const std::string &typeName) {
+        initSignedInteger(typeName);
+        opMap[{typeName, typeName, "/"}] = [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
+            return builder.CreateUDiv(lhs, rhs);
+        };
+        opMap[std::tuple{typeName, typeName, "%"}] = [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
+            return builder.CreateURem(lhs, rhs);
+        };
+        opMap[std::tuple{typeName, typeName, ">>"}] = [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
+            return builder.CreateLShr(lhs, rhs);
+        };
+    }
+
+    void init() {
+        static bool inited = false;
+        if (inited)return;
+        inited = true;
+        opMap.clear();
+
+        initSignedInteger("int");
+        initUnsignedInteger("bool");
+    }
+}
+
+namespace riddle::op {
     opFunc getOpImpl(const std::shared_ptr<TypeInfo> &left, const std::shared_ptr<TypeInfo> &right, const std::string &op) {
+        init();
         const auto key = std::make_tuple(left->name, right->name, op);
         const auto it = opMap.find(key);
         if (it != opMap.end()) {

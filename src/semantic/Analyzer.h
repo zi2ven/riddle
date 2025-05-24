@@ -1,11 +1,8 @@
 #pragma once
 
-#include <stack>
-#include <unordered_map>
-#include <unordered_set>
-
 #include "nodes.h"
 #include "nodes/NodeVisitor.h"
+#include "semantic/SymbolTable.h"
 
 namespace riddle {
     class SemObject;
@@ -13,23 +10,16 @@ namespace riddle {
 
 namespace riddle {
     class Analyzer final : public NodeVisitor {
-        std::unordered_map<std::string, std::stack<std::shared_ptr<SemObject>>> symbols;
-        std::stack<std::unordered_set<std::string>> locals;
-
-        void joinScope();
-
-        void leaveScope();
-
-        void addGlobalObject(const std::shared_ptr<SemObject> &object);
+        SymbolTable symbols;
 
     public:
         Analyzer();
 
         ~Analyzer() override;
 
-        std::shared_ptr<SemObject> objVisit(ExprNode *node);
+        [[nodiscard]] std::shared_ptr<SemObject> objVisit(ExprNode *node);
 
-        std::shared_ptr<SemObject> objVisit(const std::shared_ptr<ExprNode>& node);
+        [[nodiscard]] std::shared_ptr<SemObject> objVisit(const std::shared_ptr<ExprNode> &node);
 
         std::any visitProgram(ProgramNode *node) override;
 

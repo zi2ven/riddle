@@ -5,7 +5,6 @@
 
 #include "Operators.h"
 #include "SemObject.h"
-#include "exception/NameError.h"
 #include "exception/SyntaxError.h"
 #include "exception/TypeError.h"
 
@@ -35,44 +34,17 @@ constexpr auto make(Arg &&... args) {
 const auto nilValue = toSNPtr(make_shared<SemValue>(getPrimitiveType("void")));
 
 namespace riddle {
-    void Analyzer::joinScope() {
-        locals.emplace();
-    }
-
-    void Analyzer::leaveScope() {
-        if (locals.empty())return;
-        for (const auto &i: locals.top()) {
-            const auto it = symbols.find(i);
-            if (it == symbols.end() || it->second.empty()) {
-                return;
-            }
-            it->second.pop();
-        }
-        locals.pop();
-    }
-
-    void Analyzer::addGlobalObject(const std::shared_ptr<SemObject> &object) {
-        if (object == nullptr) {
-            throw runtime_error("get a null pointer");
-        }
-        const auto &name = object->name;
-        if (locals.top().contains(name)) {
-            throw SyntaxError(format("name '{}' is already defined", name));
-        }
-        symbols[name].emplace(object);
-        locals.top().emplace(name);
-    }
-
     Analyzer::Analyzer() {
-        joinScope();
-        addGlobalObject(make_shared<SemType>("void", getPrimitiveType("void")));
-        addGlobalObject(make_shared<SemType>("int", getPrimitiveType("int")));
-        addGlobalObject(make_shared<SemType>("float", getPrimitiveType("float")));
-        addGlobalObject(make_shared<SemType>("char", getPrimitiveType("char")));
+        symbols.joinScope();
+        symbols.addObject(make_shared<SemType>("void", getPrimitiveType("void")));
+        symbols.addObject(make_shared<SemType>("int", getPrimitiveType("int")));
+        symbols.addObject(make_shared<SemType>("float", getPrimitiveType("float")));
+        symbols.addObject(make_shared<SemType>("char", getPrimitiveType("char")));
+        symbols.addObject(make_shared<SemType>("bool", getPrimitiveType("bool")));
     }
 
     Analyzer::~Analyzer() {
-        leaveScope();
+        symbols.leaveScope();
     }
 
     std::shared_ptr<SemObject> Analyzer::objVisit(ExprNode *node) {
@@ -95,14 +67,14 @@ namespace riddle {
 
         const auto obj = make_shared<SemFunction>(node->name, returnType->type);
         node->obj = obj;
-        addGlobalObject(obj);
+        symbols.addObject(obj);
 
-        joinScope();
+        symbols.joinScope();
         for (const auto &i: node->args) {
             visit(i);
         }
         visit(node->body);
-        leaveScope();
+        symbols.leaveScope();
 
         return toSNPtr(obj);
     }
@@ -127,12 +99,8 @@ namespace riddle {
     }
 
     std::any Analyzer::visitObject(ObjectNode *node) {
-        const auto obj = symbols.find(node->name);
-        if (obj == symbols.end()) {
-            throw NameError(format("name '{}' is not defined", node->name));
-        }
-        node->obj = obj->second.top();
-        return obj->second.top();
+        const auto &&obj = symbols.getObject(node->name);
+        return node->obj = obj;
     }
 
     std::any Analyzer::visitVarDecl(VarDeclNode *node) {
@@ -154,7 +122,7 @@ namespace riddle {
         const auto obj = make_shared<SemVariable>(node->name, type);
         node->obj = obj;
         obj->isLocalVar = true;
-        addGlobalObject(obj);
+        symbols.addObject(obj);
         return toSNPtr(obj);
     }
 
@@ -162,7 +130,7 @@ namespace riddle {
         const auto type = cast<SemType>(objVisit(node->type));
         const auto obj = make_shared<SemVariable>(node->name, type->type);
         node->obj = obj;
-        addGlobalObject(obj);
+        symbols.addObject(obj);
         return nilValue;
     }
 
@@ -193,7 +161,7 @@ namespace riddle {
         const auto typeinfo = make_shared<StructTypeInfo>(std::vector<std::shared_ptr<TypeInfo>>{});
         const auto obj = make_shared<SemClass>(node->name, typeinfo);
         node->obj = obj;
-        addGlobalObject(obj);
+        symbols.addObject(obj);
 
         // member parser
         int index = 0;
@@ -268,6 +236,13 @@ namespace riddle {
         if (right == nullptr)throw runtime_error("Right must be a Value");
         if (op::isBuiltinBinary(left->type, right->type)) {
             node->type = OpNode::Builtin;
+            if (node->op == "&&" || node->op == "||") {
+                node->type = OpNode::ShortCircuited;
+            }
+            const auto &&type = op::getBuiltinBinary(left->type, right->type, node->op);
+            if (type == nullptr) {
+                throw runtime_error(std::format("Unable to find implementation of operator '{}' '{}' '{}'", left->type->name, node->op, right->type->name));
+            }
             return make<SemValue>(op::getBuiltinBinary(left->type, right->type, node->op));
         }
         node->type = OpNode::Custom;

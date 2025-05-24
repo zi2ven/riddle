@@ -31,11 +31,11 @@ expression
     | left=expression op=(LeftShift | RightShift) right=expression                      #shiftOp
     | left=expression op=(Less | LessEqual | Greater | GreaterEqual) right=expression   #relOp
     | left=expression op=(Equal | NotEqual) right=expression                            #eqOp
-    | left=expression And right=expression                                              #bitAnd
-    | left=expression Xor right=expression                                              #bitXor
-    | left=expression Or right=expression                                               #bitOr
-    | left=expression And And right=expression                                          #logicAnd
-    | left=expression Or Or right=expression                                            #logicOr
+    | left=expression op=And right=expression                                              #bitAnd
+    | left=expression op=Xor right=expression                                              #bitXor
+    | left=expression op=Or right=expression                                               #bitOr
+    | left=expression op=AndAnd right=expression                                          #logicAnd
+    | left=expression op=OrOr right=expression                                            #logicOr
     | left=expression op=(Assign | AddAssign | SubAssign | MulAssign 
         | DivAssign | ModAssign | LeftShiftAssign | RightShiftAssign 
         | AndAssign | XorAssign | OrAssign) right=expression                            #compoundAssignOp

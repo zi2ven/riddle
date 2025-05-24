@@ -21,14 +21,14 @@ public:
     RightCurly = 34, Colon = 35, Comma = 36, Equal = 37, NotEqual = 38, 
     Assign = 39, Greater = 40, GreaterEqual = 41, Less = 42, LessEqual = 43, 
     LeftShift = 44, RightShift = 45, Add = 46, Sub = 47, Star = 48, Div = 49, 
-    Mod = 50, Not = 51, And = 52, Or = 53, Xor = 54, Dot = 55, DoubleQuotes = 56, 
-    Quotes = 57, Tilde = 58, AddAssign = 59, SubAssign = 60, MulAssign = 61, 
-    DivAssign = 62, ModAssign = 63, LeftShiftAssign = 64, RightShiftAssign = 65, 
-    AndAssign = 66, OrAssign = 67, XorAssign = 68, Endl = 69, Identifier = 70, 
-    Hexadecimal = 71, Decimal = 72, Octal = 73, Binary = 74, Float = 75, 
-    IntegerSequence = 76, HEX_DIGIT = 77, OCTAL_DIGIT = 78, BINARY_DIGIT = 79, 
-    DIGIT = 80, STRING = 81, CHAR = 82, LINE_COMMENT = 83, BLOCK_COMMENT = 84, 
-    WHITESPACE = 85
+    Mod = 50, Not = 51, And = 52, AndAnd = 53, Or = 54, OrOr = 55, Xor = 56, 
+    Dot = 57, DoubleQuotes = 58, Quotes = 59, Tilde = 60, AddAssign = 61, 
+    SubAssign = 62, MulAssign = 63, DivAssign = 64, ModAssign = 65, LeftShiftAssign = 66, 
+    RightShiftAssign = 67, AndAssign = 68, OrAssign = 69, XorAssign = 70, 
+    Endl = 71, Identifier = 72, Hexadecimal = 73, Decimal = 74, Octal = 75, 
+    Binary = 76, Float = 77, IntegerSequence = 78, HEX_DIGIT = 79, OCTAL_DIGIT = 80, 
+    BINARY_DIGIT = 81, DIGIT = 82, STRING = 83, CHAR = 84, LINE_COMMENT = 85, 
+    BLOCK_COMMENT = 86, WHITESPACE = 87
   };
 
   enum {
@@ -165,10 +165,11 @@ public:
     BitOrContext(ExpressionContext *ctx);
 
     RiddleParser::ExpressionContext *left = nullptr;
+    antlr4::Token *op = nullptr;
     RiddleParser::ExpressionContext *right = nullptr;
-    antlr4::tree::TerminalNode *Or();
     std::vector<ExpressionContext *> expression();
     ExpressionContext* expression(size_t i);
+    antlr4::tree::TerminalNode *Or();
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
 
@@ -180,11 +181,11 @@ public:
     LogicOrContext(ExpressionContext *ctx);
 
     RiddleParser::ExpressionContext *left = nullptr;
+    antlr4::Token *op = nullptr;
     RiddleParser::ExpressionContext *right = nullptr;
-    std::vector<antlr4::tree::TerminalNode *> Or();
-    antlr4::tree::TerminalNode* Or(size_t i);
     std::vector<ExpressionContext *> expression();
     ExpressionContext* expression(size_t i);
+    antlr4::tree::TerminalNode *OrOr();
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
 
@@ -288,11 +289,11 @@ public:
     LogicAndContext(ExpressionContext *ctx);
 
     RiddleParser::ExpressionContext *left = nullptr;
+    antlr4::Token *op = nullptr;
     RiddleParser::ExpressionContext *right = nullptr;
-    std::vector<antlr4::tree::TerminalNode *> And();
-    antlr4::tree::TerminalNode* And(size_t i);
     std::vector<ExpressionContext *> expression();
     ExpressionContext* expression(size_t i);
+    antlr4::tree::TerminalNode *AndAnd();
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
 
@@ -405,10 +406,11 @@ public:
     BitAndContext(ExpressionContext *ctx);
 
     RiddleParser::ExpressionContext *left = nullptr;
+    antlr4::Token *op = nullptr;
     RiddleParser::ExpressionContext *right = nullptr;
-    antlr4::tree::TerminalNode *And();
     std::vector<ExpressionContext *> expression();
     ExpressionContext* expression(size_t i);
+    antlr4::tree::TerminalNode *And();
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
 
@@ -450,10 +452,11 @@ public:
     BitXorContext(ExpressionContext *ctx);
 
     RiddleParser::ExpressionContext *left = nullptr;
+    antlr4::Token *op = nullptr;
     RiddleParser::ExpressionContext *right = nullptr;
-    antlr4::tree::TerminalNode *Xor();
     std::vector<ExpressionContext *> expression();
     ExpressionContext* expression(size_t i);
+    antlr4::tree::TerminalNode *Xor();
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
 

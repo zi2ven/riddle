@@ -183,6 +183,7 @@ namespace riddle {
     public:
         enum OpType {
             Builtin,
+            ShortCircuited,
             Custom,
             Unknown,
         };

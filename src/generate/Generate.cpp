@@ -15,6 +15,7 @@ namespace riddle {
             {"int", builder.getInt32Ty()},
             {"float", builder.getFloatTy()},
             {"char", builder.getInt8Ty()},
+            {"bool", builder.getInt1Ty()},
             {"void", builder.getVoidTy()},
         };
 
@@ -207,20 +208,43 @@ namespace riddle {
     }
 
     std::any Generate::visitBinaryOp(BinaryOpNode *node) {
-        const auto left = std::any_cast<llvm::Value *>(visit(node->left));
-        const auto right = std::any_cast<llvm::Value *>(visit(node->right));
-        llvm::Value *result = nullptr;
         switch (node->type) {
             case OpNode::Custom: {
+                const auto left = std::any_cast<llvm::Value *>(visit(node->left));
+                const auto right = std::any_cast<llvm::Value *>(visit(node->right));
                 const auto func = node->func->func;
-                result = builder.CreateCall(func, {left, right});
+                llvm::Value *result = builder.CreateCall(func, {left, right});
+                return result;
             }
             case OpNode::Builtin: {
+                const auto left = std::any_cast<llvm::Value *>(visit(node->left));
+                const auto right = std::any_cast<llvm::Value *>(visit(node->right));
                 const auto func = op::getOpImpl(node->leftType, node->rightType, node->op);
                 return func(left, right, builder);
             }
+            case OpNode::ShortCircuited: {
+                const auto entryBB = builder.GetInsertBlock();
+                const auto func = entryBB->getParent();
+                const auto rhsBB = llvm::BasicBlock::Create(*context, "bb", func);
+                const auto endBB = llvm::BasicBlock::Create(*context, "bb", func);
+                const auto left = std::any_cast<llvm::Value *>(visit(node->left));
+                builder.CreateCondBr(left, rhsBB, endBB);
+                builder.SetInsertPoint(rhsBB);
+                const auto right = std::any_cast<llvm::Value *>(visit(node->right));
+                builder.CreateBr(endBB);
+                builder.SetInsertPoint(endBB);
+                auto *phi = builder.CreatePHI(builder.getInt1Ty(), 2);
+                if (node->op == "&&") {
+                    phi->addIncoming(builder.getFalse(), entryBB);
+                } else {
+                    phi->addIncoming(builder.getTrue(), entryBB);
+                }
+                phi->addIncoming(right, rhsBB);
+                llvm::Value *result = phi;
+                return result;
+            }
             default: break;
         }
-        return result;
+        return nullptr;
     }
 } // riddle

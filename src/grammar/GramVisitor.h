@@ -43,5 +43,17 @@ namespace riddle {
         std::any visitParenExpr(RiddleParser::ParenExprContext *context) override;
 
         std::any visitAddOp(RiddleParser::AddOpContext *context) override;
+
+        std::any visitLogicAnd(RiddleParser::LogicAndContext *context) override;
+
+        std::any visitLogicOr(RiddleParser::LogicOrContext *context) override;
+
+        std::any visitEqOp(RiddleParser::EqOpContext *context) override;
+
+        std::any visitBitAnd(RiddleParser::BitAndContext *context) override;
+
+        std::any visitBitOr(RiddleParser::BitOrContext *context) override;
+
+        std::any visitBitXor(RiddleParser::BitXorContext *context) override;
     };
 } // riddle
