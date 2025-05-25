@@ -8,7 +8,7 @@
 namespace riddle {
     class GramVisitor final : public RiddleParserBaseVisitor {
     public:
-        std::shared_ptr<ExprNode> nodeVisit(antlr4::tree::ParseTree *context);
+        ExprNode *nodeVisit(antlr4::tree::ParseTree *context);
 
         std::any visitExpressionEnd(RiddleParser::ExpressionEndContext *context) override;
 

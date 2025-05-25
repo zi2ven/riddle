@@ -2,8 +2,9 @@
 #include <chrono>
 #include <filesystem>
 #include <iostream>
+#include <stacktrace>
+#include <llvm/Support/Signals.h>
 #include <llvm-c/Target.h>
-#include <llvm/Support/InitLLVM.h>
 
 #include "generate/config.h"
 #include "generate/Generate.h"
@@ -19,7 +20,6 @@ void init() {
 }
 
 int main(int argc, const char *argv[]) {
-    llvm::InitLLVM init_llvm(argc,argv);
     if (argc < 2) {
         std::cerr << "Usage: " << argv[0] << " <input>" << std::endl;
         return 1;

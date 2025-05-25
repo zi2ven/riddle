@@ -1,20 +1,20 @@
 #include "GramVisitor.h"
 
+#include <stacktrace>
+
 #include "nodes.h"
 
 using namespace riddle;
 using namespace std;
 
-template<typename T>
-shared_ptr<ExprNode> toSNPtr(const shared_ptr<T> &ptr) {
-    static_assert(is_base_of_v<ExprNode, T>, "T must be derived from ExprNode");
-    return dynamic_pointer_cast<ExprNode>(ptr);
+inline ExprNode *toSNPtr(ExprNode *node) {
+    return node;
 }
 
 template<typename T>
-constexpr auto cast(const auto &ptr) {
-    return dynamic_pointer_cast<T>(ptr);
-};
+inline T *cast(ExprNode *node) {
+    return dynamic_cast<T *>(node);
+}
 
 char parseCharLiteral(const std::string &body) {
     // 普通单字符
@@ -47,13 +47,13 @@ char parseCharLiteral(const std::string &body) {
     throw std::invalid_argument("Unsupported escape sequence: " + body);
 }
 
-shared_ptr<ExprNode> GramVisitor::nodeVisit(antlr4::tree::ParseTree *context) {
+ExprNode *GramVisitor::nodeVisit(antlr4::tree::ParseTree *context) {
     const auto result = visit(context);
     try {
         if (!result.has_value()) {
             return nullptr;
         }
-        return any_cast<shared_ptr<ExprNode>>(result);
+        return any_cast<ExprNode *>(result);
     } catch (const bad_any_cast &e) {
         cout << e.what() << endl;
         return nullptr;
@@ -65,7 +65,7 @@ any GramVisitor::visitExpressionEnd(RiddleParser::ExpressionEndContext *context)
 }
 
 any GramVisitor::visitProgram(RiddleParser::ProgramContext *context) {
-    const auto program = make_shared<ProgramNode>();
+    const auto program = new ProgramNode;
     for (const auto i: context->children) {
         if (i->getTreeType() == antlr4::tree::ParseTreeType::TERMINAL) {
             continue;
@@ -81,23 +81,23 @@ any GramVisitor::visitProgram(RiddleParser::ProgramContext *context) {
 
 any GramVisitor::visitFuncDecl(RiddleParser::FuncDeclContext *context) {
     const auto name = context->name->getText();
-    shared_ptr<ExprNode> returnType = nullptr;
+    ExprNode *returnType = nullptr;
     if (context->return_type) {
         returnType = nodeVisit(context->return_type);
     } else {
-        returnType = make_shared<ObjectNode>("void");
+        returnType = new ObjectNode("void");
     }
-    shared_ptr<BlockNode> body = nullptr;
+    BlockNode *body = nullptr;
     if (context->body) body = cast<BlockNode>(nodeVisit(context->body));
 
-    const auto args = any_cast<vector<shared_ptr<ArgDeclNode>>>(visitDeclArgs(context->declArgs()));
+    const auto args = any_cast<vector<ArgDeclNode *>>(visitDeclArgs(context->declArgs()));
 
-    const auto node = make_shared<FuncDeclNode>(name, returnType, args, body);
+    const auto node = new FuncDeclNode(name, returnType, args, body);
     return toSNPtr(node);
 }
 
 any GramVisitor::visitBlock(RiddleParser::BlockContext *context) {
-    const auto node = make_shared<BlockNode>();
+    const auto node = new BlockNode();
     for (const auto i: context->children) {
         if (const auto result = nodeVisit(i); result != nullptr) {
             node->body.emplace_back(result);
@@ -107,40 +107,40 @@ any GramVisitor::visitBlock(RiddleParser::BlockContext *context) {
 }
 
 any GramVisitor::visitInteger(RiddleParser::IntegerContext *context) {
-    return toSNPtr(make_shared<IntegerNode>(stoi(context->getText())));
+    return toSNPtr(new IntegerNode(stoi(context->getText())));
 }
 
 any GramVisitor::visitFloat(RiddleParser::FloatContext *context) {
-    return toSNPtr(make_shared<FloatNode>(stod(context->getText())));
+    return toSNPtr(new FloatNode(stod(context->getText())));
 }
 
 std::any GramVisitor::visitChar(RiddleParser::CharContext *context) {
     auto lit = context->getText();
     lit = lit.substr(1, lit.size() - 2);
-    return toSNPtr(make_shared<CharNode>(parseCharLiteral(lit)));
+    return toSNPtr(new CharNode(parseCharLiteral(lit)));
 }
 
 any GramVisitor::visitObject(RiddleParser::ObjectContext *context) {
-    return toSNPtr(make_shared<ObjectNode>(context->getText()));
+    return toSNPtr(new ObjectNode(context->getText()));
 }
 
 any GramVisitor::visitVarDecl(RiddleParser::VarDeclContext *context) {
     string name = context->name->getText();
-    shared_ptr<ExprNode> type = nullptr;
-    shared_ptr<ExprNode> value = nullptr;
+    ExprNode *type = nullptr;
+    ExprNode *value = nullptr;
     if (context->type) {
         type = nodeVisit(context->type);
     }
     if (context->value) {
         value = nodeVisit(context->value);
     }
-    return toSNPtr(make_shared<VarDeclNode>(name, type, value));
+    return toSNPtr(new VarDeclNode(name, type, value));
 }
 
 any GramVisitor::visitDeclArgs(RiddleParser::DeclArgsContext *context) {
     string name;
-    shared_ptr<ExprNode> type = nullptr;
-    vector<shared_ptr<ArgDeclNode>> args;
+    ExprNode *type = nullptr;
+    vector<ArgDeclNode*> args;
     for (const auto i: context->children) {
         if (i->getTreeType() == antlr4::tree::ParseTreeType::TERMINAL) {
             continue;
@@ -151,7 +151,7 @@ any GramVisitor::visitDeclArgs(RiddleParser::DeclArgsContext *context) {
             type = nodeVisit(i);
         }
         if (!name.empty() && type != nullptr) {
-            args.emplace_back(make_shared<ArgDeclNode>(name, type));
+            args.emplace_back(new ArgDeclNode(name, type));
             name.clear();
             type = nullptr;
         }
@@ -160,16 +160,16 @@ any GramVisitor::visitDeclArgs(RiddleParser::DeclArgsContext *context) {
 }
 
 std::any GramVisitor::visitReturnStmt(RiddleParser::ReturnStmtContext *context) {
-    shared_ptr<ExprNode> value = nullptr;
+    ExprNode *value = nullptr;
     if (context->result) {
         value = nodeVisit(context->result);
     }
-    return toSNPtr(make_shared<ReturnNode>(value));
+    return toSNPtr(new ReturnNode(value));
 }
 
 std::any GramVisitor::visitCallExpr(RiddleParser::CallExprContext *context) {
     const auto value = nodeVisit(context->obj);
-    vector<shared_ptr<ExprNode>> args;
+    vector<ExprNode *> args;
     for (int i = 1; i < context->children.size(); i++) {
         const auto tree = context->children[i];
         if (tree->getTreeType() == antlr4::tree::ParseTreeType::TERMINAL) {
@@ -177,33 +177,33 @@ std::any GramVisitor::visitCallExpr(RiddleParser::CallExprContext *context) {
         }
         args.emplace_back(nodeVisit(tree));
     }
-    return toSNPtr(make_shared<CallNode>(value, args));
+    return toSNPtr(new CallNode(value, args));
 }
 
 std::any GramVisitor::visitClassDecl(RiddleParser::ClassDeclContext *context) {
     const auto name = context->name->getText();
-    std::vector<shared_ptr<VarDeclNode>> members;
-    std::vector<shared_ptr<FuncDeclNode>> methods;
-    const auto body = std::dynamic_pointer_cast<BlockNode>(nodeVisit(context->body));
+    std::vector<VarDeclNode*> members;
+    std::vector<FuncDeclNode*> methods;
+    const auto body = cast<BlockNode>(nodeVisit(context->body));
     for (const auto &i: body->body) {
-        if (const auto varDecl = std::dynamic_pointer_cast<VarDeclNode>(i)) {
+        if (const auto varDecl = cast<VarDeclNode>(i)) {
             members.emplace_back(varDecl);
-        } else if (const auto funcDecl = std::dynamic_pointer_cast<FuncDeclNode>(i)) {
+        } else if (const auto funcDecl = cast<FuncDeclNode>(i)) {
             methods.emplace_back(funcDecl);
         }
     }
-    return toSNPtr(make_shared<ClassDeclNode>(name, members, methods));
+    return toSNPtr(new ClassDeclNode(name, members, methods));
 }
 
 std::any GramVisitor::visitMemberAccess(RiddleParser::MemberAccessContext *context) {
     const auto left = nodeVisit(context->left);
     const auto right = context->right->getText();
-    return toSNPtr(make_shared<MemberAccessNode>(left, right));
+    return toSNPtr(new MemberAccessNode(left, right));
 }
 
 std::any GramVisitor::visitPointerTo(RiddleParser::PointerToContext *context) {
     const auto type = nodeVisit(context->obj);
-    return toSNPtr(make_shared<PointerToNode>(type));
+    return toSNPtr(new PointerToNode(type));
 }
 
 std::any GramVisitor::visitParenExpr(RiddleParser::ParenExprContext *context) {
@@ -214,7 +214,7 @@ std::any GramVisitor::visitParenExpr(RiddleParser::ParenExprContext *context) {
     const auto left = nodeVisit(context->left); \
     const auto right = nodeVisit(context->right); \
     const auto op = context->op->getText(); \
-    return toSNPtr(make_shared<BinaryOpNode>(left, right, op));
+    return toSNPtr(new BinaryOpNode(left, right, op));
 
 std::any GramVisitor::visitAddOp(RiddleParser::AddOpContext *context) {
     binaryOp()
