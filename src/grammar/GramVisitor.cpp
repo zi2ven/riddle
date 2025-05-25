@@ -87,7 +87,9 @@ any GramVisitor::visitFuncDecl(RiddleParser::FuncDeclContext *context) {
     } else {
         returnType = make_shared<ObjectNode>("void");
     }
-    const auto body = cast<BlockNode>(nodeVisit(context->body));
+    shared_ptr<BlockNode> body = nullptr;
+    if (context->body) body = cast<BlockNode>(nodeVisit(context->body));
+
     const auto args = any_cast<vector<shared_ptr<ArgDeclNode>>>(visitDeclArgs(context->declArgs()));
 
     const auto node = make_shared<FuncDeclNode>(name, returnType, args, body);

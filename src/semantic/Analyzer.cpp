@@ -73,7 +73,9 @@ namespace riddle {
         for (const auto &i: node->args) {
             visit(i);
         }
-        visit(node->body);
+        if (node->body) {
+            visit(node->body);
+        }
         symbols.leaveScope();
 
         return toSNPtr(obj);

@@ -1,11 +1,11 @@
 #include "Generate.h"
 
 #include <iostream>
+#include <llvm/IR/Verifier.h>
 
 #include "nodes.h"
 #include "config.h"
 #include "OperatorImpl.h"
-#include "llvm/IR/Verifier.h"
 
 using namespace std;
 
@@ -52,7 +52,9 @@ namespace riddle {
         return nullptr;
     }
 
-    Generate::Generate(): context(globalContext.get()), module(make_unique<llvm::Module>("main", *globalContext)), builder(*globalContext) {}
+    Generate::Generate(): info(make_unique<BuildInfo>()), context(globalContext.get()), builder(*globalContext) {
+        info->module = make_unique<llvm::Module>("main", *globalContext);
+    }
 
     any Generate::visitProgram(ProgramNode *node) {
         for (const auto &i: node->body) {
@@ -60,11 +62,11 @@ namespace riddle {
         }
         std::string verifyError;
         llvm::raw_string_ostream errorStream(verifyError);
-        if (llvm::verifyModule(*module, &errorStream)) {
+        if (llvm::verifyModule(*info->module, &errorStream)) {
             errorStream.flush();
             cerr << "Module verification failed: " + verifyError;
         }
-        module->print(llvm::outs(), nullptr);
+        info->module->print(llvm::outs(), nullptr);
         return {};
     }
 
@@ -92,7 +94,7 @@ namespace riddle {
 
         const auto returnType = parseType(node->obj->returnType);
         const auto funcType = llvm::FunctionType::get(returnType, argTypes, false);
-        const auto func = llvm::Function::Create(funcType, llvm::GlobalValue::ExternalLinkage, node->name, module.get());
+        const auto func = llvm::Function::Create(funcType, llvm::GlobalValue::ExternalLinkage, node->name, info->module.get());
 
         // reset arg's memory
         unsigned index = 0;
@@ -103,9 +105,11 @@ namespace riddle {
 
         node->obj->func = func;
 
-        const auto entry = llvm::BasicBlock::Create(*context, "entry", func);
-        builder.SetInsertPoint(entry);
-        visit(node->body);
+        if (node->body) {
+            const auto entry = llvm::BasicBlock::Create(*context, "entry", func);
+            builder.SetInsertPoint(entry);
+            visit(node->body);
+        }
         return {};
     }
 

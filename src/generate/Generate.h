@@ -1,4 +1,5 @@
 #pragma once
+#include "BuildInfo.h"
 #include "TypeInfo.h"
 #include "nodes/NodeVisitor.h"
 #include "llvm/IR/Module.h"
@@ -6,8 +7,11 @@
 
 namespace riddle {
     class Generate final : public NodeVisitor {
+    public:
+        std::unique_ptr<BuildInfo> info;
+
+    private:
         llvm::LLVMContext *context;
-        std::unique_ptr<llvm::Module> module;
         llvm::IRBuilder<> builder;
 
         llvm::Type *getPrimitiveType(const std::string &name);
