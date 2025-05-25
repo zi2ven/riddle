@@ -10,7 +10,6 @@ find_package(Clang REQUIRED CONFIG)
 
 message(STATUS "LLVM Version ${LLVM_PACKAGE_VERSION}")
 
-#include_directories(${LLVM_INCLUDE_DIRS})
 include(AddLLVM)
 include(cmake/optimize.cmake)
 
@@ -30,9 +29,6 @@ target_link_libraries(riddlec PRIVATE
         ${llvm_libs}
         antlr4_shared
         lldCommon
-        lldELF
-        lldCoff
-        lldMingw
         ClangDriver       # 驱动模块 (Driver, ToolChain)
         ClangBasic        # 基础库 (DiagnosticIDs, DiagnosticsEngine)
         ClangFrontend     # 前端支持 (TextDiagnosticPrinter)

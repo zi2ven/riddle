@@ -5,7 +5,6 @@
 #include <llvm/TargetParser/Host.h>
 #include <llvm/TargetParser/Triple.h>
 
-
 namespace riddle {
     class BuildInfo {
     public:
@@ -27,8 +26,6 @@ namespace riddle {
             machine = target->createTargetMachine(triple.str(), "generic", features, options, RM);
         }
 
-        void buildToFile(const std::string &fileName, llvm::CodeGenFileType fileType = llvm::CodeGenFileType::ObjectFile) const;
-
-        std::unique_ptr<llvm::MemoryBuffer> buildToMemory(llvm::CodeGenFileType fileType = llvm::CodeGenFileType::ObjectFile) const;
+        void buildToFile(const std::string &fileName) const;
     };
 } // riddle
