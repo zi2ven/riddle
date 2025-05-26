@@ -31,6 +31,10 @@ std::any CharNode::accept(NodeVisitor *visitor) {
     return visitor->visitChar(this);
 }
 
+std::any BooleanNode::accept(NodeVisitor *visitor) {
+    return visitor->visitBoolean(this);
+}
+
 std::any ObjectNode::accept(NodeVisitor *visitor) {
     return visitor->visitObject(this);
 }
@@ -57,6 +61,10 @@ std::any MemberAccessNode::accept(NodeVisitor *visitor) {
 
 std::any PointerToNode::accept(NodeVisitor *visitor) {
     return visitor->visitPointerTo(this);
+}
+
+std::any UnaryOpNode::accept(NodeVisitor *visitor) {
+    return visitor->visitUnaryOp(this);
 }
 
 std::any BinaryOpNode::accept(NodeVisitor *visitor) {

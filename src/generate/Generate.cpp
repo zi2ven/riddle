@@ -85,6 +85,11 @@ namespace riddle {
         return value;
     }
 
+    std::any Generate::visitBoolean(BooleanNode *node) {
+        llvm::Value *value = builder.getInt1(node->value);
+        return value;
+    }
+
     any Generate::visitFuncDecl(FuncDeclNode *node) {
         // get args
         vector<llvm::Type *> argTypes;

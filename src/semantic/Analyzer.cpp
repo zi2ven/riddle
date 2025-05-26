@@ -2,6 +2,7 @@
 
 #include <format>
 #include <ranges>
+#include <memory>
 
 #include "Operators.h"
 #include "SemObject.h"
@@ -17,14 +18,14 @@ shared_ptr<SemObject> toSNPtr(const shared_ptr<T> &ptr) {
     return dynamic_pointer_cast<SemObject>(ptr);
 }
 
-template<typename T>
-constexpr auto cast(const auto &&ptr) {
-    const auto &&result = dynamic_pointer_cast<T>(ptr);
-    if (result == nullptr) {
-        throw runtime_error("Cast Error");
-    }
+template<class To, class From>
+std::shared_ptr<To> cast(const std::shared_ptr<From>& ptr)
+{
+    static_assert(std::is_base_of_v<SemObject, To>);
+    auto result = std::dynamic_pointer_cast<To>(ptr);
+    if (!result) throw std::runtime_error("Cast Error");
     return result;
-};
+}
 
 template<typename T, typename... Arg>
 constexpr auto make(Arg &&... args) {
@@ -52,7 +53,7 @@ namespace riddle {
     }
 
     std::shared_ptr<SemObject> Analyzer::objVisit(const std::shared_ptr<ExprNode> &node) {
-        return cast<SemObject>(any_cast<shared_ptr<SemObject>>(visit(node)));
+        return cast<SemObject>(any_cast<shared_ptr<SemObject>>(visit(node.get())));
     }
 
     std::any Analyzer::visitProgram(ProgramNode *node) {
@@ -98,6 +99,10 @@ namespace riddle {
 
     std::any Analyzer::visitChar(CharNode *node) {
         return make<SemValue>(getPrimitiveType("char"));
+    }
+
+    std::any Analyzer::visitBoolean(BooleanNode *node) {
+        return make<SemValue>(getPrimitiveType("bool"));
     }
 
     std::any Analyzer::visitObject(ObjectNode *node) {

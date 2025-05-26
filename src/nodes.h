@@ -99,6 +99,14 @@ namespace riddle {
         std::any accept(NodeVisitor *visitor) override;
     };
 
+    class BooleanNode final : public ExprNode {
+    public:
+        bool value;
+        explicit BooleanNode(const bool value): value(value) {}
+
+        std::any accept(NodeVisitor *visitor) override;
+    };
+
     class ObjectNode final : public ExprNode {
     public:
         std::string name;
@@ -147,12 +155,12 @@ namespace riddle {
     class ClassDeclNode final : public ExprNode {
     public:
         std::string name;
-        std::vector<VarDeclNode*> members;
-        std::vector<FuncDeclNode*> methods;
+        std::vector<VarDeclNode *> members;
+        std::vector<FuncDeclNode *> methods;
         std::shared_ptr<SemClass> obj;
 
-        explicit ClassDeclNode(std::string name, std::vector<VarDeclNode*> members,
-                               std::vector<FuncDeclNode*> methods)
+        explicit ClassDeclNode(std::string name, std::vector<VarDeclNode *> members,
+                               std::vector<FuncDeclNode *> methods)
             : name(std::move(name)), members(std::move(members)), methods(std::move(methods)) {}
 
         std::any accept(NodeVisitor *visitor) override;
@@ -196,6 +204,16 @@ namespace riddle {
         };
 
         OpType type = Unknown;
+    };
+
+    class UnaryOpNode final : public OpNode {
+    public:
+        ExprNode *operand;
+        std::string op;
+
+        UnaryOpNode(ExprNode *operand, std::string op): operand(operand), op(std::move(op)) {}
+
+        std::any accept(NodeVisitor *visitor) override;
     };
 
     class BinaryOpNode final : public OpNode {

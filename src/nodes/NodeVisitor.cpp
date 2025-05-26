@@ -10,13 +10,6 @@ std::any NodeVisitor::visit(ExprNode *node) {
     return node->accept(this);
 }
 
-std::any NodeVisitor::visit(const std::shared_ptr<ExprNode> &node) {
-    if (node == nullptr) {
-        throw std::runtime_error("Node is null");
-    }
-    return node->accept(this);
-}
-
 std::any NodeVisitor::visitProgram(ProgramNode *node) {
     for (const auto &i: node->body) {
         visit(i);
@@ -54,6 +47,10 @@ std::any NodeVisitor::visitFloat(FloatNode *node) {
 }
 
 std::any NodeVisitor::visitChar(CharNode *node) {
+    return {};
+}
+
+std::any NodeVisitor::visitBoolean(BooleanNode *node) {
     return {};
 }
 
@@ -105,5 +102,10 @@ std::any NodeVisitor::visitPointerTo(PointerToNode *node) {
 std::any NodeVisitor::visitBinaryOp(BinaryOpNode *node) {
     visit(node->left);
     visit(node->right);
+    return {};
+}
+
+std::any NodeVisitor::visitUnaryOp(UnaryOpNode *node) {
+    visit(node->operand);
     return {};
 }

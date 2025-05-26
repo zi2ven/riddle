@@ -29,6 +29,8 @@ namespace riddle {
 
         std::any visitChar(CharNode *node) override;
 
+        std::any visitBoolean(BooleanNode *node) override;
+
         std::any visitFuncDecl(FuncDeclNode *node) override;
 
         std::any visitBlock(BlockNode *node) override;

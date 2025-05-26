@@ -31,8 +31,6 @@ namespace riddle {
 
         virtual std::any visit(ExprNode *node);
 
-        virtual std::any visit(const std::shared_ptr<ExprNode> &node);
-
         virtual std::any visitProgram(ProgramNode *node);
 
         virtual std::any visitBlock(BlockNode *node);
@@ -47,20 +45,24 @@ namespace riddle {
 
         virtual std::any visitChar(CharNode *node);
 
+        virtual std::any visitBoolean(BooleanNode *node);
+
         virtual std::any visitObject(ObjectNode *node);
 
         virtual std::any visitVarDecl(VarDeclNode *node);
 
         virtual std::any visitReturn(ReturnNode *node);
 
-        virtual std::any visitCall(CallNode* node);
+        virtual std::any visitCall(CallNode *node);
 
-        virtual std::any visitClassDecl(ClassDeclNode* node);
+        virtual std::any visitClassDecl(ClassDeclNode *node);
 
-        virtual std::any visitMemberAccess(MemberAccessNode* node);
+        virtual std::any visitMemberAccess(MemberAccessNode *node);
 
-        virtual std::any visitPointerTo(PointerToNode* node);
+        virtual std::any visitPointerTo(PointerToNode *node);
 
-        virtual std::any visitBinaryOp(BinaryOpNode* node);
+        virtual std::any visitBinaryOp(BinaryOpNode *node);
+
+        virtual std::any visitUnaryOp(UnaryOpNode *node);
     };
 }

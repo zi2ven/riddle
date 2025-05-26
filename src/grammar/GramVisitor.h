@@ -7,6 +7,7 @@
 
 namespace riddle {
     class GramVisitor final : public RiddleParserBaseVisitor {
+        ProgramNode* program = new ProgramNode;
     public:
         ExprNode *nodeVisit(antlr4::tree::ParseTree *context);
 
@@ -23,6 +24,8 @@ namespace riddle {
         std::any visitFloat(RiddleParser::FloatContext *context) override;
 
         std::any visitChar(RiddleParser::CharContext *context) override;
+
+        std::any visitBoolean(RiddleParser::BooleanContext *context) override;
 
         std::any visitObject(RiddleParser::ObjectContext *context) override;
 
@@ -55,5 +58,7 @@ namespace riddle {
         std::any visitBitOr(RiddleParser::BitOrContext *context) override;
 
         std::any visitBitXor(RiddleParser::BitXorContext *context) override;
+
+        std::any visitUnaryOp(RiddleParser::UnaryOpContext *context) override;
     };
 } // riddle

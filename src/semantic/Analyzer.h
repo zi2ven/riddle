@@ -33,6 +33,8 @@ namespace riddle {
 
         std::any visitChar(CharNode *node) override;
 
+        std::any visitBoolean(BooleanNode *node) override;
+
         std::any visitObject(ObjectNode *node) override;
 
         std::any visitVarDecl(VarDeclNode *node) override;

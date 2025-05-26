@@ -2,7 +2,6 @@
 #include <chrono>
 #include <filesystem>
 #include <iostream>
-#include <stacktrace>
 #include <llvm/Support/Signals.h>
 #include <llvm-c/Target.h>
 
