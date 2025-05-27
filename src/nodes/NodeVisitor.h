@@ -64,5 +64,9 @@ namespace riddle {
         virtual std::any visitBinaryOp(BinaryOpNode *node);
 
         virtual std::any visitUnaryOp(UnaryOpNode *node);
+
+        virtual std::any visitFor(ForNode* node);
+
+        virtual std::any visitWhile(WhileNode* node);
     };
 }

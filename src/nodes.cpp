@@ -70,3 +70,11 @@ std::any UnaryOpNode::accept(NodeVisitor *visitor) {
 std::any BinaryOpNode::accept(NodeVisitor *visitor) {
     return visitor->visitBinaryOp(this);
 }
+
+std::any WhileNode::accept(NodeVisitor *visitor) {
+    return visitor->visitWhile(this);
+}
+
+std::any ForNode::accept(NodeVisitor *visitor) {
+    return visitor->visitFor(this);
+}

@@ -254,6 +254,26 @@ namespace riddle {
             }
             default: break;
         }
-        return nullptr;
+        return {};
+    }
+
+    std::any Generate::visitWhile(WhileNode *node) {
+        const auto entryBB = builder.GetInsertBlock();
+        const auto func = entryBB->getParent();
+        llvm::BasicBlock *condBB = llvm::BasicBlock::Create(*context, "bb", func);
+        llvm::BasicBlock *loopBB = llvm::BasicBlock::Create(*context, "bb", func);
+        llvm::BasicBlock *exitBB = llvm::BasicBlock::Create(*context, "bb", func);
+
+        builder.CreateBr(condBB);
+        builder.SetInsertPoint(condBB);
+        const auto cond = std::any_cast<llvm::Value *>(visit(node->condition));
+        builder.CreateCondBr(cond, loopBB, exitBB);
+
+        builder.SetInsertPoint(loopBB);
+        visit(node->body);
+        builder.CreateBr(condBB);
+
+        builder.SetInsertPoint(exitBB);
+        return {};
     }
 } // riddle

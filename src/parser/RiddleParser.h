@@ -670,6 +670,7 @@ public:
     antlr4::tree::TerminalNode *Sub();
     antlr4::tree::TerminalNode *Greater();
     ExpressionContext *expression();
+    antlr4::tree::TerminalNode *Semi();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;

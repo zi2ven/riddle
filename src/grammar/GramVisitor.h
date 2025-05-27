@@ -60,5 +60,9 @@ namespace riddle {
         std::any visitBitXor(RiddleParser::BitXorContext *context) override;
 
         std::any visitUnaryOp(RiddleParser::UnaryOpContext *context) override;
+
+        std::any visitForStmt(RiddleParser::ForStmtContext *context) override;
+
+        std::any visitWhileStmt(RiddleParser::WhileStmtContext *context) override;
     };
 } // riddle

@@ -19,8 +19,7 @@ shared_ptr<SemObject> toSNPtr(const shared_ptr<T> &ptr) {
 }
 
 template<class To, class From>
-std::shared_ptr<To> cast(const std::shared_ptr<From>& ptr)
-{
+std::shared_ptr<To> cast(const std::shared_ptr<From> &ptr) {
     static_assert(std::is_base_of_v<SemObject, To>);
     auto result = std::dynamic_pointer_cast<To>(ptr);
     if (!result) throw std::runtime_error("Cast Error");
@@ -253,6 +252,42 @@ namespace riddle {
             return make<SemValue>(op::getBuiltinBinary(left->type, right->type, node->op));
         }
         node->type = OpNode::Custom;
-        return make<SemValue>(getPrimitiveType("void"));
+        return nilValue;
+    }
+
+    std::any Analyzer::visitFor(ForNode *node) {
+        symbols.joinScope();
+        if (node->init)visit(node->init);
+        if (node->condition) {
+            const auto cond = objVisit(node->condition);
+            if (const auto value = dynamic_pointer_cast<SemValue>(cond)) {
+                if (value->type != getPrimitiveType("bool")) {
+                    throw TypeError("Condition must be a bool");
+                }
+            } else {
+                throw TypeError("Condition must be a bool");
+            }
+        }
+        if (node->increment)visit(node->increment);
+        visit(node->body);
+        symbols.leaveScope();
+        return nilValue;
+    }
+
+    std::any Analyzer::visitWhile(WhileNode *node) {
+        symbols.joinScope();
+        if (node->condition) {
+            const auto cond = objVisit(node->condition);
+            if (const auto value = dynamic_pointer_cast<SemValue>(cond)) {
+                if (value->type != getPrimitiveType("bool")) {
+                    throw TypeError("Condition must be a bool");
+                }
+            } else {
+                throw TypeError("Condition must be a bool");
+            }
+        }
+        visit(node->body);
+        symbols.leaveScope();
+        return nilValue;
     }
 } // riddle

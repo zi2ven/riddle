@@ -281,3 +281,28 @@ std::any GramVisitor::visitUnaryOp(RiddleParser::UnaryOpContext *context) {
     program->nodes.emplace_back(node);
     return toSNPtr(node);
 }
+
+std::any GramVisitor::visitForStmt(RiddleParser::ForStmtContext *context) {
+    ExprNode *init = nullptr, *condition = nullptr, *increment = nullptr;
+    if (context->init) {
+        init = nodeVisit(context->init);
+    }
+    if (context->cond) {
+        condition = nodeVisit(context->cond);
+    }
+    if (context->change) {
+        increment = nodeVisit(context->change);
+    }
+    ExprNode *body = nodeVisit(context->body);
+    const auto node = new ForNode(init, condition, increment, body);
+    program->nodes.emplace_back(node);
+    return toSNPtr(node);
+}
+
+std::any GramVisitor::visitWhileStmt(RiddleParser::WhileStmtContext *context) {
+    ExprNode *condition = nodeVisit(context->cond);
+    ExprNode *body = nodeVisit(context->body);
+    const auto node = new WhileNode(condition, body);
+    program->nodes.emplace_back(node);
+    return toSNPtr(node);
+}

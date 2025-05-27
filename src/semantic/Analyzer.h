@@ -12,6 +12,8 @@ namespace riddle {
     class Analyzer final : public NodeVisitor {
         SymbolTable symbols;
 
+        std::shared_ptr<SemValue> voidValue = std::make_shared<SemValue>(getPrimitiveType("void"));
+
     public:
         Analyzer();
 
@@ -52,5 +54,9 @@ namespace riddle {
         std::any visitPointerTo(PointerToNode *node) override;
 
         std::any visitBinaryOp(BinaryOpNode *node) override;
+
+        std::any visitFor(ForNode *node) override;
+
+        std::any visitWhile(WhileNode *node) override;
     };
 } // riddle

@@ -96,7 +96,7 @@ modifier
 
 funcDecl
     : (modifier)* Func name=id LeftParen declArgs RightParen (Sub Greater return_type=expression)? body=block
-    | (modifier)* Func name=id LeftParen declArgs RightParen Sub Greater return_type=expression
+    | (modifier)* Func name=id LeftParen declArgs RightParen Sub Greater return_type=expression Semi
     ;
 
 ifStmt

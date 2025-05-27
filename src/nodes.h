@@ -230,4 +230,23 @@ namespace riddle {
 
         std::any accept(NodeVisitor *visitor) override;
     };
+
+    class WhileNode final : public ExprNode {
+    public:
+        ExprNode *condition, *body;
+
+        WhileNode(ExprNode *condition, ExprNode *body): condition(condition), body(body) {}
+
+        std::any accept(NodeVisitor *visitor) override;
+    };
+
+    class ForNode final : public ExprNode {
+    public:
+        ExprNode *init, *condition, *increment, *body;
+
+        ForNode(ExprNode *init, ExprNode *condition, ExprNode *increment, ExprNode *body)
+            : init(init), condition(condition), increment(increment), body(body) {}
+
+        std::any accept(NodeVisitor *visitor) override;
+    };
 }

@@ -109,3 +109,17 @@ std::any NodeVisitor::visitUnaryOp(UnaryOpNode *node) {
     visit(node->operand);
     return {};
 }
+
+std::any NodeVisitor::visitFor(ForNode *node) {
+    if (node->init)visit(node->init);
+    if (node->condition)visit(node->condition);
+    if (node->increment)visit(node->increment);
+    visit(node->body);
+    return {};
+}
+
+std::any NodeVisitor::visitWhile(WhileNode *node) {
+    visit(node->condition);
+    visit(node->body);
+    return {};
+}
