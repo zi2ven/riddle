@@ -79,7 +79,7 @@ jobs:
 
       - name: Generate nightly tag
         shell: pwsh
-        run: echo "TAG=nightly-$(Get-Date -Format 'yyyyMMdd')-${{ github.sha.Substring(0, 7) }}" >> $env:GITHUB_ENV
+        run: echo "TAG=nightly-$(Get-Date -Format 'yyyyMMdd')-$($env:GITHUB_SHA.Substring(0, 7))" >> $env:GITHUB_ENV
 
       - name: Create prerelease
         uses: softprops/action-gh-release@v2
