@@ -1,0 +1,91 @@
+name: Nightly Build (Windows)
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  check_changes:
+    runs-on: windows-latest
+    outputs:
+      build_needed: ${{ steps.result.outputs.build_needed }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: '0'
+
+      - name: Did anything change in 24h?
+        id: result
+        shell: pwsh
+        run: |
+          # 统计过去 24 小时内的新提交数量（不含 merge commit）
+          $COUNT = git rev-list --no-merges --count --since="24 hours ago" HEAD
+          if ($COUNT -gt 0) {
+            Write-Output "↪️  有 $COUNT 个新提交，需要编译"
+            echo "build_needed=true"  >> $env:GITHUB_OUTPUT
+          } else {
+            Write-Output "✅  过去 24h 没有提交，跳过构建"
+            echo "build_needed=false" >> $env:GITHUB_OUTPUT
+          }
+
+  build:
+    needs: check_changes
+    runs-on: windows-latest
+    if: needs.check_changes.outputs.build_needed == 'true'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install dependencies using Chocolatey
+        shell: pwsh
+        run: |
+          choco install llvm --version=19.0.0 -y
+          choco install cmake --version=3.28.0 -y
+          choco install ninja --version=1.11.1 -y
+
+      - name: Install vcpkg
+        shell: pwsh
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git C:\vcpkg
+          cd C:\vcpkg
+          .\bootstrap-vcpkg.bat
+
+      - name: Install ANTLR4-runtime
+        shell: pwsh
+        run: |
+          C:\vcpkg\vcpkg install antlr4:x64-windows
+
+      - name: Configure CMake
+        shell: pwsh
+        run: |
+          cmake -S . -B build `
+          -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake `
+          -DVCPKG_TARGET_TRIPLET=x64-windows
+
+      - name: Build project
+        shell: pwsh
+        run: cmake --build build --config Release
+
+      - name: Zip binary
+        shell: pwsh
+        run: |
+          Compress-Archive -Path build\* -DestinationPath build\riddlec-windows-amd64.zip
+
+      - name: Generate nightly tag
+        shell: pwsh
+        run: echo "TAG=nightly-$(Get-Date -Format 'yyyyMMdd')-${{ github.sha.Substring(0, 7) }}" >> $env:GITHUB_ENV
+
+      - name: Create prerelease
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.TAG }}
+          name: Nightly Build (Windows)
+          prerelease: true
+          generate_release_notes: false
+          files: build/riddlec-windows-amd64.zip

@@ -5,7 +5,6 @@ set(CMAKE_CXX_STANDARD 23)
 
 find_package(LLVM CONFIG REQUIRED)
 find_package(antlr4-runtime CONFIG REQUIRED)
-find_package(LLD REQUIRED CONFIG)
 find_package(Clang REQUIRED CONFIG)
 
 message(STATUS "LLVM Version ${LLVM_PACKAGE_VERSION}")

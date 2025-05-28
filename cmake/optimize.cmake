@@ -65,15 +65,4 @@ function(target_optimize_all target)
                 $<$<CXX_COMPILER_ID:Clang>:-fprofile-instr-use=default.profdata>
         )
     endif()
-
-    if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
-        if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-            execute_process(COMMAND ${CMAKE_CXX_COMPILER} -march=native -Q --help=target
-                    OUTPUT_VARIARCH_OUTPUT ERROR_QUIET)
-            string(REGEX MATCH "-march=([^ ]+)" MATCHED_ARCH ${ARCH_OUTPUT})
-            if(MATCHED_ARCH)
-                target_compile_options(${target} PRIVATE -march=${CMAKE_MATCH_1})
-            endif()
-        endif()
-    endif()
 endfunction()
