@@ -16,7 +16,18 @@ file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.h")
 
 add_executable(riddlec ${SOURCES})
 
-target_optimize_all(riddlec)
+if (${CMAKE_BUILD_TYPE} EQUAL "Release")
+    target_optimize_all(riddlec)
+endif ()
+
+target_link_options(riddlec PRIVATE
+        $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:
+        -fuse-ld=lld   # 使用 LLVM 的 lld 链接器（更快）
+        >
+        $<$<CXX_COMPILER_ID:MSVC>:
+        /LTCG          # 链接时代码生成（MSVC 的 LTO）
+        >
+)
 
 target_include_directories(riddlec PUBLIC ${LLVM_INCLUDE_DIRS} ${ANTLR4_INCLUDE_DIR} src/ ${LLD_INCLUDE_DIRS})
 
@@ -39,5 +50,11 @@ target_link_libraries(riddlec PRIVATE
         ClangAST          # 抽象语法树
         ClangLex          # 词法分析
         ClangAnalysis     # 静态分析
-        version
 )
+
+if (WIN32)
+    target_link_libraries(riddlec PRIVATE
+            LLVMWindowsDriver
+            version
+    )
+endif ()

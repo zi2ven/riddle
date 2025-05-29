@@ -20,10 +20,13 @@ namespace {
             for (auto j: op::operators) {
                 builtinOps.emplace(std::format("{}_{}_{}", i, i, j), getPrimitiveType(i));
             }
+            for (auto j: op::logic_operators) {
+                builtinOps.emplace(std::format("{}_{}_{}", i, i, j), getPrimitiveType("bool"));
+            }
         }
-        for (auto j: op::logic_operators) {
-            builtinOps.emplace(std::format("{}_{}_{}", "bool", "bool", j), getPrimitiveType("bool"));
-        }
+
+        builtinOps.emplace(std::format("{}_{}_{}", "bool", "bool", "||"), getPrimitiveType("bool"));
+        builtinOps.emplace(std::format("{}_{}_{}", "bool", "bool", "&&"), getPrimitiveType("bool"));
     }
 }
 

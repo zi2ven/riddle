@@ -67,7 +67,7 @@ namespace riddle {
             cerr << "Module verification failed: " + verifyError;
         }
         info->module->print(llvm::outs(), nullptr);
-        return {};
+        return nullptr;
     }
 
     any Generate::visitInteger(IntegerNode *node) {
@@ -115,14 +115,19 @@ namespace riddle {
             builder.SetInsertPoint(entry);
             visit(node->body);
         }
-        return {};
+        return nullptr;
     }
 
     std::any Generate::visitBlock(BlockNode *node) {
-        for (const auto &i: node->body) {
-            visit(i);
+        llvm::Value *value = nullptr;
+        for (const auto i: node->body) {
+            const auto result = visit(i);
+            if (result.type() == typeid(nullptr)) {
+                continue;
+            }
+            value = std::any_cast<llvm::Value *>(result);
         }
-        return {};
+        return value;
     }
 
     any Generate::visitVarDecl(VarDeclNode *node) {
@@ -133,7 +138,7 @@ namespace riddle {
             const auto value = any_cast<llvm::Value *>(visit(node->value));
             builder.CreateStore(value, alloca);
         }
-        return {};
+        return nullptr;
     }
 
     any Generate::visitObject(ObjectNode *node) {
@@ -190,7 +195,7 @@ namespace riddle {
         for (const auto &i: node->methods) {
             visit(i);
         }
-        return {};
+        return nullptr;
     }
 
     std::any Generate::visitMemberAccess(MemberAccessNode *node) {
@@ -254,7 +259,7 @@ namespace riddle {
             }
             default: break;
         }
-        return {};
+        return nullptr;
     }
 
     std::any Generate::visitWhile(WhileNode *node) {
@@ -274,6 +279,32 @@ namespace riddle {
         builder.CreateBr(condBB);
 
         builder.SetInsertPoint(exitBB);
-        return {};
+        return nullptr;
+    }
+
+    std::any Generate::visitFor(ForNode *node) {
+        const auto entryBB = builder.GetInsertBlock();
+        const auto func = entryBB->getParent();
+        llvm::BasicBlock *condBB = llvm::BasicBlock::Create(*context, "bb", func);
+        llvm::BasicBlock *loopBB = llvm::BasicBlock::Create(*context, "bb", func);
+        llvm::BasicBlock *incBB = llvm::BasicBlock::Create(*context, "bb", func);
+        llvm::BasicBlock *exitBB = llvm::BasicBlock::Create(*context, "bb", func);
+
+        visit(node->init);
+        builder.CreateBr(condBB);
+        builder.SetInsertPoint(condBB);
+        const auto cond = std::any_cast<llvm::Value *>(visit(node->condition));
+        builder.CreateCondBr(cond, loopBB, exitBB);
+
+        builder.SetInsertPoint(loopBB);
+        visit(node->body);
+        builder.CreateBr(incBB);
+
+        builder.SetInsertPoint(incBB);
+        visit(node->increment);
+        builder.CreateBr(condBB);
+
+        builder.SetInsertPoint(exitBB);
+        return nullptr;
     }
 } // riddle

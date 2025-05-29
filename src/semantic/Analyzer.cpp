@@ -82,10 +82,11 @@ namespace riddle {
     }
 
     std::any Analyzer::visitBlock(BlockNode *node) {
+        shared_ptr<SemObject> val;
         for (const auto &i: node->body) {
-            visit(i);
+            val = objVisit(i);
         }
-        return nilValue;
+        return val;
     }
 
     std::any Analyzer::visitFloat(FloatNode *node) {

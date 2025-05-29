@@ -16,7 +16,11 @@ namespace riddle::op {
     };
 
     static inline std::vector<std::string> logic_operators = {
-        "==", "!=", "<", ">", "<=", ">=", "||", "&&",
+        "==", "!=", "<", ">", "<=", ">="
+    };
+
+    static inline std::vector<std::string> bool_only_operators = {
+        "&&", "||"
     };
 
     /**
