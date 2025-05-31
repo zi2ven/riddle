@@ -13,6 +13,14 @@ namespace riddle {
 
     class ExprNode {
     public:
+        enum CaseType {
+            None, ///< Do nothing
+            ZExt, ///< unsigned extend
+            SExt  ///< signed extend
+        };
+
+        CaseType cast_type = None;
+
         virtual ~ExprNode() = default;
 
         virtual std::any accept(NodeVisitor *visitor) = 0;

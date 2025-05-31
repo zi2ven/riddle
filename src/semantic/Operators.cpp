@@ -46,3 +46,15 @@ std::shared_ptr<TypeInfo> op::getBuiltinBinary(const std::shared_ptr<TypeInfo> &
     }
     return nullptr;
 }
+
+bool op::isLosslessConvertible(const std::shared_ptr<TypeInfo> &from, const std::shared_ptr<TypeInfo> &to) {
+    if (from->getTypeKind() == TypeInfo::Primitive && to->getTypeKind() == TypeInfo::Pointer) {
+        return true;
+    }
+    if (from->getTypeKind() != TypeInfo::Primitive || to->getTypeKind() != TypeInfo::Primitive) {
+        return false;
+    }
+    const auto left_size = primitiveSize[from->name];
+    const auto right_size = primitiveSize[to->name];
+    return left_size <= right_size;
+}

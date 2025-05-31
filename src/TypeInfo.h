@@ -54,7 +54,9 @@ namespace riddle {
 
     class PrimitiveTypeInfo final : public TypeInfo {
     public:
-        explicit PrimitiveTypeInfo(const std::string &name): TypeInfo(name) {
+        bool sign;
+
+        explicit PrimitiveTypeInfo(const std::string &name, const bool sign = true): TypeInfo(name), sign(sign) {
             kind = Primitive;
         }
     };
@@ -84,5 +86,24 @@ namespace riddle {
         explicit StructTypeInfo(std::vector<std::shared_ptr<TypeInfo>> types): TypeInfo("{}"), types(std::move(types)) {
             kind = Struct;
         }
+    };
+
+    /**
+     * @brief A mapping of primitive type names to their respective sizes in bits.
+     *
+     * This unordered map associates the names of primitive types, such as "int" and "long",
+     * with their corresponding sizes in bits. The size information is used to determine
+     * the bit-width of primitive types during type analysis or code generation.
+     *
+     * The map is defined as static, ensuring it has internal linkage and is only accessible
+     * within the enclosing translation unit. It is initialized with predefined values for
+     * common primitive types.
+     */
+    static std::unordered_map<std::string, size_t> primitiveSize = {
+        {"int", 32},
+        {"long", 64},
+        {"char", 8},
+        {"bool", 1},
+        {"short", 32},
     };
 }

@@ -38,6 +38,7 @@ namespace riddle {
         symbols.joinScope();
         symbols.addObject(make_shared<SemType>("void", getPrimitiveType("void")));
         symbols.addObject(make_shared<SemType>("int", getPrimitiveType("int")));
+        symbols.addObject(make_shared<SemType>("long", getPrimitiveType("long")));
         symbols.addObject(make_shared<SemType>("float", getPrimitiveType("float")));
         symbols.addObject(make_shared<SemType>("char", getPrimitiveType("char")));
         symbols.addObject(make_shared<SemType>("bool", getPrimitiveType("bool")));
@@ -71,7 +72,8 @@ namespace riddle {
 
         symbols.joinScope();
         for (const auto &i: node->args) {
-            visit(i);
+            const auto param = dynamic_pointer_cast<SemVariable>(objVisit(i));
+            obj->args.emplace_back(param);
         }
         if (node->body) {
             visit(node->body);
@@ -111,26 +113,52 @@ namespace riddle {
     }
 
     std::any Analyzer::visitVarDecl(VarDeclNode *node) {
-        shared_ptr<TypeInfo> type = nullptr;
-        shared_ptr<SemValue> value = nullptr;
-        if (node->value != nullptr) {
-            value = cast<SemValue>(objVisit(node->value));
-        }
-        if (node->type) {
-            const auto obj = objVisit(node->type);
-            const auto ty = std::dynamic_pointer_cast<SemType>(obj);
-            type = ty->type;
-        } else {
-            type = value->type;
-        }
+        // Extract type and value
+        auto type = resolveType(node);
+        const auto value = node->value ? cast<SemValue>(objVisit(node->value)) : nullptr;
+
+        // Validate type
         if (type == getPrimitiveType("void")) {
             throw TypeError("The type 'void' cannot be used as a type for local variables");
         }
+
+        // Validate value against type
+        if (type && value && node->value) {
+            validateAndAdjustValue(type, value, node->value);
+        }
+
+        // Create and register the variable
         const auto obj = make_shared<SemVariable>(node->name, type);
         node->obj = obj;
         obj->isLocalVar = true;
         symbols.addObject(obj);
+
         return toSNPtr(obj);
+    }
+
+    // Helper function to resolve type
+    std::shared_ptr<TypeInfo> Analyzer::resolveType(const VarDeclNode *node) {
+        if (node->type) {
+            const auto obj = objVisit(node->type);
+            const auto semType = std::dynamic_pointer_cast<SemType>(obj);
+            return semType ? semType->type : nullptr;
+        }
+        return node->value ? cast<SemValue>(objVisit(node->value))->type : nullptr;
+    }
+
+    // Helper function to validate and adjust value
+    void Analyzer::validateAndAdjustValue(const std::shared_ptr<TypeInfo> &type,
+                                          const std::shared_ptr<SemValue> &value,
+                                          ExprNode *exprNode) {
+        if (!value->type->equal(type.get()) && !op::isLosslessConvertible(value->type, type)) {
+            throw TypeError("Type mismatch");
+        }
+        if (!value->type->equal(type.get()) && op::isLosslessConvertible(value->type, type)) {
+            if (value->type->getTypeKind() == TypeInfo::Primitive) {
+                const auto primitiveType = std::dynamic_pointer_cast<PrimitiveTypeInfo>(value->type);
+                exprNode->cast_type = primitiveType->sign ? ExprNode::SExt : ExprNode::ZExt;
+            }
+        }
     }
 
     std::any Analyzer::visitArgDecl(ArgDeclNode *node) {
@@ -138,7 +166,7 @@ namespace riddle {
         const auto obj = make_shared<SemVariable>(node->name, type->type);
         node->obj = obj;
         symbols.addObject(obj);
-        return nilValue;
+        return toSNPtr(obj);
     }
 
     std::any Analyzer::visitReturn(ReturnNode *node) {
@@ -154,12 +182,15 @@ namespace riddle {
             throw TypeError(std::format("'{}' object is not callable", obj->name));
         }
         const auto func = dynamic_pointer_cast<SemFunction>(obj);
+        int index = 0;
         for (const auto &i: node->args) {
             const auto rel = objVisit(i);
             const auto value = std::dynamic_pointer_cast<SemValue>(rel);
             if (value == nullptr) {
                 throw TypeError(std::format("'{}' object not a value", value->name));
             }
+            validateAndAdjustValue(func->args[index]->type, value, i);
+            index++;
         }
         return make<SemValue>(func->returnType);
     }

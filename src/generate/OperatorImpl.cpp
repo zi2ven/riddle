@@ -77,6 +77,9 @@ namespace {
         opMap.clear();
 
         initSignedInteger("int");
+        initSignedInteger("short");
+        initSignedInteger("long");
+        initUnsignedInteger("char");
         initUnsignedInteger("bool");
     }
 }

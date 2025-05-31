@@ -41,6 +41,10 @@ namespace riddle {
 
         std::any visitVarDecl(VarDeclNode *node) override;
 
+        std::shared_ptr<TypeInfo> resolveType(const VarDeclNode *node);
+
+        static void validateAndAdjustValue(const std::shared_ptr<TypeInfo> &type, const std::shared_ptr<SemValue> &value, ExprNode *exprNode);
+
         std::any visitArgDecl(ArgDeclNode *node) override;
 
         std::any visitReturn(ReturnNode *node) override;

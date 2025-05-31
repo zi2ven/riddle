@@ -6,6 +6,7 @@
 #include "nodes.h"
 #include "config.h"
 #include "OperatorImpl.h"
+#include "semantic/Operators.h"
 
 using namespace std;
 
@@ -17,6 +18,7 @@ namespace riddle {
             {"char", builder.getInt8Ty()},
             {"bool", builder.getInt1Ty()},
             {"void", builder.getVoidTy()},
+            {"long", builder.getInt64Ty()},
         };
 
         const auto it = mp.find(name);
@@ -24,6 +26,22 @@ namespace riddle {
             throw runtime_error("Unknown primitive type: " + name);
         }
         return it->second;
+    }
+
+    llvm::Value *cast(llvm::Value *value, llvm::Type *type, ExprNode::CaseType cast_type, llvm::IRBuilder<> &builder) {
+        switch (cast_type) {
+            case ExprNode::ZExt: {
+                return builder.CreateZExt(value, type);
+            }
+            case ExprNode::SExt: {
+                return builder.CreateSExt(value, type);
+            }
+            case ExprNode::None: {
+                return value;
+            }
+            default: break;
+        }
+        throw runtime_error("Unknown cast type");
     }
 
     llvm::Type *Generate::parseType(const shared_ptr<TypeInfo> &type, const size_t depth) { // NOLINT(*-no-recursion)
@@ -135,7 +153,8 @@ namespace riddle {
         const auto alloca = builder.CreateAlloca(type);
         node->obj->alloca = alloca;
         if (node->value) {
-            const auto value = any_cast<llvm::Value *>(visit(node->value));
+            auto value = any_cast<llvm::Value *>(visit(node->value));
+            value = cast(value, type, node->value->cast_type, builder);
             builder.CreateStore(value, alloca);
         }
         return nullptr;
@@ -178,8 +197,11 @@ namespace riddle {
     any Generate::visitCall(CallNode *node) {
         const auto value = llvm::dyn_cast<llvm::Function>(any_cast<llvm::Value *>(visit(node->value)));
         vector<llvm::Value *> args;
+        const auto now_type = value->args().begin();
         for (const auto &i: node->args) {
-            args.emplace_back(std::any_cast<llvm::Value *>(visit(i)));
+            auto param = std::any_cast<llvm::Value *>(visit(i));
+            param = cast(param, now_type->getType(), i->cast_type, builder);
+            args.emplace_back(param);
         }
         llvm::Value *result = builder.CreateCall(value, args);
         return result;
