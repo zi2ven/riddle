@@ -16,10 +16,6 @@ file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.h")
 
 add_executable(riddlec ${SOURCES})
 
-if (${CMAKE_BUILD_TYPE} EQUAL "Release")
-    target_optimize_all(riddlec)
-endif ()
-
 target_link_options(riddlec PRIVATE
         $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:
         -fuse-ld=lld   # 使用 LLVM 的 lld 链接器（更快）
