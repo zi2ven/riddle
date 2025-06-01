@@ -4,6 +4,7 @@
 #include <iostream>
 #include <llvm-c/Target.h>
 
+#include "args.h"
 #include "generate/config.h"
 #include "generate/Generate.h"
 #include "grammar/GramVisitor.h"
@@ -17,17 +18,12 @@ void init() {
     LLVMInitializeNativeAsmPrinter();
 }
 
-int main(int argc, const char *argv[]) {
-    if (argc < 2) {
-        std::cerr << "Usage: " << argv[0] << " <input>" << std::endl;
-        return 1;
-    }
 
-    std::ifstream in(argv[1]);
-    if (!in) {
-        std::cerr << "Error: Unable to open file " << argv[1] << std::endl;
-        return 1;
-    }
+int main(int argc, char **argv) {
+    parseArgs(argc, argv);
+
+    std::ifstream in(build_args.inputFiles[0]);
+
     std::stringstream buffer;
     buffer << in.rdbuf();
     std::string code = buffer.str();
@@ -47,8 +43,9 @@ int main(int argc, const char *argv[]) {
 
         init();
         riddle::Generate generate;
+        generate.info->triple = llvm::Triple(build_args.triple);
         generate.visit(result);
-        generate.info->buildToFile("module");
+        generate.info->buildToFile(build_args.outFile);
     } catch (std::exception &e) {
         std::cerr << e.what();
         return 0;
