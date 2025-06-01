@@ -98,6 +98,9 @@ public:
   virtual void enterStatement(RiddleParser::StatementContext *ctx) = 0;
   virtual void exitStatement(RiddleParser::StatementContext *ctx) = 0;
 
+  virtual void enterAnnotation(RiddleParser::AnnotationContext *ctx) = 0;
+  virtual void exitAnnotation(RiddleParser::AnnotationContext *ctx) = 0;
+
   virtual void enterPackStmt(RiddleParser::PackStmtContext *ctx) = 0;
   virtual void exitPackStmt(RiddleParser::PackStmtContext *ctx) = 0;
 

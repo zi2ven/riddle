@@ -75,6 +75,8 @@ public:
 
     virtual std::any visitStatement(RiddleParser::StatementContext *context) = 0;
 
+    virtual std::any visitAnnotation(RiddleParser::AnnotationContext *context) = 0;
+
     virtual std::any visitPackStmt(RiddleParser::PackStmtContext *context) = 0;
 
     virtual std::any visitVarDecl(RiddleParser::VarDeclContext *context) = 0;

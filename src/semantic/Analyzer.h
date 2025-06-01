@@ -13,6 +13,11 @@ namespace riddle {
         SymbolTable symbols;
 
         std::shared_ptr<SemValue> voidValue = std::make_shared<SemValue>(getPrimitiveType("void"));
+        std::shared_ptr<SemObject> nilValue = voidValue;
+
+        std::stack<std::shared_ptr<SemFunction>> parent;
+
+        ProgramNode* program = nullptr;
 
     public:
         Analyzer();

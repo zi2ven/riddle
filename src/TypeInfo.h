@@ -30,7 +30,7 @@ namespace riddle {
 
         virtual ~TypeInfo() = default;
 
-        virtual std::shared_ptr<TypeInfo> getPointerTo();
+        virtual std::shared_ptr<TypeInfo> getPointValue();
 
         [[nodiscard]] TypeKind getTypeKind() const {
             return kind;
@@ -71,7 +71,7 @@ namespace riddle {
             kind = Pointer;
         }
 
-        std::shared_ptr<TypeInfo> getPointerTo() override;
+        std::shared_ptr<TypeInfo> getPointValue() override;
 
         bool equal(TypeInfo *other) override {
             return TypeInfo::equal(other) && this->pointe->equal(dynamic_cast<PointerTypeInfo *>(other));

@@ -100,6 +100,9 @@ public:
   virtual void enterStatement(RiddleParser::StatementContext * /*ctx*/) override { }
   virtual void exitStatement(RiddleParser::StatementContext * /*ctx*/) override { }
 
+  virtual void enterAnnotation(RiddleParser::AnnotationContext * /*ctx*/) override { }
+  virtual void exitAnnotation(RiddleParser::AnnotationContext * /*ctx*/) override { }
+
   virtual void enterPackStmt(RiddleParser::PackStmtContext * /*ctx*/) override { }
   virtual void exitPackStmt(RiddleParser::PackStmtContext * /*ctx*/) override { }
 

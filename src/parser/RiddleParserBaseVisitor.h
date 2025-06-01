@@ -127,6 +127,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitAnnotation(RiddleParser::AnnotationContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitPackStmt(RiddleParser::PackStmtContext *ctx) override {
     return visitChildren(ctx);
   }

@@ -20,15 +20,15 @@ public:
     RightParen = 30, LeftBracket = 31, RightBracket = 32, LeftCurly = 33, 
     RightCurly = 34, Colon = 35, Comma = 36, Equal = 37, NotEqual = 38, 
     Assign = 39, Greater = 40, GreaterEqual = 41, Less = 42, LessEqual = 43, 
-    LeftShift = 44, RightShift = 45, Add = 46, Sub = 47, Star = 48, Div = 49, 
-    Mod = 50, Not = 51, And = 52, AndAnd = 53, Or = 54, OrOr = 55, Xor = 56, 
-    Dot = 57, DoubleQuotes = 58, Quotes = 59, Tilde = 60, AddAssign = 61, 
-    SubAssign = 62, MulAssign = 63, DivAssign = 64, ModAssign = 65, LeftShiftAssign = 66, 
-    RightShiftAssign = 67, AndAssign = 68, OrAssign = 69, XorAssign = 70, 
-    Endl = 71, Identifier = 72, Hexadecimal = 73, Decimal = 74, Octal = 75, 
-    Binary = 76, Float = 77, IntegerSequence = 78, HEX_DIGIT = 79, OCTAL_DIGIT = 80, 
-    BINARY_DIGIT = 81, DIGIT = 82, STRING = 83, CHAR = 84, LINE_COMMENT = 85, 
-    BLOCK_COMMENT = 86, WHITESPACE = 87
+    LeftShift = 44, RightShift = 45, At = 46, Add = 47, Sub = 48, Star = 49, 
+    Div = 50, Mod = 51, Not = 52, And = 53, AndAnd = 54, Or = 55, OrOr = 56, 
+    Xor = 57, Dot = 58, DoubleQuotes = 59, Quotes = 60, Tilde = 61, AddAssign = 62, 
+    SubAssign = 63, MulAssign = 64, DivAssign = 65, ModAssign = 66, LeftShiftAssign = 67, 
+    RightShiftAssign = 68, AndAssign = 69, OrAssign = 70, XorAssign = 71, 
+    Endl = 72, Identifier = 73, Hexadecimal = 74, Decimal = 75, Octal = 76, 
+    Binary = 77, Float = 78, IntegerSequence = 79, HEX_DIGIT = 80, OCTAL_DIGIT = 81, 
+    BINARY_DIGIT = 82, DIGIT = 83, STRING = 84, CHAR = 85, LINE_COMMENT = 86, 
+    BLOCK_COMMENT = 87, WHITESPACE = 88
   };
 
   explicit RiddleLexer(antlr4::CharStream *input);

@@ -63,7 +63,7 @@ namespace riddle {
                 return type->type;
             }
             case TypeInfo::Pointer: {
-                return llvm::PointerType::get(parseType(type->getPointerTo(), depth + 1), 0);
+                return llvm::PointerType::get(parseType(type->getPointValue(), depth + 1), 0);
             }
             default: break;
         }
@@ -203,6 +203,14 @@ namespace riddle {
             param = cast(param, now_type->getType(), i->cast_type, builder);
             args.emplace_back(param);
         }
+        if (node->call_type == CallNode::CallType::Self) {
+            const auto child = dynamic_cast<MemberAccessNode *>(node->value);
+            auto self = child->parentValue;
+            if (llvm::isa<llvm::LoadInst>(self)) {
+                self = llvm::dyn_cast<llvm::LoadInst>(self)->getPointerOperand();
+            }
+            args.insert(args.begin(),self );
+        }
         llvm::Value *result = builder.CreateCall(value, args);
         return result;
     }
@@ -223,6 +231,7 @@ namespace riddle {
     std::any Generate::visitMemberAccess(MemberAccessNode *node) {
         const auto sty = node->theClass->type->type;
         auto left = std::any_cast<llvm::Value *>(visit(node->left));
+        node->parentValue = left;
         switch (node->type) {
             case MemberAccessNode::Member: {
                 if (llvm::isa<llvm::LoadInst>(left)) {

@@ -2,7 +2,7 @@
 #include <unordered_map>
 
 namespace riddle {
-    std::shared_ptr<TypeInfo> TypeInfo::getPointerTo() {
+    std::shared_ptr<TypeInfo> TypeInfo::getPointValue() {
         return nullptr;
     }
 
@@ -31,7 +31,7 @@ namespace riddle {
         return (it != typeMap.end()) ? it->second : nullptr;
     }
 
-    std::shared_ptr<TypeInfo> PointerTypeInfo::getPointerTo() {
+    std::shared_ptr<TypeInfo> PointerTypeInfo::getPointValue() {
         return this->pointe;
     }
 }

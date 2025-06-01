@@ -31,8 +31,6 @@ constexpr auto make(Arg &&... args) {
     return toSNPtr(make_shared<T>(std::forward<Arg>(args)...));
 };
 
-const auto nilValue = toSNPtr(make_shared<SemValue>(getPrimitiveType("void")));
-
 namespace riddle {
     Analyzer::Analyzer() {
         symbols.joinScope();
@@ -57,6 +55,7 @@ namespace riddle {
     }
 
     std::any Analyzer::visitProgram(ProgramNode *node) {
+        program = node;
         for (const auto &i: node->body) {
             visit(i);
         }
@@ -71,6 +70,16 @@ namespace riddle {
         symbols.addObject(obj);
 
         symbols.joinScope();
+        parent.push(obj);
+        if (node->theClass) {
+            const auto class_obj = new ObjectNode(node->theClass->name);
+            program->nodes.emplace_back(class_obj);
+            const auto point = new PointerToNode(class_obj);
+            program->nodes.emplace_back(point);
+            const auto param = new ArgDeclNode("self", point);
+            program->nodes.emplace_back(param);
+            node->args.insert(node->args.begin(), param);
+        }
         for (const auto &i: node->args) {
             const auto param = dynamic_pointer_cast<SemVariable>(objVisit(i));
             obj->args.emplace_back(param);
@@ -79,6 +88,7 @@ namespace riddle {
             visit(node->body);
         }
         symbols.leaveScope();
+        parent.pop();
 
         return toSNPtr(obj);
     }
@@ -150,12 +160,26 @@ namespace riddle {
     void Analyzer::validateAndAdjustValue(const std::shared_ptr<TypeInfo> &type,
                                           const std::shared_ptr<SemValue> &value,
                                           ExprNode *exprNode) {
-        if (!value->type->equal(type.get()) && !op::isLosslessConvertible(value->type, type)) {
-            throw TypeError("Type mismatch");
+        auto throwTypeError = [&](const std::string &message) {
+            throw TypeError(std::format("Cannot convert '{}' to '{}'", value->type->name, type->name));
+        };
+
+        auto isConvertible = [&]() -> bool {
+            return !value->type->equal(type.get()) && !op::isLosslessConvertible(value->type, type);
+        };
+
+        if (isConvertible()) {
+            throwTypeError("Type conversion error");
         }
+
+        if (!exprNode && type->name != "void") {
+            throwTypeError("Expression node is required for non-void type");
+        }
+
         if (!value->type->equal(type.get()) && op::isLosslessConvertible(value->type, type)) {
             if (value->type->getTypeKind() == TypeInfo::Primitive) {
                 const auto primitiveType = std::dynamic_pointer_cast<PrimitiveTypeInfo>(value->type);
+                if (!primitiveType) throw TypeError("Invalid primitive type");
                 exprNode->cast_type = primitiveType->sign ? ExprNode::SExt : ExprNode::ZExt;
             }
         }
@@ -170,9 +194,20 @@ namespace riddle {
     }
 
     std::any Analyzer::visitReturn(ReturnNode *node) {
+        const auto func = parent.top();
+        const auto returnType = func->returnType;
+        shared_ptr<SemValue> resultValue;
         if (node->value) {
-            visit(node->value);
+            const auto result = objVisit(node->value);
+            if (const auto value = std::dynamic_pointer_cast<SemValue>(result)) {
+                resultValue = value;
+            } else {
+                throw TypeError("Result must be a Value");
+            }
+        } else {
+            resultValue = voidValue;
         }
+        validateAndAdjustValue(returnType, resultValue, node->value);
         return nilValue;
     }
 
@@ -180,6 +215,9 @@ namespace riddle {
         const auto obj = objVisit(node->value);
         if (obj->getKind() != SemObject::Function) {
             throw TypeError(std::format("'{}' object is not callable", obj->name));
+        }
+        if (dynamic_cast<MemberAccessNode *>(node->value)) {
+            node->call_type = CallNode::CallType::Self;
         }
         const auto func = dynamic_pointer_cast<SemFunction>(obj);
         int index = 0;
@@ -193,44 +231,6 @@ namespace riddle {
             index++;
         }
         return make<SemValue>(func->returnType);
-    }
-
-    std::any Analyzer::visitClassDecl(ClassDeclNode *node) {
-        const auto typeinfo = make_shared<StructTypeInfo>(std::vector<std::shared_ptr<TypeInfo>>{});
-        const auto obj = make_shared<SemClass>(node->name, typeinfo);
-        node->obj = obj;
-        symbols.addObject(obj);
-
-        // member parser
-        int index = 0;
-        for (const auto &i: node->members) {
-            const auto result = objVisit(i);
-            if (const auto var = dynamic_pointer_cast<SemVariable>(result)) {
-                obj->addMember(var, index++);
-            } else {
-                throw runtime_error("Result Not a Variable");
-            }
-        }
-
-        // method parser
-        for (const auto &i: node->methods) {
-            const auto result = objVisit(i);
-            if (const auto func = dynamic_pointer_cast<SemFunction>(result)) {
-                obj->addMethod(func);
-            } else {
-                throw runtime_error("Result Not a Function");
-            }
-        }
-
-        // create typeinfo
-        const auto structType = obj->getStructType();
-        structType->types.resize(index);
-        for (const auto &[idx, var]: obj->members | views::values) {
-            structType->types[idx] = var->type;
-        }
-        structType->theClass = obj;
-
-        return toSNPtr(obj);
     }
 
     std::any Analyzer::visitMemberAccess(MemberAccessNode *node) {
@@ -254,6 +254,46 @@ namespace riddle {
         }
         throw runtime_error("Right Not Member or Method");
     }
+
+    std::any Analyzer::visitClassDecl(ClassDeclNode *node) {
+        const auto typeinfo = make_shared<StructTypeInfo>(std::vector<std::shared_ptr<TypeInfo>>{});
+        const auto obj = make_shared<SemClass>(node->name, typeinfo);
+        node->obj = obj;
+        symbols.addObject(obj);
+
+        // member parser
+        int index = 0;
+        for (const auto &i: node->members) {
+            const auto result = objVisit(i);
+            if (const auto var = dynamic_pointer_cast<SemVariable>(result)) {
+                obj->addMember(var, index++);
+            } else {
+                throw runtime_error("Result Not a Variable");
+            }
+        }
+
+        // method parser
+        for (const auto &i: node->methods) {
+            i->theClass = obj;
+            const auto result = objVisit(i);
+            if (const auto func = dynamic_pointer_cast<SemFunction>(result)) {
+                obj->addMethod(func);
+            } else {
+                throw runtime_error("Result Not a Function");
+            }
+        }
+
+        // create typeinfo
+        const auto structType = obj->getStructType();
+        structType->types.resize(index);
+        for (const auto &[idx, var]: obj->members | views::values) {
+            structType->types[idx] = var->type;
+        }
+        structType->theClass = obj;
+
+        return toSNPtr(obj);
+    }
+
 
     std::any Analyzer::visitPointerTo(PointerToNode *node) {
         const auto obj = objVisit(node->type);

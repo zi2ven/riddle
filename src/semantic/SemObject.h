@@ -62,17 +62,16 @@ namespace riddle {
         std::vector<std::shared_ptr<SemVariable>> args;
         llvm::Function *func = nullptr;
 
-        SemFunction(std::string name, const std::shared_ptr<TypeInfo> &returnType,
-                    std::vector<std::shared_ptr<SemVariable>> args = {}): SemObject(std::move(name), Function),
+        SemFunction(const std::string &name, const std::shared_ptr<TypeInfo> &returnType,
+                    std::vector<std::shared_ptr<SemVariable>> args = {}): SemObject(name, Function),
                                                                           returnType(returnType), args(std::move(args)) {}
     };
 
     class SemType : public SemObject {
     public:
-        std::string name;
         std::shared_ptr<TypeInfo> type;
 
-        explicit SemType(std::string name, std::shared_ptr<TypeInfo> type): SemObject(std::move(name), Type), type(std::move(type)) {}
+        explicit SemType(const std::string &name, std::shared_ptr<TypeInfo> type): SemObject(name, Type), type(std::move(type)) {}
     };
 
     class SemClass final : public SemType {

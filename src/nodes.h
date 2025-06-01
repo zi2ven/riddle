@@ -72,6 +72,7 @@ namespace riddle {
         std::vector<ArgDeclNode *> args;
         bool isGlobal = true;
         std::shared_ptr<SemFunction> obj = nullptr;
+        std::shared_ptr<SemClass> theClass;
 
         explicit FuncDeclNode(std::string name,
                               ExprNode *return_type,
@@ -150,6 +151,13 @@ namespace riddle {
 
     class CallNode final : public ExprNode {
     public:
+        enum class CallType {
+            Standard,
+            Self,
+        };
+
+        CallType call_type = CallType::Standard;
+
         std::vector<ExprNode *> args;
         ExprNode *value;
 
@@ -187,6 +195,7 @@ namespace riddle {
         std::string right;
         std::shared_ptr<SemClass> theClass = nullptr;
         std::shared_ptr<SemObject> childObj;
+        llvm::Value* parentValue = nullptr;
         MemberAccessNode(ExprNode *left, std::string right): left(left), right(std::move(right)) {}
 
         std::any accept(NodeVisitor *visitor) override;

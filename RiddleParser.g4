@@ -59,6 +59,11 @@ statement
     | ifStmt
     | whileStmt
     | forStmt
+    | annotation
+    ;
+
+annotation
+    : At id (LeftParen expression (Comma expression)* RightParen)? Semi? stmt=statement
     ;
 
 packStmt

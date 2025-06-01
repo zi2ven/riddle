@@ -89,12 +89,12 @@ Semi
     | { shouldImplicitSemi() }? Endl
     ;
 
-LeftParen : '(' ;
-RightParen : ')' ;
-LeftBracket : '[' ;
-RightBracket : ']' ;
-LeftCurly : '{' ;
-RightCurly : '}' ;
+LeftParen :     '(' ;
+RightParen :    ')' ;
+LeftBracket :   '[' ;
+RightBracket :  ']' ;
+LeftCurly :     '{' ;
+RightCurly :    '}' ;
 Colon:          ':';
 Comma:          ',';
 Equal:          '==';
@@ -106,6 +106,7 @@ Less:           '<';
 LessEqual:      '<=';
 LeftShift:      '<<';
 RightShift:     '>>';
+At:             '@';
 Add:            '+';
 Sub:            '-';
 Star:           '*';
