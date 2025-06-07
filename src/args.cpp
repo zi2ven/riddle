@@ -36,6 +36,13 @@ cl::opt<std::string> LinkScript(
     cl::cat(RiddleToolCategory)
 );
 
+cl::opt<bool> CompileOnly(
+    "c",
+    cl::desc("Only compile"),
+    cl::init(false),
+    cl::cat(RiddleToolCategory)
+);
+
 
 void parseArgs(const int argc, char **argv) {
     cl::HideUnrelatedOptions(RiddleToolCategory);
@@ -44,12 +51,5 @@ void parseArgs(const int argc, char **argv) {
     build_args.outFile = OutFileNames.getValue();
     build_args.triple = TargetTriple.getValue();
     build_args.linkerScript = LinkScript.getValue();
-
-    if (build_args.outFile.empty()) {
-#ifdef WIN32
-        build_args.outFile = "a.exe";
-#else
-        build_args.outFile = "a.out";
-#endif
-    }
+    build_args.compileOnly = CompileOnly;
 }

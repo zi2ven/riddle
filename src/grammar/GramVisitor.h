@@ -65,6 +65,8 @@ namespace riddle {
 
         std::any visitCompoundAssignOp(RiddleParser::CompoundAssignOpContext *context) override;
 
+        std::any visitIfStmt(RiddleParser::IfStmtContext *context) override;
+
         std::any visitForStmt(RiddleParser::ForStmtContext *context) override;
 
         std::any visitWhileStmt(RiddleParser::WhileStmtContext *context) override;

@@ -66,6 +66,8 @@ namespace riddle {
 
         std::any visitCompoundOp(CompoundOpNode *node) override;
 
+        std::any visitIf(IfNode *node) override;
+
         std::any visitFor(ForNode *node) override;
 
         std::any visitWhile(WhileNode *node) override;

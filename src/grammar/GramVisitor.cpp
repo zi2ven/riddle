@@ -308,6 +308,18 @@ std::any GramVisitor::visitCompoundAssignOp(RiddleParser::CompoundAssignOpContex
     return toSNPtr(node);
 }
 
+std::any GramVisitor::visitIfStmt(RiddleParser::IfStmtContext *context) {
+    ExprNode *cond = nodeVisit(context->cond);
+    ExprNode *then = nodeVisit(context->then);
+    ExprNode *else_ = nullptr;
+    if (context->else_) {
+        else_ = nodeVisit(context->else_);
+    }
+    const auto node = new IfNode(cond, then, else_);
+    program->nodes.emplace_back(node);
+    return toSNPtr(node);
+}
+
 std::any GramVisitor::visitForStmt(RiddleParser::ForStmtContext *context) {
     ExprNode *init = nullptr, *condition = nullptr, *increment = nullptr;
     if (context->init) {

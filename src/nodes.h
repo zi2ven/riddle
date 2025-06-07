@@ -276,6 +276,17 @@ namespace riddle {
         std::any accept(NodeVisitor *visitor) override;
     };
 
+    class IfNode final : public ExprNode {
+    public:
+        ExprNode *condition;
+        ExprNode *thenBody;
+        ExprNode *elseBody;
+
+        IfNode(ExprNode *condition, ExprNode *thenBody, ExprNode *elseBody): condition(condition), thenBody(thenBody), elseBody(elseBody) {}
+
+        std::any accept(NodeVisitor *visitor) override;
+    };
+
     class WhileNode final : public ExprNode {
     public:
         ExprNode *condition, *body;

@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
         riddle::Generate generate;
         generate.info->triple = llvm::Triple(build_args.triple);
         generate.visit(result);
-        generate.info->buildToFile(build_args.outFile);
+        generate.info->buildToFile();
     } catch (std::exception &e) {
         std::cerr << e.what();
         return 0;

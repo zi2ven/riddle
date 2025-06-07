@@ -136,15 +136,10 @@ namespace riddle {
     }
 
     std::any Generate::visitBlock(BlockNode *node) {
-        llvm::Value *value = nullptr;
         for (const auto i: node->body) {
-            const auto result = visit(i);
-            if (result.type() == typeid(nullptr)) {
-                continue;
-            }
-            value = std::any_cast<llvm::Value *>(result);
+            visit(i);
         }
-        return value;
+        return nullptr;
     }
 
     any Generate::visitVarDecl(VarDeclNode *node) {
@@ -298,8 +293,39 @@ namespace riddle {
             left = llvm::dyn_cast<llvm::LoadInst>(left)->getPointerOperand();
         }
         const auto value = std::any_cast<llvm::Value *>(visitBinaryOp(node));
-        llvm::Value* result = builder.CreateStore(value, left);
+        llvm::Value *result = builder.CreateStore(value, left);
         return result;
+    }
+
+    std::any Generate::visitIf(IfNode *node) {
+        const auto entryBB = builder.GetInsertBlock();
+        const auto func = entryBB->getParent();
+        llvm::BasicBlock *condBB = llvm::BasicBlock::Create(*context, "bb", func);
+        llvm::BasicBlock *thenBB = llvm::BasicBlock::Create(*context, "bb", func);
+        llvm::BasicBlock *elseBB = nullptr;
+        llvm::BasicBlock *exitBB = llvm::BasicBlock::Create(*context, "bb", func);
+        if (node->elseBody) {
+            elseBB = llvm::BasicBlock::Create(*context, "bb", func, exitBB);
+        }
+
+        builder.CreateBr(condBB);
+        builder.SetInsertPoint(condBB);
+        const auto cond = std::any_cast<llvm::Value *>(visit(node->condition));
+        builder.CreateCondBr(cond, thenBB, elseBB ? elseBB : exitBB);
+
+        builder.SetInsertPoint(thenBB);
+        visit(node->thenBody);
+        builder.CreateBr(exitBB);
+
+        if (elseBB) {
+            builder.SetInsertPoint(elseBB);
+            visit(node->elseBody);
+            builder.CreateBr(exitBB);
+        }
+
+        builder.SetInsertPoint(exitBB);
+
+        return {};
     }
 
     std::any Generate::visitWhile(WhileNode *node) {

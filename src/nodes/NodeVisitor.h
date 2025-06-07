@@ -46,6 +46,8 @@ namespace riddle {
 
         virtual std::any visitCompoundOp(CompoundOpNode* node);
 
+        virtual std::any visitIf(IfNode* node);
+
         virtual std::any visitFor(ForNode* node);
 
         virtual std::any visitWhile(WhileNode* node);

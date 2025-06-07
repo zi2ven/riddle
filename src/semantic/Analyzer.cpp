@@ -59,7 +59,7 @@ namespace riddle {
         for (const auto &i: node->body) {
             visit(i);
         }
-        return nilValue;
+        return{};
     }
 
     std::any Analyzer::visitFuncDecl(FuncDeclNode *node) {
@@ -95,11 +95,10 @@ namespace riddle {
     }
 
     std::any Analyzer::visitBlock(BlockNode *node) {
-        shared_ptr<SemObject> val;
         for (const auto &i: node->body) {
-            val = objVisit(i);
+            visit(i);
         }
-        return val;
+        return {};
     }
 
     std::any Analyzer::visitFloat(FloatNode *node) {
@@ -209,7 +208,7 @@ namespace riddle {
             resultValue = voidValue;
         }
         validateAndAdjustValue(returnType, resultValue, node->value);
-        return nilValue;
+        return {};
     }
 
     std::any Analyzer::visitCall(CallNode *node) {
@@ -330,13 +329,34 @@ namespace riddle {
             return make<SemValue>(op::getBuiltinBinary(left->type, right->type, node->op));
         }
         node->type = OpNode::Custom;
-        return nilValue;
+        return {};
     }
 
     std::any Analyzer::visitCompoundOp(CompoundOpNode *node) {
         node->op.pop_back();
         if (node->op.empty()) node->op = "=";
         return visitBinaryOp(node);
+    }
+
+    std::any Analyzer::visitIf(IfNode *node) {
+        const auto condition = objVisit(node->condition);
+        if (const auto value = std::dynamic_pointer_cast<SemValue>(condition)) {
+            if (value->type->name != "bool") {
+                throw TypeError("Condition must be a bool");
+            }
+        } else {
+            throw TypeError("Condition must be a bool");
+        }
+        symbols.joinScope();
+        visit(node->thenBody);
+        symbols.leaveScope();
+        if (node->elseBody) {
+            symbols.joinScope();
+            visit(node->elseBody);
+            symbols.leaveScope();
+        }
+
+        return {};
     }
 
     std::any Analyzer::visitFor(ForNode *node) {
@@ -355,7 +375,7 @@ namespace riddle {
         if (node->increment)visit(node->increment);
         visit(node->body);
         symbols.leaveScope();
-        return nilValue;
+        return {};
     }
 
     std::any Analyzer::visitWhile(WhileNode *node) {
@@ -372,6 +392,6 @@ namespace riddle {
         }
         visit(node->body);
         symbols.leaveScope();
-        return nilValue;
+        return {};
     }
 } // riddle

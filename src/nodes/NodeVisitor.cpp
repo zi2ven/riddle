@@ -116,6 +116,13 @@ std::any NodeVisitor::visitCompoundOp(CompoundOpNode *node) {
     return {};
 }
 
+std::any NodeVisitor::visitIf(IfNode *node) {
+    visit(node->condition);
+    visit(node->thenBody);
+    visit(node->elseBody);
+    return {};
+}
+
 std::any NodeVisitor::visitFor(ForNode *node) {
     if (node->init)visit(node->init);
     if (node->condition)visit(node->condition);

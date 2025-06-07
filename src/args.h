@@ -7,6 +7,7 @@ struct BuildArgs {
     std::string outFile;
     std::string triple;
     std::string linkerScript;
+    bool compileOnly{};
 };
 
 inline BuildArgs build_args;

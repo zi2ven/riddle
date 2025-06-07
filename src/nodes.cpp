@@ -75,6 +75,10 @@ std::any CompoundOpNode::accept(NodeVisitor *visitor) {
     return visitor->visitCompoundOp(this);
 }
 
+std::any IfNode::accept(NodeVisitor *visitor) {
+    return visitor->visitIf(this);
+}
+
 std::any WhileNode::accept(NodeVisitor *visitor) {
     return visitor->visitWhile(this);
 }

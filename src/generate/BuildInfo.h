@@ -11,6 +11,6 @@ namespace riddle {
 
         explicit BuildInfo(const std::string &tripleStr = llvm::sys::getDefaultTargetTriple()): triple(llvm::Triple(tripleStr)) {}
 
-        void buildToFile(const std::string &fileName) const;
+        void buildToFile() const;
     };
 } // riddle
