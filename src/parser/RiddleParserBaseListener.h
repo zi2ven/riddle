@@ -118,6 +118,9 @@ public:
   virtual void enterDeclArgs(RiddleParser::DeclArgsContext * /*ctx*/) override { }
   virtual void exitDeclArgs(RiddleParser::DeclArgsContext * /*ctx*/) override { }
 
+  virtual void enterModifierList(RiddleParser::ModifierListContext * /*ctx*/) override { }
+  virtual void exitModifierList(RiddleParser::ModifierListContext * /*ctx*/) override { }
+
   virtual void enterModifier(RiddleParser::ModifierContext * /*ctx*/) override { }
   virtual void exitModifier(RiddleParser::ModifierContext * /*ctx*/) override { }
 

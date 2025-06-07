@@ -6,7 +6,6 @@
 #include "nodes.h"
 #include "config.h"
 #include "OperatorImpl.h"
-#include "semantic/Operators.h"
 
 using namespace std;
 
@@ -209,7 +208,7 @@ namespace riddle {
             if (llvm::isa<llvm::LoadInst>(self)) {
                 self = llvm::dyn_cast<llvm::LoadInst>(self)->getPointerOperand();
             }
-            args.insert(args.begin(),self );
+            args.insert(args.begin(), self);
         }
         llvm::Value *result = builder.CreateCall(value, args);
         return result;
@@ -291,6 +290,16 @@ namespace riddle {
             default: break;
         }
         return nullptr;
+    }
+
+    std::any Generate::visitCompoundOp(CompoundOpNode *node) {
+        auto left = std::any_cast<llvm::Value *>(visit(node->left));
+        if (llvm::isa<llvm::LoadInst>(left)) {
+            left = llvm::dyn_cast<llvm::LoadInst>(left)->getPointerOperand();
+        }
+        const auto value = std::any_cast<llvm::Value *>(visitBinaryOp(node));
+        llvm::Value* result = builder.CreateStore(value, left);
+        return result;
     }
 
     std::any Generate::visitWhile(WhileNode *node) {

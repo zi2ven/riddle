@@ -116,6 +116,9 @@ public:
   virtual void enterDeclArgs(RiddleParser::DeclArgsContext *ctx) = 0;
   virtual void exitDeclArgs(RiddleParser::DeclArgsContext *ctx) = 0;
 
+  virtual void enterModifierList(RiddleParser::ModifierListContext *ctx) = 0;
+  virtual void exitModifierList(RiddleParser::ModifierListContext *ctx) = 0;
+
   virtual void enterModifier(RiddleParser::ModifierContext *ctx) = 0;
   virtual void exitModifier(RiddleParser::ModifierContext *ctx) = 0;
 

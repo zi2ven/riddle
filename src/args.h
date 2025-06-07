@@ -6,6 +6,7 @@ struct BuildArgs {
     std::vector<std::string> inputFiles;
     std::string outFile;
     std::string triple;
+    std::string linkerScript;
 };
 
 inline BuildArgs build_args;

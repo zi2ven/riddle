@@ -71,7 +71,7 @@ namespace riddle {
 
         symbols.joinScope();
         parent.push(obj);
-        if (node->theClass) {
+        if (node->theClass && !node->modifier.get(Modifier::Static)) {
             const auto class_obj = new ObjectNode(node->theClass->name);
             program->nodes.emplace_back(class_obj);
             const auto point = new PointerToNode(class_obj);
@@ -80,6 +80,7 @@ namespace riddle {
             program->nodes.emplace_back(param);
             node->args.insert(node->args.begin(), param);
         }
+
         for (const auto &i: node->args) {
             const auto param = dynamic_pointer_cast<SemVariable>(objVisit(i));
             obj->args.emplace_back(param);
@@ -235,9 +236,14 @@ namespace riddle {
 
     std::any Analyzer::visitMemberAccess(MemberAccessNode *node) {
         const auto obj = objVisit(node->left);
-        const auto theClass = std::dynamic_pointer_cast<StructTypeInfo>(std::dynamic_pointer_cast<SemValue>(obj)->type);
+        const auto type = std::dynamic_pointer_cast<SemValue>(obj)->type;
+        auto theClass = std::dynamic_pointer_cast<StructTypeInfo>(type);
         if (theClass == nullptr) {
-            throw runtime_error("Left is not a class");
+            if (const auto ptr = std::dynamic_pointer_cast<PointerTypeInfo>(type)) {
+                theClass = std::dynamic_pointer_cast<StructTypeInfo>(ptr->pointe);
+            } else {
+                throw runtime_error("Left is not a class");
+            }
         }
         node->theClass = theClass->theClass.lock();
         if (node->theClass->hasMember(node->right)) {
@@ -272,6 +278,14 @@ namespace riddle {
             }
         }
 
+        // create typeinfo
+        const auto structType = obj->getStructType();
+        structType->types.resize(index);
+        for (const auto &[idx, var]: obj->members | views::values) {
+            structType->types[idx] = var->type;
+        }
+        structType->theClass = obj;
+
         // method parser
         for (const auto &i: node->methods) {
             i->theClass = obj;
@@ -282,14 +296,6 @@ namespace riddle {
                 throw runtime_error("Result Not a Function");
             }
         }
-
-        // create typeinfo
-        const auto structType = obj->getStructType();
-        structType->types.resize(index);
-        for (const auto &[idx, var]: obj->members | views::values) {
-            structType->types[idx] = var->type;
-        }
-        structType->theClass = obj;
 
         return toSNPtr(obj);
     }
@@ -325,6 +331,12 @@ namespace riddle {
         }
         node->type = OpNode::Custom;
         return nilValue;
+    }
+
+    std::any Analyzer::visitCompoundOp(CompoundOpNode *node) {
+        node->op.pop_back();
+        if (node->op.empty()) node->op = "=";
+        return visitBinaryOp(node);
     }
 
     std::any Analyzer::visitFor(ForNode *node) {

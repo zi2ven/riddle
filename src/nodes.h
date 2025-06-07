@@ -1,5 +1,6 @@
 #pragma once
 #include <any>
+#include <bitset>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -64,6 +65,23 @@ namespace riddle {
         std::any accept(NodeVisitor *visitor) override;
     };
 
+    class Modifier {
+        std::bitset<32> bs;
+
+    public:
+        enum ModifierType : char {
+            Static
+        };
+
+        void set(const ModifierType type, const bool flag) {
+            bs[type] = flag;
+        }
+
+        bool get(const ModifierType type) {
+            return bs[type];
+        }
+    };
+
     class FuncDeclNode final : public ExprNode {
     public:
         std::string name;
@@ -73,6 +91,7 @@ namespace riddle {
         bool isGlobal = true;
         std::shared_ptr<SemFunction> obj = nullptr;
         std::shared_ptr<SemClass> theClass;
+        Modifier modifier;
 
         explicit FuncDeclNode(std::string name,
                               ExprNode *return_type,
@@ -195,7 +214,7 @@ namespace riddle {
         std::string right;
         std::shared_ptr<SemClass> theClass = nullptr;
         std::shared_ptr<SemObject> childObj;
-        llvm::Value* parentValue = nullptr;
+        llvm::Value *parentValue = nullptr;
         MemberAccessNode(ExprNode *left, std::string right): left(left), right(std::move(right)) {}
 
         std::any accept(NodeVisitor *visitor) override;
@@ -233,7 +252,7 @@ namespace riddle {
         std::any accept(NodeVisitor *visitor) override;
     };
 
-    class BinaryOpNode final : public OpNode {
+    class BinaryOpNode : public OpNode {
     public:
         ExprNode *left, *right;
         std::shared_ptr<TypeInfo> leftType, rightType;
@@ -244,6 +263,15 @@ namespace riddle {
                      ExprNode *right,
                      std::string op): left(left), right(right),
                                       op(std::move(op)) {}
+
+        std::any accept(NodeVisitor *visitor) override;
+    };
+
+    class CompoundOpNode final : public BinaryOpNode {
+    public:
+        CompoundOpNode(ExprNode *left,
+                       ExprNode *right,
+                       const std::string &op): BinaryOpNode(left, right, op) {}
 
         std::any accept(NodeVisitor *visitor) override;
     };

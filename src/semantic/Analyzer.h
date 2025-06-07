@@ -64,6 +64,8 @@ namespace riddle {
 
         std::any visitBinaryOp(BinaryOpNode *node) override;
 
+        std::any visitCompoundOp(CompoundOpNode *node) override;
+
         std::any visitFor(ForNode *node) override;
 
         std::any visitWhile(WhileNode *node) override;

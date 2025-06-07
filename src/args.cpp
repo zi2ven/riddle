@@ -29,6 +29,13 @@ cl::opt<std::string> TargetTriple(
     cl::cat(RiddleToolCategory)
 );
 
+cl::opt<std::string> LinkScript(
+    "T",
+    cl::desc("Linker script"),
+    cl::init(""),
+    cl::cat(RiddleToolCategory)
+);
+
 
 void parseArgs(const int argc, char **argv) {
     cl::HideUnrelatedOptions(RiddleToolCategory);
@@ -36,6 +43,7 @@ void parseArgs(const int argc, char **argv) {
     build_args.inputFiles = InputFileNames;
     build_args.outFile = OutFileNames.getValue();
     build_args.triple = TargetTriple.getValue();
+    build_args.linkerScript = LinkScript.getValue();
 
     if (build_args.outFile.empty()) {
 #ifdef WIN32

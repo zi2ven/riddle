@@ -151,6 +151,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitModifierList(RiddleParser::ModifierListContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitModifier(RiddleParser::ModifierContext *ctx) override {
     return visitChildren(ctx);
   }

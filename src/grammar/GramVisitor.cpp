@@ -3,6 +3,7 @@
 #include <stacktrace>
 
 #include "nodes.h"
+#include "support/Trie.h"
 
 using namespace riddle;
 using namespace std;
@@ -78,6 +79,21 @@ any GramVisitor::visitProgram(RiddleParser::ProgramContext *context) {
     return toSNPtr(program);
 }
 
+std::any GramVisitor::visitModifierList(RiddleParser::ModifierListContext *context) {
+    static Trie<Modifier::ModifierType> trie = {
+        {"static", Modifier::Static},
+    };
+    Modifier modifier;
+    for (const auto i: context->children) {
+        const auto type = trie.get(i->getText());
+        const auto value = type.or_else([context]-> std::optional<Modifier::ModifierType> {
+            throw runtime_error("Unsupported modifier: " + context->getText());
+        }).value();
+        modifier.set(value, true);
+    }
+    return modifier;
+}
+
 any GramVisitor::visitFuncDecl(RiddleParser::FuncDeclContext *context) {
     const auto name = context->name->getText();
     ExprNode *returnType = nullptr;
@@ -92,6 +108,7 @@ any GramVisitor::visitFuncDecl(RiddleParser::FuncDeclContext *context) {
     const auto args = any_cast<vector<ArgDeclNode *>>(visitDeclArgs(context->declArgs()));
 
     const auto node = new FuncDeclNode(name, returnType, args, body);
+    node->modifier = any_cast<Modifier>(visit(context->modifierList()));
     program->nodes.emplace_back(node);
     return toSNPtr(node);
 }
@@ -278,6 +295,15 @@ std::any GramVisitor::visitBitXor(RiddleParser::BitXorContext *context) {
 std::any GramVisitor::visitUnaryOp(RiddleParser::UnaryOpContext *context) {
     const auto value = nodeVisit(context->value);
     const auto node = new UnaryOpNode(value, context->op->getText());
+    program->nodes.emplace_back(node);
+    return toSNPtr(node);
+}
+
+std::any GramVisitor::visitCompoundAssignOp(RiddleParser::CompoundAssignOpContext *context) {
+    const auto left = nodeVisit(context->left);
+    const auto right = nodeVisit(context->right);
+    const auto op = context->op->getText();
+    const auto node = new CompoundOpNode(left, right, op);
     program->nodes.emplace_back(node);
     return toSNPtr(node);
 }

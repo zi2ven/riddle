@@ -87,6 +87,8 @@ public:
 
     virtual std::any visitDeclArgs(RiddleParser::DeclArgsContext *context) = 0;
 
+    virtual std::any visitModifierList(RiddleParser::ModifierListContext *context) = 0;
+
     virtual std::any visitModifier(RiddleParser::ModifierContext *context) = 0;
 
     virtual std::any visitFuncDecl(RiddleParser::FuncDeclContext *context) = 0;

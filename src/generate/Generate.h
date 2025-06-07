@@ -1,9 +1,9 @@
 #pragma once
+#include <llvm/IR/IRBuilder.h>
+#include <llvm/IR/Module.h>
 #include "BuildInfo.h"
 #include "TypeInfo.h"
 #include "nodes/NodeVisitor.h"
-#include "llvm/IR/Module.h"
-#include "llvm/IR/IRBuilder.h"
 
 namespace riddle {
     class Generate final : public NodeVisitor {
@@ -48,6 +48,8 @@ namespace riddle {
         std::any visitMemberAccess(MemberAccessNode *node) override;
 
         std::any visitBinaryOp(BinaryOpNode *node) override;
+
+        std::any visitCompoundOp(CompoundOpNode *node) override;
 
         std::any visitWhile(WhileNode *node) override;
 

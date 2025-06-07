@@ -110,6 +110,12 @@ std::any NodeVisitor::visitUnaryOp(UnaryOpNode *node) {
     return {};
 }
 
+std::any NodeVisitor::visitCompoundOp(CompoundOpNode *node) {
+    visit(node->left);
+    visit(node->right);
+    return {};
+}
+
 std::any NodeVisitor::visitFor(ForNode *node) {
     if (node->init)visit(node->init);
     if (node->condition)visit(node->condition);

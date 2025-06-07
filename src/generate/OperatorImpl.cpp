@@ -47,7 +47,7 @@ namespace {
             return builder.CreateXor(lhs, rhs);
         });
         opMap.emplace(std::tuple{typeName, typeName, "="}, [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
-            return builder.CreateStore(rhs, lhs);
+            return rhs;
         });
         opMap.emplace(std::tuple{typeName, typeName, "=="}, [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
             return builder.CreateICmpEQ(lhs, rhs);

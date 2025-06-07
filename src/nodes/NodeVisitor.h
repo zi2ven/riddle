@@ -1,30 +1,9 @@
 #pragma once
 #include <any>
-#include <memory>
 
 #include "nodes.h"
 
 namespace riddle {
-    class MemberAccessNode;
-}
-
-namespace riddle {
-    class ClassDeclNode;
-}
-
-namespace riddle {
-    class CallNode;
-    class ReturnNode;
-    class ArgDeclNode;
-    class VarDeclNode;
-    class ObjectNode;
-    class ExprNode;
-    class ProgramNode;
-    class BlockNode;
-    class FuncDeclNode;
-    class IntegerNode;
-    class FloatNode;
-
     class NodeVisitor {
     public:
         virtual ~NodeVisitor() = default;
@@ -64,6 +43,8 @@ namespace riddle {
         virtual std::any visitBinaryOp(BinaryOpNode *node);
 
         virtual std::any visitUnaryOp(UnaryOpNode *node);
+
+        virtual std::any visitCompoundOp(CompoundOpNode* node);
 
         virtual std::any visitFor(ForNode* node);
 

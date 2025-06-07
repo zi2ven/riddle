@@ -90,6 +90,10 @@ declArgs returns [bool isVar = false]
     | Dot Dot Dot {$isVar=true;}
     ;
 
+modifierList
+    : modifier*
+    ;
+
 modifier
     : Static
     | Public
@@ -100,8 +104,8 @@ modifier
     ;
 
 funcDecl
-    : (modifier)* Func name=id LeftParen declArgs RightParen (Sub Greater return_type=expression)? body=block
-    | (modifier)* Func name=id LeftParen declArgs RightParen Sub Greater return_type=expression Semi
+    : modifierList Func name=id LeftParen declArgs RightParen (Sub Greater return_type=expression)? body=block
+    | modifierList Func name=id LeftParen declArgs RightParen Sub Greater return_type=expression Semi
     ;
 
 ifStmt

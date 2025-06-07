@@ -33,7 +33,7 @@ llvm_map_components_to_libnames(llvm_libs ${llvm_components})
 
 target_link_libraries(riddlec PRIVATE
         ${llvm_libs}
-        antlr4_shared
+        antlr4_static
         lldCommon
         ClangDriver       # 驱动模块 (Driver, ToolChain)
         ClangBasic        # 基础库 (DiagnosticIDs, DiagnosticsEngine)

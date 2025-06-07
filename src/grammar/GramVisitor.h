@@ -15,6 +15,8 @@ namespace riddle {
 
         std::any visitProgram(RiddleParser::ProgramContext *context) override;
 
+        std::any visitModifierList(RiddleParser::ModifierListContext *context) override;
+
         std::any visitFuncDecl(RiddleParser::FuncDeclContext *context) override;
 
         std::any visitBlock(RiddleParser::BlockContext *context) override;
@@ -60,6 +62,8 @@ namespace riddle {
         std::any visitBitXor(RiddleParser::BitXorContext *context) override;
 
         std::any visitUnaryOp(RiddleParser::UnaryOpContext *context) override;
+
+        std::any visitCompoundAssignOp(RiddleParser::CompoundAssignOpContext *context) override;
 
         std::any visitForStmt(RiddleParser::ForStmtContext *context) override;
 

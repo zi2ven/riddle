@@ -34,9 +34,9 @@ public:
   enum {
     RuleProgram = 0, RuleExpressionEnd = 1, RuleExpression = 2, RuleStatement = 3, 
     RuleAnnotation = 4, RulePackStmt = 5, RuleVarDecl = 6, RuleBlock = 7, 
-    RuleInitList = 8, RuleDeclArgs = 9, RuleModifier = 10, RuleFuncDecl = 11, 
-    RuleIfStmt = 12, RuleWhileStmt = 13, RuleForStmt = 14, RuleReturnStmt = 15, 
-    RuleClassDecl = 16, RuleId = 17
+    RuleInitList = 8, RuleDeclArgs = 9, RuleModifierList = 10, RuleModifier = 11, 
+    RuleFuncDecl = 12, RuleIfStmt = 13, RuleWhileStmt = 14, RuleForStmt = 15, 
+    RuleReturnStmt = 16, RuleClassDecl = 17, RuleId = 18
   };
 
   explicit RiddleParser(antlr4::TokenStream *input);
@@ -66,6 +66,7 @@ public:
   class BlockContext;
   class InitListContext;
   class DeclArgsContext;
+  class ModifierListContext;
   class ModifierContext;
   class FuncDeclContext;
   class IfStmtContext;
@@ -658,6 +659,22 @@ public:
 
   DeclArgsContext* declArgs();
 
+  class  ModifierListContext : public antlr4::ParserRuleContext {
+  public:
+    ModifierListContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    std::vector<ModifierContext *> modifier();
+    ModifierContext* modifier(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  ModifierListContext* modifierList();
+
   class  ModifierContext : public antlr4::ParserRuleContext {
   public:
     ModifierContext(antlr4::ParserRuleContext *parent, size_t invokingState);
@@ -686,14 +703,13 @@ public:
     RiddleParser::BlockContext *body = nullptr;
     FuncDeclContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
+    ModifierListContext *modifierList();
     antlr4::tree::TerminalNode *Func();
     antlr4::tree::TerminalNode *LeftParen();
     DeclArgsContext *declArgs();
     antlr4::tree::TerminalNode *RightParen();
     IdContext *id();
     BlockContext *block();
-    std::vector<ModifierContext *> modifier();
-    ModifierContext* modifier(size_t i);
     antlr4::tree::TerminalNode *Sub();
     antlr4::tree::TerminalNode *Greater();
     ExpressionContext *expression();
