@@ -20,9 +20,11 @@ void init() {
 
 
 int main(int argc, char **argv) {
-    parseArgs(argc, argv);
+    if (!riddle::parseArgs(argc, argv)) {
+        return -1;
+    }
 
-    std::ifstream in(build_args.inputFiles[0]);
+    std::ifstream in(riddle::build_args.inputFiles[0]);
 
     std::stringstream buffer;
     buffer << in.rdbuf();
@@ -43,7 +45,7 @@ int main(int argc, char **argv) {
 
         init();
         riddle::Generate generate;
-        generate.info->triple = llvm::Triple(build_args.triple);
+        generate.info->triple = llvm::Triple(riddle::build_args.triple);
         generate.visit(result);
         generate.info->buildToFile();
     } catch (std::exception &e) {

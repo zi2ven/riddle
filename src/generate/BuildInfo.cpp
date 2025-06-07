@@ -51,22 +51,44 @@ namespace riddle {
         clang::driver::Driver Driver(ClangPath, triple.str(), *Diags);
 
         // 构建编译参数
-        std::vector<std::string> Args = {ClangPath, "-x", "ir", fileName + ".ll"};
-        if (!build_args.outFile.empty()) {
-            Args.emplace_back("-o");
-            Args.emplace_back(build_args.outFile);
+        std::vector<std::string> args = {ClangPath, "-x", "ir", fileName + ".ll"};
+
+        auto addArgIf = [&args](bool condition, const std::string &flag, const std::string &value = "") {
+            if (condition) {
+                args.emplace_back(flag);
+                if (!value.empty()) {
+                    args.emplace_back(value);
+                }
+            }
+        };
+
+        // 添加输出文件
+        addArgIf(!build_args.outFile.empty(), "-o", build_args.outFile);
+
+        // 添加链接脚本
+        addArgIf(!build_args.linkerScript.empty(), "-T", build_args.linkerScript);
+
+        // 添加编译选项
+        addArgIf(build_args.compileOnly, "-c");
+        addArgIf(build_args.noRedZone, "-mno-red-zone");
+        addArgIf(build_args.no80387, "-mno-80387");
+        addArgIf(build_args.noMMX, "-mno-mmx");
+        addArgIf(build_args.noSSE, "-mno-sse");
+        addArgIf(build_args.noSSE2, "-mno-sse2");
+
+        // 添加目标位数
+        if (build_args.outBit == 32) {
+            args.emplace_back("-m32");
+        } else if (build_args.outBit == 64) {
+            args.emplace_back("-m64");
+        } else if (build_args.outBit != 0) {
+            throw std::runtime_error("Invalid bit size");
         }
-        if (!build_args.linkerScript.empty()) {
-            Args.emplace_back("-T");
-            Args.emplace_back(build_args.linkerScript);
-        }
-        if (build_args.compileOnly) {
-            Args.emplace_back("-c");
-        }
+
 
         // 转换为 C 风格字符串数组
         std::vector<const char *> argsText;
-        for (const auto &arg : Args) {
+        for (const auto &arg: args) {
             argsText.push_back(arg.c_str());
         }
         argsText.push_back(nullptr);

@@ -3,7 +3,7 @@
 #include <stacktrace>
 
 #include "nodes.h"
-#include "support/Trie.h"
+#include "support/Trie.hpp"
 
 using namespace riddle;
 using namespace std;

@@ -1,15 +1,24 @@
 #pragma once
 #include <string>
 #include <vector>
+#include "support/riddledef.hpp"
 
-struct BuildArgs {
-    std::vector<std::string> inputFiles;
-    std::string outFile;
-    std::string triple;
-    std::string linkerScript;
-    bool compileOnly{};
-};
+namespace riddle {
+    struct BuildArgs {
+        std::vector<std::string> inputFiles;
+        std::string outFile;
+        std::string triple;
+        std::string linkerScript;
+        byte outBit;
+        bool compileOnly{};
+        bool noRedZone;
+        bool no80387;
+        bool noMMX;
+        bool noSSE;
+        bool noSSE2;
+    };
 
-inline BuildArgs build_args;
+    inline BuildArgs build_args;
 
-void parseArgs(int argc, char **argv);
+    bool parseArgs(int argc, char **argv);
+}

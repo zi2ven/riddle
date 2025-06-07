@@ -1,1 +1,1 @@
-#include "support/Trie.h"
+#include "support/Trie.hpp"
