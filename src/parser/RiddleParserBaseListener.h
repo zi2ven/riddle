@@ -1,4 +1,7 @@
 
+#include "RiddleLexer.h"
+
+
 // Generated from D:/Code/riddle/RiddleParser.g4 by ANTLR 4.13.2
 
 #pragma once
@@ -18,6 +21,9 @@ public:
 
   virtual void enterProgram(RiddleParser::ProgramContext * /*ctx*/) override { }
   virtual void exitProgram(RiddleParser::ProgramContext * /*ctx*/) override { }
+
+  virtual void enterTerminator(RiddleParser::TerminatorContext * /*ctx*/) override { }
+  virtual void exitTerminator(RiddleParser::TerminatorContext * /*ctx*/) override { }
 
   virtual void enterExpressionEnd(RiddleParser::ExpressionEndContext * /*ctx*/) override { }
   virtual void exitExpressionEnd(RiddleParser::ExpressionEndContext * /*ctx*/) override { }
@@ -99,6 +105,12 @@ public:
 
   virtual void enterStatement(RiddleParser::StatementContext * /*ctx*/) override { }
   virtual void exitStatement(RiddleParser::StatementContext * /*ctx*/) override { }
+
+  virtual void enterEnumValue(RiddleParser::EnumValueContext * /*ctx*/) override { }
+  virtual void exitEnumValue(RiddleParser::EnumValueContext * /*ctx*/) override { }
+
+  virtual void enterEnumStmt(RiddleParser::EnumStmtContext * /*ctx*/) override { }
+  virtual void exitEnumStmt(RiddleParser::EnumStmtContext * /*ctx*/) override { }
 
   virtual void enterAnnotation(RiddleParser::AnnotationContext * /*ctx*/) override { }
   virtual void exitAnnotation(RiddleParser::AnnotationContext * /*ctx*/) override { }

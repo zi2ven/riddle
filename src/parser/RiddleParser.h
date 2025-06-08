@@ -1,4 +1,7 @@
 
+#include "RiddleLexer.h"
+
+
 // Generated from D:/Code/riddle/RiddleParser.g4 by ANTLR 4.13.2
 
 #pragma once
@@ -16,27 +19,28 @@ public:
     Else = 8, Func = 9, Return = 10, Import = 11, Package = 12, Class = 13, 
     True = 14, False = 15, Null = 16, Try = 17, Catch = 18, Extern = 19, 
     Override = 20, Static = 21, Const = 22, Public = 23, Protected = 24, 
-    Private = 25, Virtual = 26, Operator = 27, Semi = 28, LeftParen = 29, 
-    RightParen = 30, LeftBracket = 31, RightBracket = 32, LeftCurly = 33, 
-    RightCurly = 34, Colon = 35, Comma = 36, Equal = 37, NotEqual = 38, 
-    Assign = 39, Greater = 40, GreaterEqual = 41, Less = 42, LessEqual = 43, 
-    LeftShift = 44, RightShift = 45, At = 46, Add = 47, Sub = 48, Star = 49, 
-    Div = 50, Mod = 51, Not = 52, And = 53, AndAnd = 54, Or = 55, OrOr = 56, 
-    Xor = 57, Dot = 58, DoubleQuotes = 59, Quotes = 60, Tilde = 61, AddAssign = 62, 
-    SubAssign = 63, MulAssign = 64, DivAssign = 65, ModAssign = 66, LeftShiftAssign = 67, 
-    RightShiftAssign = 68, AndAssign = 69, OrAssign = 70, XorAssign = 71, 
-    Endl = 72, Identifier = 73, Hexadecimal = 74, Decimal = 75, Octal = 76, 
-    Binary = 77, Float = 78, IntegerSequence = 79, HEX_DIGIT = 80, OCTAL_DIGIT = 81, 
-    BINARY_DIGIT = 82, DIGIT = 83, STRING = 84, CHAR = 85, LINE_COMMENT = 86, 
-    BLOCK_COMMENT = 87, WHITESPACE = 88
+    Private = 25, Virtual = 26, Operator = 27, Enum = 28, Semi = 29, Endl = 30, 
+    LeftParen = 31, RightParen = 32, LeftBracket = 33, RightBracket = 34, 
+    LeftCurly = 35, RightCurly = 36, Colon = 37, Comma = 38, Equal = 39, 
+    NotEqual = 40, Assign = 41, Greater = 42, GreaterEqual = 43, Less = 44, 
+    LessEqual = 45, LeftShift = 46, RightShift = 47, At = 48, Add = 49, 
+    Sub = 50, Star = 51, Div = 52, Mod = 53, Not = 54, And = 55, AndAnd = 56, 
+    Or = 57, OrOr = 58, Xor = 59, Dot = 60, DoubleQuotes = 61, Quotes = 62, 
+    Tilde = 63, AddAssign = 64, SubAssign = 65, MulAssign = 66, DivAssign = 67, 
+    ModAssign = 68, LeftShiftAssign = 69, RightShiftAssign = 70, AndAssign = 71, 
+    OrAssign = 72, XorAssign = 73, Identifier = 74, Hexadecimal = 75, Decimal = 76, 
+    Octal = 77, Binary = 78, Float = 79, IntegerSequence = 80, HEX_DIGIT = 81, 
+    OCTAL_DIGIT = 82, BINARY_DIGIT = 83, DIGIT = 84, STRING = 85, CHAR = 86, 
+    LINE_COMMENT = 87, BLOCK_COMMENT = 88, WHITESPACE = 89
   };
 
   enum {
-    RuleProgram = 0, RuleExpressionEnd = 1, RuleExpression = 2, RuleStatement = 3, 
-    RuleAnnotation = 4, RulePackStmt = 5, RuleVarDecl = 6, RuleBlock = 7, 
-    RuleInitList = 8, RuleDeclArgs = 9, RuleModifierList = 10, RuleModifier = 11, 
-    RuleFuncDecl = 12, RuleIfStmt = 13, RuleWhileStmt = 14, RuleForStmt = 15, 
-    RuleReturnStmt = 16, RuleClassDecl = 17, RuleId = 18
+    RuleProgram = 0, RuleTerminator = 1, RuleExpressionEnd = 2, RuleExpression = 3, 
+    RuleStatement = 4, RuleEnumValue = 5, RuleEnumStmt = 6, RuleAnnotation = 7, 
+    RulePackStmt = 8, RuleVarDecl = 9, RuleBlock = 10, RuleInitList = 11, 
+    RuleDeclArgs = 12, RuleModifierList = 13, RuleModifier = 14, RuleFuncDecl = 15, 
+    RuleIfStmt = 16, RuleWhileStmt = 17, RuleForStmt = 18, RuleReturnStmt = 19, 
+    RuleClassDecl = 20, RuleId = 21
   };
 
   explicit RiddleParser(antlr4::TokenStream *input);
@@ -56,10 +60,29 @@ public:
   antlr4::atn::SerializedATNView getSerializedATN() const override;
 
 
+      /** 只看隐藏信道，判断当前 token 左边最近一次出现的是 Endl 还是 EOF */
+      bool lineTerminatorAhead() {
+          ssize_t i = 1;  // 从当前token的前一个开始
+          auto* tokens = dynamic_cast<antlr4::BufferedTokenStream*>(_input);
+
+          // 获取所有隐藏信道token
+          std::vector<antlr4::Token*> hidden = tokens->getHiddenTokensToLeft(_input->index());
+          for (auto idx : hidden) {
+              if (idx->getType() == RiddleLexer::Endl) {
+                return true;
+              }
+          }
+          return false;
+      }
+
+
   class ProgramContext;
+  class TerminatorContext;
   class ExpressionEndContext;
   class ExpressionContext;
   class StatementContext;
+  class EnumValueContext;
+  class EnumStmtContext;
   class AnnotationContext;
   class PackStmtContext;
   class VarDeclContext;
@@ -80,6 +103,7 @@ public:
   public:
     ProgramContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *EOF();
     std::vector<ExpressionEndContext *> expressionEnd();
     ExpressionEndContext* expressionEnd(size_t i);
 
@@ -92,12 +116,29 @@ public:
 
   ProgramContext* program();
 
+  class  TerminatorContext : public antlr4::ParserRuleContext {
+  public:
+    TerminatorContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *Semi();
+    antlr4::tree::TerminalNode *EOF();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  TerminatorContext* terminator();
+
   class  ExpressionEndContext : public antlr4::ParserRuleContext {
   public:
     ExpressionEndContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     ExpressionContext *expression();
-    antlr4::tree::TerminalNode *Semi();
+    TerminatorContext *terminator();
+    antlr4::tree::TerminalNode *Endl();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -515,6 +556,7 @@ public:
     WhileStmtContext *whileStmt();
     ForStmtContext *forStmt();
     AnnotationContext *annotation();
+    EnumStmtContext *enumStmt();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -524,6 +566,51 @@ public:
   };
 
   StatementContext* statement();
+
+  class  EnumValueContext : public antlr4::ParserRuleContext {
+  public:
+    bool hasType = true;
+    EnumValueContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    IdContext *id();
+    antlr4::tree::TerminalNode *LeftParen();
+    antlr4::tree::TerminalNode *RightParen();
+    std::vector<ExpressionContext *> expression();
+    ExpressionContext* expression(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> Comma();
+    antlr4::tree::TerminalNode* Comma(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  EnumValueContext* enumValue();
+
+  class  EnumStmtContext : public antlr4::ParserRuleContext {
+  public:
+    RiddleParser::IdContext *name = nullptr;
+    EnumStmtContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *Enum();
+    antlr4::tree::TerminalNode *LeftCurly();
+    antlr4::tree::TerminalNode *RightCurly();
+    IdContext *id();
+    std::vector<EnumValueContext *> enumValue();
+    EnumValueContext* enumValue(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> Comma();
+    antlr4::tree::TerminalNode* Comma(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  EnumStmtContext* enumStmt();
 
   class  AnnotationContext : public antlr4::ParserRuleContext {
   public:
@@ -849,6 +936,7 @@ public:
 
   bool sempred(antlr4::RuleContext *_localctx, size_t ruleIndex, size_t predicateIndex) override;
 
+  bool terminatorSempred(TerminatorContext *_localctx, size_t predicateIndex);
   bool expressionSempred(ExpressionContext *_localctx, size_t predicateIndex);
 
   // By default the static state used to implement the parser is lazily initialized during the first

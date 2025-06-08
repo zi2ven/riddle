@@ -344,3 +344,29 @@ std::any GramVisitor::visitWhileStmt(RiddleParser::WhileStmtContext *context) {
     program->nodes.emplace_back(node);
     return toSNPtr(node);
 }
+
+std::any GramVisitor::visitEnumValue(RiddleParser::EnumValueContext *context) {
+    const std::string name = context->getText();
+    if (context->hasType) {
+        return EnumValue{name};
+    }
+
+    vector<ExprNode *> types;
+    for (const auto i: context->children) {
+        if (antlrcpp::is<RiddleParser::ExpressionContext *>(i)) {
+            types.emplace_back(nodeVisit(i));
+        }
+    }
+    return EnumValue{name, types};
+}
+
+std::any GramVisitor::visitEnumStmt(RiddleParser::EnumStmtContext *context) {
+    const auto node = new EnumNode(context->name->getText(), {});
+    for (const auto i:context->children) {
+        if (antlrcpp::is<RiddleParser::EnumValueContext*>(i)) {
+            const auto value = any_cast<EnumValue>(i);
+            node->values.emplace_back(value);
+        }
+    }
+    return toSNPtr(node);
+}

@@ -86,3 +86,7 @@ std::any WhileNode::accept(NodeVisitor *visitor) {
 std::any ForNode::accept(NodeVisitor *visitor) {
     return visitor->visitFor(this);
 }
+
+std::any EnumNode::accept(NodeVisitor *visitor) {
+    return visitor->visitEnum(this);
+}

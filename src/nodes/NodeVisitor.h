@@ -51,5 +51,7 @@ namespace riddle {
         virtual std::any visitFor(ForNode* node);
 
         virtual std::any visitWhile(WhileNode* node);
+
+        virtual std::any visitEnum(EnumNode* node);
     };
 }

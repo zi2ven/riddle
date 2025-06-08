@@ -41,5 +41,9 @@ namespace riddle {
         bool isLocal(const std::string &name) const {
             return !locals.empty() && locals.top().contains(name);
         }
+
+        bool isGlobal() const {
+            return symbols.size() == 1;
+        }
     };
 } // riddle

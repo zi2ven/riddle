@@ -80,14 +80,14 @@ cl::opt<bool> NoMMX(
 );
 
 cl::opt<bool> NoSSE(
-    'mno-sse',
+    "mno-sse",
     cl::desc("Disable SSE instructions"),
     cl::init(false),
     cl::cat(RiddleToolCategory)
 );
 
 cl::opt<bool> NoSSE2(
-    'mno-sse2',
+    "mno-sse2",
     cl::desc("Disable SSE2 instructions"),
     cl::init(false),
     cl::cat(RiddleToolCategory)

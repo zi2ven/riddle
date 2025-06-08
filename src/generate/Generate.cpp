@@ -130,6 +130,13 @@ namespace riddle {
         if (node->body) {
             const auto entry = llvm::BasicBlock::Create(*context, "entry", func);
             builder.SetInsertPoint(entry);
+
+            // alloca local variable
+            for (const auto &i: node->allocList) {
+                llvm::Type *type = parseType(i->type);
+                i->alloca = builder.CreateAlloca(type);
+            }
+
             visit(node->body);
         }
         return nullptr;
@@ -144,8 +151,7 @@ namespace riddle {
 
     any Generate::visitVarDecl(VarDeclNode *node) {
         const auto type = parseType(node->obj->type);
-        const auto alloca = builder.CreateAlloca(type);
-        node->obj->alloca = alloca;
+        const auto alloca = node->obj->alloca;
         if (node->value) {
             auto value = any_cast<llvm::Value *>(visit(node->value));
             value = cast(value, type, node->value->cast_type, builder);

@@ -4,18 +4,40 @@ options {
     tokenVocab=RiddleLexer;
 }
 
-@Header{}
+@header{
+#include "RiddleLexer.h"
+}
 
-@parserFile::members {}
+@parser::members {
+    /** 只看隐藏信道，判断当前 token 左边最近一次出现的是 Endl 还是 EOF */
+    bool lineTerminatorAhead() {
+        ssize_t i = 1;  // 从当前token的前一个开始
+        auto* tokens = dynamic_cast<antlr4::BufferedTokenStream*>(_input);
 
+        // 获取所有隐藏信道token
+        std::vector<antlr4::Token*> hidden = tokens->getHiddenTokensToLeft(_input->index());
+        for (auto idx : hidden) {
+            if (idx->getType() == RiddleLexer::Endl) {
+              return true;
+            }
+        }
+        return false;
+    }
+}
 
 program
-    : expressionEnd*
+    : expressionEnd+ EOF
+    ;
+
+terminator
+    : Semi
+    | EOF
+    | { lineTerminatorAhead() }?
     ;
 
 expressionEnd
-    : expression Semi
-    | Semi
+    : expression terminator
+    | Endl
     ;
 
 expression
@@ -60,6 +82,17 @@ statement
     | whileStmt
     | forStmt
     | annotation
+    | enumStmt
+    ;
+
+enumValue returns [bool hasType = true]
+    : id {$hasType = false;}
+    | id LeftParen RightParen
+    | id LeftParen expression (Comma expression)* RightParen
+    ;
+
+enumStmt
+    : Enum name=id LeftCurly (enumValue (Comma enumValue)*)? Comma? RightCurly
     ;
 
 annotation

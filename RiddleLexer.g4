@@ -1,58 +1,4 @@
 lexer grammar RiddleLexer;
-
-@lexer::members {
-    /** 判断前一个可见 token 是否允许在行尾插入分号 */
-    bool shouldImplicitSemi() {
-        // 上一个已 emit 的 token
-        antlr4::Token *prev = _lastToken;
-        if (prev == nullptr) return false;
-
-        switch (prev->getType()) {
-            case RiddleLexer::Identifier:
-            case RiddleLexer::Decimal:
-            case RiddleLexer::STRING:
-            case RiddleLexer::CHAR:
-            case RiddleLexer::Semi:
-            case RiddleLexer::Return:
-            case RiddleLexer::RightParen:
-            case RiddleLexer::RightBracket:
-            case RiddleLexer::RightCurly:
-                return true;
-            case Star:
-                return isPointerTail();
-            default:
-                return false;
-        }
-    }
-
-    /** 记录最后一个非隐藏信道 token，用来做上面的判断 */
-    antlr4::Token *_lastToken = nullptr;  // 当前行最后一个
-    antlr4::Token *_prevToken  = nullptr; // 倒数第二个
-
-    antlr4::Token *emit() override {
-        antlr4::Token *t = Lexer::emit();
-        if (t->getChannel() == antlr4::Token::DEFAULT_CHANNEL) {
-            _prevToken = _lastToken;
-            _lastToken = t;
-        }
-        return t;
-    }
-
-    bool isPointerTail() {
-        if (!_prevToken) return false;
-
-        switch (_prevToken->getType()) {
-            case RiddleLexer::Star:          // int**
-            case RiddleLexer::RightParen:    // (T*)*
-            case RiddleLexer::RightBracket:  // arr*
-            case RiddleLexer::RightCurly:    // {...}*
-                return true;
-            default:
-                return false;                // 其它情况认为是跨行表达式，不插 ;
-        }
-    }
-}
-
 //关键字
 Var:'var';  //可变变量
 Val:'val';  //不可变变量
@@ -82,12 +28,14 @@ Protected: 'protected';
 Private: 'private';
 Virtual: 'virtual';
 Operator: 'operator';
+Enum: 'enum';
 //可见字符
 //基本运算符
-Semi
-    : ';'
-    | { shouldImplicitSemi() }? Endl
-    ;
+Semi: ';';
+
+Endl
+  : '\r'? '\n' -> channel(HIDDEN)
+  ;
 
 LeftParen :     '(' ;
 RightParen :    ')' ;
@@ -133,10 +81,6 @@ AndAssign:      '&=';
 OrAssign:       '|=';
 XorAssign:      '^=';
 
-
-Endl
-  : '\r'? '\n' -> channel(HIDDEN)
-  ;
 //标识符
 Identifier: [A-Za-z_] [A-Za-z_0-9]*;
 //十六进制

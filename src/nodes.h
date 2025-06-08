@@ -92,6 +92,7 @@ namespace riddle {
         std::shared_ptr<SemFunction> obj = nullptr;
         std::shared_ptr<SemClass> theClass;
         Modifier modifier;
+        std::vector<std::shared_ptr<SemVariable>> allocList;
 
         explicit FuncDeclNode(std::string name,
                               ExprNode *return_type,
@@ -302,6 +303,22 @@ namespace riddle {
 
         ForNode(ExprNode *init, ExprNode *condition, ExprNode *increment, ExprNode *body)
             : init(init), condition(condition), increment(increment), body(body) {}
+
+        std::any accept(NodeVisitor *visitor) override;
+    };
+
+    class EnumValue {
+    public:
+        std::string name;
+        std::vector<ExprNode *> types;
+    };
+
+    class EnumNode final : public ExprNode {
+    public:
+        std::string name;
+        std::vector<EnumValue> values;
+
+        explicit EnumNode(std::string name, const std::vector<EnumValue> &values): name(std::move(name)), values(values) {}
 
         std::any accept(NodeVisitor *visitor) override;
     };

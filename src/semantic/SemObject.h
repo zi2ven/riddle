@@ -74,7 +74,14 @@ namespace riddle {
         explicit SemType(const std::string &name, std::shared_ptr<TypeInfo> type): SemObject(name, Type), type(std::move(type)) {}
     };
 
-    class SemClass final : public SemType {
+    class ISemProvider {
+    public:
+        virtual ~ISemProvider() = default;
+
+        [[nodiscard]] virtual std::shared_ptr<SemVariable> getMember(const std::string &name) const = 0;
+    }__attribute__((packed));
+
+    class SemClass final : public SemType, public ISemProvider {
     public:
         std::unordered_map<std::string, std::pair<int, std::shared_ptr<SemVariable>>> members;
         std::unordered_map<std::string, std::shared_ptr<SemFunction>> methods;
@@ -108,7 +115,7 @@ namespace riddle {
             throw std::runtime_error("Member not found at index " + std::to_string(index));
         }
 
-        std::shared_ptr<SemVariable> getMember(const std::string &name) const {
+        std::shared_ptr<SemVariable> getMember(const std::string &name) const override {
             if (!members.contains(name)) {
                 throw std::runtime_error("Member not found");
             }
@@ -135,6 +142,20 @@ namespace riddle {
 
         bool hasMethod(const std::string &name) const {
             return methods.contains(name);
+        }
+    };
+
+    class SemUnion final : public SemType, public ISemProvider {
+        std::unordered_map<std::string, std::shared_ptr<SemVariable>> members;
+
+    public:
+        SemUnion(const std::string &name, const std::shared_ptr<UnionTypeInfo> &type): SemType(name, type) {}
+
+        [[nodiscard]] std::shared_ptr<SemVariable> getMember(const std::string &name) const override {
+            if (!members.contains(name)) {
+                throw std::runtime_error("Member not found");
+            }
+            return members.at(name);
         }
     };
 }

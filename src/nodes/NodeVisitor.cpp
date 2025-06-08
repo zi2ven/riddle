@@ -136,3 +136,7 @@ std::any NodeVisitor::visitWhile(WhileNode *node) {
     visit(node->body);
     return {};
 }
+
+std::any NodeVisitor::visitEnum(EnumNode *node) {
+    return {};
+}

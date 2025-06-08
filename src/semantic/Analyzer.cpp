@@ -59,7 +59,7 @@ namespace riddle {
         for (const auto &i: node->body) {
             visit(i);
         }
-        return{};
+        return {};
     }
 
     std::any Analyzer::visitFuncDecl(FuncDeclNode *node) {
@@ -70,7 +70,7 @@ namespace riddle {
         symbols.addObject(obj);
 
         symbols.joinScope();
-        parent.push(obj);
+        parent.push(node);
         if (node->theClass && !node->modifier.get(Modifier::Static)) {
             const auto class_obj = new ObjectNode(node->theClass->name);
             program->nodes.emplace_back(class_obj);
@@ -140,7 +140,14 @@ namespace riddle {
         // Create and register the variable
         const auto obj = make_shared<SemVariable>(node->name, type);
         node->obj = obj;
-        obj->isLocalVar = true;
+
+        obj->isLocalVar = !symbols.isGlobal();
+
+        if (obj->isLocalVar) {
+            const auto func = parent.top();
+            func->allocList.push_back(obj);
+        }
+
         symbols.addObject(obj);
 
         return toSNPtr(obj);
@@ -194,7 +201,7 @@ namespace riddle {
     }
 
     std::any Analyzer::visitReturn(ReturnNode *node) {
-        const auto func = parent.top();
+        const auto func = parent.top()->obj;
         const auto returnType = func->returnType;
         shared_ptr<SemValue> resultValue;
         if (node->value) {

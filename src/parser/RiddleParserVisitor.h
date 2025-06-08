@@ -1,4 +1,7 @@
 
+#include "RiddleLexer.h"
+
+
 // Generated from D:/Code/riddle/RiddleParser.g4 by ANTLR 4.13.2
 
 #pragma once
@@ -20,6 +23,8 @@ public:
    * Visit parse trees produced by RiddleParser.
    */
     virtual std::any visitProgram(RiddleParser::ProgramContext *context) = 0;
+
+    virtual std::any visitTerminator(RiddleParser::TerminatorContext *context) = 0;
 
     virtual std::any visitExpressionEnd(RiddleParser::ExpressionEndContext *context) = 0;
 
@@ -74,6 +79,10 @@ public:
     virtual std::any visitObject(RiddleParser::ObjectContext *context) = 0;
 
     virtual std::any visitStatement(RiddleParser::StatementContext *context) = 0;
+
+    virtual std::any visitEnumValue(RiddleParser::EnumValueContext *context) = 0;
+
+    virtual std::any visitEnumStmt(RiddleParser::EnumStmtContext *context) = 0;
 
     virtual std::any visitAnnotation(RiddleParser::AnnotationContext *context) = 0;
 

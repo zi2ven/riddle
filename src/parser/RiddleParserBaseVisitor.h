@@ -1,4 +1,7 @@
 
+#include "RiddleLexer.h"
+
+
 // Generated from D:/Code/riddle/RiddleParser.g4 by ANTLR 4.13.2
 
 #pragma once
@@ -16,6 +19,10 @@ class  RiddleParserBaseVisitor : public RiddleParserVisitor {
 public:
 
   virtual std::any visitProgram(RiddleParser::ProgramContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitTerminator(RiddleParser::TerminatorContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -124,6 +131,14 @@ public:
   }
 
   virtual std::any visitStatement(RiddleParser::StatementContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitEnumValue(RiddleParser::EnumValueContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitEnumStmt(RiddleParser::EnumStmtContext *ctx) override {
     return visitChildren(ctx);
   }
 

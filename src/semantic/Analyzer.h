@@ -15,7 +15,7 @@ namespace riddle {
         std::shared_ptr<SemValue> voidValue = std::make_shared<SemValue>(getPrimitiveType("void"));
         std::shared_ptr<SemObject> nilValue = voidValue;
 
-        std::stack<std::shared_ptr<SemFunction>> parent;
+        std::stack<FuncDeclNode*> parent;
 
         ProgramNode* program = nullptr;
 
