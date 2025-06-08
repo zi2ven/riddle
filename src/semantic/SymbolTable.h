@@ -43,7 +43,7 @@ namespace riddle {
         }
 
         bool isGlobal() const {
-            return symbols.size() == 1;
+            return locals.size() == 1;
         }
     };
 } // riddle

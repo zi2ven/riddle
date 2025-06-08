@@ -6,6 +6,7 @@
 #include "nodes.h"
 #include "config.h"
 #include "OperatorImpl.h"
+#include "exception/TypeError.h"
 
 using namespace std;
 
@@ -151,12 +152,26 @@ namespace riddle {
 
     any Generate::visitVarDecl(VarDeclNode *node) {
         const auto type = parseType(node->obj->type);
-        const auto alloca = node->obj->alloca;
+        llvm::Value *value = nullptr;
         if (node->value) {
-            auto value = any_cast<llvm::Value *>(visit(node->value));
+            value = any_cast<llvm::Value *>(visit(node->value));
             value = cast(value, type, node->value->cast_type, builder);
-            builder.CreateStore(value, alloca);
         }
+
+        if (node->obj->isLocalVar) {
+            builder.CreateStore(value, node->obj->alloca);
+        } else {
+            if (llvm::dyn_cast<llvm::Constant>(value) == nullptr) {
+                throw TypeError("Value Must be a Constant");
+            }
+            const auto alloca = info->module->getOrInsertGlobal(
+                node->name,
+                type
+            );
+            node->obj->alloca = alloca;
+            llvm::dyn_cast<llvm::GlobalVariable>(alloca)->setInitializer(llvm::dyn_cast<llvm::Constant>(value));
+        }
+
         return nullptr;
     }
 
