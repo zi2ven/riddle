@@ -140,3 +140,10 @@ std::any NodeVisitor::visitWhile(WhileNode *node) {
 std::any NodeVisitor::visitEnum(EnumNode *node) {
     return {};
 }
+
+std::any NodeVisitor::visitUnion(UnionNode *node) {
+    for (const auto i:node->members) {
+        visit(i);
+    }
+    return {};
+}

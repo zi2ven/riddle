@@ -345,6 +345,20 @@ std::any GramVisitor::visitWhileStmt(RiddleParser::WhileStmtContext *context) {
     return toSNPtr(node);
 }
 
+std::any GramVisitor::visitUnionDecl(RiddleParser::UnionDeclContext *context) {
+    const auto name = context->name->getText();
+    const auto body = dynamic_cast<BlockNode *>(nodeVisit(context->body));
+    vector<VarDeclNode*> members;
+    for (const auto i: body->body) {
+        if (const auto var = dynamic_cast<VarDeclNode*>(i)) {
+            members.emplace_back(var);
+        }
+    }
+    const auto node = new UnionNode(name, members);
+    program->nodes.emplace_back(node);
+    return toSNPtr(node);
+}
+
 std::any GramVisitor::visitEnumValue(RiddleParser::EnumValueContext *context) {
     const std::string name = context->getText();
     if (context->hasType) {
@@ -362,8 +376,9 @@ std::any GramVisitor::visitEnumValue(RiddleParser::EnumValueContext *context) {
 
 std::any GramVisitor::visitEnumStmt(RiddleParser::EnumStmtContext *context) {
     const auto node = new EnumNode(context->name->getText(), {});
-    for (const auto i:context->children) {
-        if (antlrcpp::is<RiddleParser::EnumValueContext*>(i)) {
+    program->nodes.emplace_back(node);
+    for (const auto i: context->children) {
+        if (antlrcpp::is<RiddleParser::EnumValueContext *>(i)) {
             const auto value = any_cast<EnumValue>(i);
             node->values.emplace_back(value);
         }

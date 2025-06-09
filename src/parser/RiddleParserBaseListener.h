@@ -154,6 +154,9 @@ public:
   virtual void enterClassDecl(RiddleParser::ClassDeclContext * /*ctx*/) override { }
   virtual void exitClassDecl(RiddleParser::ClassDeclContext * /*ctx*/) override { }
 
+  virtual void enterUnionDecl(RiddleParser::UnionDeclContext * /*ctx*/) override { }
+  virtual void exitUnionDecl(RiddleParser::UnionDeclContext * /*ctx*/) override { }
+
   virtual void enterId(RiddleParser::IdContext * /*ctx*/) override { }
   virtual void exitId(RiddleParser::IdContext * /*ctx*/) override { }
 

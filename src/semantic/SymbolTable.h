@@ -29,6 +29,7 @@ namespace riddle {
 
         void addObject(const std::shared_ptr<SemObject> &object) {
             symbols[object->name].push(object);
+            locals.top().insert(object->name);
         }
 
         std::shared_ptr<SemObject> getObject(const std::string &name) const {

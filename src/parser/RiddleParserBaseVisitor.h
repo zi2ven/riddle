@@ -198,6 +198,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitUnionDecl(RiddleParser::UnionDeclContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitId(RiddleParser::IdContext *ctx) override {
     return visitChildren(ctx);
   }

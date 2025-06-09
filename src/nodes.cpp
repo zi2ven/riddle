@@ -87,6 +87,10 @@ std::any ForNode::accept(NodeVisitor *visitor) {
     return visitor->visitFor(this);
 }
 
+std::any UnionNode::accept(NodeVisitor *visitor) {
+    return visitor->visitUnion(this);
+}
+
 std::any EnumNode::accept(NodeVisitor *visitor) {
     return visitor->visitEnum(this);
 }

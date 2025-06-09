@@ -71,6 +71,8 @@ namespace riddle {
 
         std::any visitWhileStmt(RiddleParser::WhileStmtContext *context) override;
 
+        std::any visitUnionDecl(RiddleParser::UnionDeclContext *context) override;
+
         std::any visitEnumValue(RiddleParser::EnumValueContext *context) override;
 
         std::any visitEnumStmt(RiddleParser::EnumStmtContext *context) override;

@@ -65,9 +65,12 @@ namespace riddle {
             case TypeInfo::Pointer: {
                 return llvm::PointerType::get(parseType(type->getPointValue(), depth + 1), 0);
             }
+            case TypeInfo::Union: {
+                return type->type;
+            }
             default: break;
         }
-        return nullptr;
+        throw runtime_error("Unknown type");
     }
 
     Generate::Generate(): info(make_unique<BuildInfo>()), context(globalContext.get()), builder(*globalContext) {
@@ -157,6 +160,8 @@ namespace riddle {
             value = any_cast<llvm::Value *>(visit(node->value));
             value = cast(value, type, node->value->cast_type, builder);
         }
+
+        if (!value)return nullptr;
 
         if (node->obj->isLocalVar) {
             builder.CreateStore(value, node->obj->alloca);
@@ -392,6 +397,15 @@ namespace riddle {
         builder.CreateBr(condBB);
 
         builder.SetInsertPoint(exitBB);
+        return nullptr;
+    }
+
+    std::any Generate::visitUnion(UnionNode *node) {
+        const auto size = node->obj->type->getSize() / 8;
+        node->obj->type->type = llvm::StructType::create(
+            node->name,
+            llvm::ArrayType::get(builder.getInt8Ty(), size)
+        );
         return nullptr;
     }
 } // riddle

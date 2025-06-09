@@ -29,6 +29,7 @@ Private: 'private';
 Virtual: 'virtual';
 Operator: 'operator';
 Enum: 'enum';
+Union: 'union';
 //可见字符
 //基本运算符
 Semi: ';';

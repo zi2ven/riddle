@@ -53,5 +53,7 @@ namespace riddle {
         virtual std::any visitWhile(WhileNode* node);
 
         virtual std::any visitEnum(EnumNode* node);
+
+        virtual std::any visitUnion(UnionNode* node);
     };
 }

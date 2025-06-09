@@ -152,6 +152,9 @@ public:
   virtual void enterClassDecl(RiddleParser::ClassDeclContext *ctx) = 0;
   virtual void exitClassDecl(RiddleParser::ClassDeclContext *ctx) = 0;
 
+  virtual void enterUnionDecl(RiddleParser::UnionDeclContext *ctx) = 0;
+  virtual void exitUnionDecl(RiddleParser::UnionDeclContext *ctx) = 0;
+
   virtual void enterId(RiddleParser::IdContext *ctx) = 0;
   virtual void exitId(RiddleParser::IdContext *ctx) = 0;
 

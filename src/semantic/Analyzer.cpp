@@ -143,6 +143,8 @@ namespace riddle {
 
         obj->isLocalVar = !symbols.isGlobal();
 
+        if (!node->needGen)return toSNPtr(obj);
+
         if (obj->isLocalVar) {
             const auto func = parent.top();
             func->allocList.push_back(obj);
@@ -273,9 +275,11 @@ namespace riddle {
         node->obj = obj;
         symbols.addObject(obj);
 
+        symbols.joinScope();
         // member parser
         int index = 0;
         for (const auto &i: node->members) {
+            i->needGen = false;
             const auto result = objVisit(i);
             if (const auto var = dynamic_pointer_cast<SemVariable>(result)) {
                 obj->addMember(var, index++);
@@ -302,6 +306,7 @@ namespace riddle {
                 throw runtime_error("Result Not a Function");
             }
         }
+        symbols.leaveScope();
 
         return toSNPtr(obj);
     }
@@ -400,5 +405,25 @@ namespace riddle {
         visit(node->body);
         symbols.leaveScope();
         return {};
+    }
+
+    std::any Analyzer::visitUnion(UnionNode *node) {
+        vector<shared_ptr<TypeInfo>> types;
+        symbols.joinScope();
+        for (const auto i: node->members) {
+            i->needGen = false;
+            const auto result = objVisit(i);
+            const auto val = std::dynamic_pointer_cast<SemVariable>(result);
+            if (val == nullptr) {
+                throw runtime_error("Result Not a Variable");
+            }
+            types.emplace_back(val->type);
+        }
+        symbols.leaveScope();
+        const auto type = make_shared<UnionTypeInfo>(types);
+        auto obj = make_shared<SemUnion>(node->name, type);
+        node->obj = obj;
+        symbols.addObject(obj);
+        return obj;
     }
 } // riddle

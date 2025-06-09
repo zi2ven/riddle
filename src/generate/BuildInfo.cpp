@@ -53,7 +53,7 @@ namespace riddle {
         // 构建编译参数
         std::vector<std::string> args = {ClangPath, "-x", "ir", fileName + ".ll"};
 
-        auto addArgIf = [&args](bool condition, const std::string &flag, const std::string &value = "") {
+        auto addArgIf = [&args](const bool condition, const std::string &flag, const std::string &value = "") {
             if (condition) {
                 args.emplace_back(flag);
                 if (!value.empty()) {

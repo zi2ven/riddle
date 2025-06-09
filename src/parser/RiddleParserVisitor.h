@@ -112,6 +112,8 @@ public:
 
     virtual std::any visitClassDecl(RiddleParser::ClassDeclContext *context) = 0;
 
+    virtual std::any visitUnionDecl(RiddleParser::UnionDeclContext *context) = 0;
+
     virtual std::any visitId(RiddleParser::IdContext *context) = 0;
 
 

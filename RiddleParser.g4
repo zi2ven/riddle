@@ -83,6 +83,7 @@ statement
     | forStmt
     | annotation
     | enumStmt
+    | unionDecl
     ;
 
 enumValue returns [bool hasType = true]
@@ -159,6 +160,10 @@ returnStmt
 
 classDecl
     : Class name=id body=block
+    ;
+
+unionDecl
+    : Union name=id body = block
     ;
 
 id

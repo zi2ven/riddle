@@ -71,5 +71,7 @@ namespace riddle {
         std::any visitFor(ForNode *node) override;
 
         std::any visitWhile(WhileNode *node) override;
+
+        std::any visitUnion(UnionNode *node) override;
     };
 } // riddle

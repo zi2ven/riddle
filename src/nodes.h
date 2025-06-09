@@ -151,6 +151,7 @@ namespace riddle {
         ExprNode *type;
         ExprNode *value;
         std::shared_ptr<SemVariable> obj = nullptr;
+        bool needGen = true;
 
         VarDeclNode(std::string name,
                     ExprNode *type,
@@ -303,6 +304,17 @@ namespace riddle {
 
         ForNode(ExprNode *init, ExprNode *condition, ExprNode *increment, ExprNode *body)
             : init(init), condition(condition), increment(increment), body(body) {}
+
+        std::any accept(NodeVisitor *visitor) override;
+    };
+
+    class UnionNode final : public ExprNode {
+    public:
+        std::string name;
+        std::vector<VarDeclNode *> members;
+        std::shared_ptr<SemUnion> obj;
+
+        UnionNode(std::string name, const std::vector<VarDeclNode *> &members): name(std::move(name)), members(members) {}
 
         std::any accept(NodeVisitor *visitor) override;
     };

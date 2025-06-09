@@ -19,19 +19,19 @@ public:
     Else = 8, Func = 9, Return = 10, Import = 11, Package = 12, Class = 13, 
     True = 14, False = 15, Null = 16, Try = 17, Catch = 18, Extern = 19, 
     Override = 20, Static = 21, Const = 22, Public = 23, Protected = 24, 
-    Private = 25, Virtual = 26, Operator = 27, Enum = 28, Semi = 29, Endl = 30, 
-    LeftParen = 31, RightParen = 32, LeftBracket = 33, RightBracket = 34, 
-    LeftCurly = 35, RightCurly = 36, Colon = 37, Comma = 38, Equal = 39, 
-    NotEqual = 40, Assign = 41, Greater = 42, GreaterEqual = 43, Less = 44, 
-    LessEqual = 45, LeftShift = 46, RightShift = 47, At = 48, Add = 49, 
-    Sub = 50, Star = 51, Div = 52, Mod = 53, Not = 54, And = 55, AndAnd = 56, 
-    Or = 57, OrOr = 58, Xor = 59, Dot = 60, DoubleQuotes = 61, Quotes = 62, 
-    Tilde = 63, AddAssign = 64, SubAssign = 65, MulAssign = 66, DivAssign = 67, 
-    ModAssign = 68, LeftShiftAssign = 69, RightShiftAssign = 70, AndAssign = 71, 
-    OrAssign = 72, XorAssign = 73, Identifier = 74, Hexadecimal = 75, Decimal = 76, 
-    Octal = 77, Binary = 78, Float = 79, IntegerSequence = 80, HEX_DIGIT = 81, 
-    OCTAL_DIGIT = 82, BINARY_DIGIT = 83, DIGIT = 84, STRING = 85, CHAR = 86, 
-    LINE_COMMENT = 87, BLOCK_COMMENT = 88, WHITESPACE = 89
+    Private = 25, Virtual = 26, Operator = 27, Enum = 28, Union = 29, Semi = 30, 
+    Endl = 31, LeftParen = 32, RightParen = 33, LeftBracket = 34, RightBracket = 35, 
+    LeftCurly = 36, RightCurly = 37, Colon = 38, Comma = 39, Equal = 40, 
+    NotEqual = 41, Assign = 42, Greater = 43, GreaterEqual = 44, Less = 45, 
+    LessEqual = 46, LeftShift = 47, RightShift = 48, At = 49, Add = 50, 
+    Sub = 51, Star = 52, Div = 53, Mod = 54, Not = 55, And = 56, AndAnd = 57, 
+    Or = 58, OrOr = 59, Xor = 60, Dot = 61, DoubleQuotes = 62, Quotes = 63, 
+    Tilde = 64, AddAssign = 65, SubAssign = 66, MulAssign = 67, DivAssign = 68, 
+    ModAssign = 69, LeftShiftAssign = 70, RightShiftAssign = 71, AndAssign = 72, 
+    OrAssign = 73, XorAssign = 74, Identifier = 75, Hexadecimal = 76, Decimal = 77, 
+    Octal = 78, Binary = 79, Float = 80, IntegerSequence = 81, HEX_DIGIT = 82, 
+    OCTAL_DIGIT = 83, BINARY_DIGIT = 84, DIGIT = 85, STRING = 86, CHAR = 87, 
+    LINE_COMMENT = 88, BLOCK_COMMENT = 89, WHITESPACE = 90
   };
 
   enum {
@@ -40,7 +40,7 @@ public:
     RulePackStmt = 8, RuleVarDecl = 9, RuleBlock = 10, RuleInitList = 11, 
     RuleDeclArgs = 12, RuleModifierList = 13, RuleModifier = 14, RuleFuncDecl = 15, 
     RuleIfStmt = 16, RuleWhileStmt = 17, RuleForStmt = 18, RuleReturnStmt = 19, 
-    RuleClassDecl = 20, RuleId = 21
+    RuleClassDecl = 20, RuleUnionDecl = 21, RuleId = 22
   };
 
   explicit RiddleParser(antlr4::TokenStream *input);
@@ -97,6 +97,7 @@ public:
   class ForStmtContext;
   class ReturnStmtContext;
   class ClassDeclContext;
+  class UnionDeclContext;
   class IdContext; 
 
   class  ProgramContext : public antlr4::ParserRuleContext {
@@ -557,6 +558,7 @@ public:
     ForStmtContext *forStmt();
     AnnotationContext *annotation();
     EnumStmtContext *enumStmt();
+    UnionDeclContext *unionDecl();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -917,6 +919,25 @@ public:
   };
 
   ClassDeclContext* classDecl();
+
+  class  UnionDeclContext : public antlr4::ParserRuleContext {
+  public:
+    RiddleParser::IdContext *name = nullptr;
+    RiddleParser::BlockContext *body = nullptr;
+    UnionDeclContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *Union();
+    IdContext *id();
+    BlockContext *block();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  UnionDeclContext* unionDecl();
 
   class  IdContext : public antlr4::ParserRuleContext {
   public:
