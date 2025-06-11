@@ -60,6 +60,10 @@ namespace riddle {
 
         std::any visitMemberAccess(MemberAccessNode *node) override;
 
+        static std::shared_ptr<SemObject> ClassMemberAccess(const std::shared_ptr<TypeInfo> &type, MemberAccessNode *node);
+
+        static std::shared_ptr<SemObject> UnionMemberAccess(const std::shared_ptr<TypeInfo> &type, MemberAccessNode *node);
+
         std::any visitPointerTo(PointerToNode *node) override;
 
         std::any visitBinaryOp(BinaryOpNode *node) override;

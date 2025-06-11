@@ -206,15 +206,16 @@ namespace riddle {
     class MemberAccessNode final : public ExprNode {
     public:
         enum Type : char {
-            Member,
-            Method,
+            ClassMember,
+            ClassMethod,
+            UnionMember,
             Unknown,
         };
 
         Type type = Unknown;
         ExprNode *left;
         std::string right;
-        std::shared_ptr<SemClass> theClass = nullptr;
+        std::variant<std::shared_ptr<SemClass>, std::shared_ptr<SemUnion>> theObject;
         std::shared_ptr<SemObject> childObj;
         llvm::Value *parentValue = nullptr;
         MemberAccessNode(ExprNode *left, std::string right): left(left), right(std::move(right)) {}

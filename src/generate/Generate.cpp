@@ -88,7 +88,7 @@ namespace riddle {
             cerr << "Module verification failed: " + verifyError;
         }
         info->module->print(llvm::outs(), nullptr);
-        return nullptr;
+        return {};
     }
 
     any Generate::visitInteger(IntegerNode *node) {
@@ -143,14 +143,14 @@ namespace riddle {
 
             visit(node->body);
         }
-        return nullptr;
+        return {};
     }
 
     std::any Generate::visitBlock(BlockNode *node) {
         for (const auto i: node->body) {
             visit(i);
         }
-        return nullptr;
+        return {};
     }
 
     any Generate::visitVarDecl(VarDeclNode *node) {
@@ -161,7 +161,7 @@ namespace riddle {
             value = cast(value, type, node->value->cast_type, builder);
         }
 
-        if (!value)return nullptr;
+        if (!value)return {};
 
         if (node->obj->isLocalVar) {
             builder.CreateStore(value, node->obj->alloca);
@@ -177,7 +177,7 @@ namespace riddle {
             llvm::dyn_cast<llvm::GlobalVariable>(alloca)->setInitializer(llvm::dyn_cast<llvm::Constant>(value));
         }
 
-        return nullptr;
+        return {};
     }
 
     any Generate::visitObject(ObjectNode *node) {
@@ -240,36 +240,58 @@ namespace riddle {
         for (const auto &i: node->obj->getStructType()->types) {
             types.emplace_back(parseType(i));
         }
-        llvm::StructType *type = llvm::StructType::create(types, node->name);
+        llvm::StructType *type = llvm::StructType::create(types, "class." + node->name);
         node->obj->type->type = type;
         for (const auto &i: node->methods) {
             visit(i);
         }
-        return nullptr;
+        return {};
     }
 
     std::any Generate::visitMemberAccess(MemberAccessNode *node) {
-        const auto sty = node->theClass->type->type;
-        auto left = std::any_cast<llvm::Value *>(visit(node->left));
+        const auto left = std::any_cast<llvm::Value *>(visit(node->left));
         node->parentValue = left;
         switch (node->type) {
-            case MemberAccessNode::Member: {
-                if (llvm::isa<llvm::LoadInst>(left)) {
-                    const auto ld = llvm::dyn_cast<llvm::LoadInst>(left);
-                    left = ld->getPointerOperand();
-                }
-                const auto index = node->theClass->getMemberIndex(node->right);
-                const auto member = builder.CreateStructGEP(sty, left, index);
-                const auto type = parseType(std::dynamic_pointer_cast<SemVariable>(node->childObj)->type);
-                llvm::Value *result = builder.CreateLoad(type, member);
-                return result;
+            case MemberAccessNode::ClassMember: {
+                const auto sty = get<0>(node->theObject)->type->type;
+                return handleMemberAccess(left, node, sty);
             }
-            case MemberAccessNode::Method: {
-                llvm::Value *result = std::dynamic_pointer_cast<SemFunction>(node->childObj)->func;
-                return result;
+            case MemberAccessNode::ClassMethod: {
+                return handleMethodAccess(node);
+            }
+            case MemberAccessNode::UnionMember: {
+                const auto sty = get<1>(node->theObject)->type->type;
+                return handleUnionMemberAccess(left, node, sty);
             }
             default: throw runtime_error("Unknown MemberAccessNode::Type");
         }
+    }
+
+    llvm::Value *Generate::handleMemberAccess(llvm::Value *left, const MemberAccessNode *node, llvm::Type *sty) {
+        if (llvm::isa<llvm::LoadInst>(left)) {
+            const auto ld = llvm::dyn_cast<llvm::LoadInst>(left);
+            left = ld->getPointerOperand();
+        }
+        const auto index = get<0>(node->theObject)->getMemberIndex(node->right);
+        const auto member = builder.CreateStructGEP(sty, left, index);
+        const auto type = parseType(std::dynamic_pointer_cast<SemVariable>(node->childObj)->type);
+        return builder.CreateLoad(type, member);
+    }
+
+    llvm::Value *Generate::handleMethodAccess(const MemberAccessNode *node) {
+        return std::dynamic_pointer_cast<SemFunction>(node->childObj)->func;
+    }
+
+    llvm::Value *Generate::handleUnionMemberAccess(llvm::Value *left, const MemberAccessNode *node, llvm::Type *sty) {
+        if (llvm::isa<llvm::LoadInst>(left)) {
+            const auto ld = llvm::dyn_cast<llvm::LoadInst>(left);
+            left = ld->getPointerOperand();
+            // ld->dropAllReferences();
+            // ld->eraseFromParent();
+        }
+        const auto memberType = get<1>(node->theObject)->getMember(node->right)->type;;
+        const auto result = builder.CreateBitCast(left, llvm::PointerType::get(parseType(memberType),0));
+        return builder.CreateLoad(parseType(memberType),result);
     }
 
     std::any Generate::visitBinaryOp(BinaryOpNode *node) {
@@ -310,7 +332,7 @@ namespace riddle {
             }
             default: break;
         }
-        return nullptr;
+        return {};
     }
 
     std::any Generate::visitCompoundOp(CompoundOpNode *node) {
@@ -371,7 +393,7 @@ namespace riddle {
         builder.CreateBr(condBB);
 
         builder.SetInsertPoint(exitBB);
-        return nullptr;
+        return {};
     }
 
     std::any Generate::visitFor(ForNode *node) {
@@ -397,15 +419,15 @@ namespace riddle {
         builder.CreateBr(condBB);
 
         builder.SetInsertPoint(exitBB);
-        return nullptr;
+        return {};
     }
 
     std::any Generate::visitUnion(UnionNode *node) {
         const auto size = node->obj->type->getSize() / 8;
         node->obj->type->type = llvm::StructType::create(
-            node->name,
+            "union." + node->name,
             llvm::ArrayType::get(builder.getInt8Ty(), size)
         );
-        return nullptr;
+        return {};
     }
 } // riddle

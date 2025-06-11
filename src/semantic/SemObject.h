@@ -151,11 +151,22 @@ namespace riddle {
     public:
         SemUnion(const std::string &name, const std::shared_ptr<UnionTypeInfo> &type): SemType(name, type) {}
 
+        void addMember(const std::shared_ptr<SemVariable> &member) {
+            if (members.contains(member->name)) {
+                throw std::runtime_error("Member already exists");
+            }
+            members[member->name] = member;
+        }
+
         [[nodiscard]] std::shared_ptr<SemVariable> getMember(const std::string &name) const override {
             if (!members.contains(name)) {
                 throw std::runtime_error("Member not found");
             }
             return members.at(name);
+        }
+
+        [[nodiscard]] bool hasMember(const std::string &name) const {
+            return members.contains(name);
         }
     };
 }

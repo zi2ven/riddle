@@ -245,6 +245,15 @@ namespace riddle {
     std::any Analyzer::visitMemberAccess(MemberAccessNode *node) {
         const auto obj = objVisit(node->left);
         const auto type = std::dynamic_pointer_cast<SemValue>(obj)->type;
+        switch (type->getTypeKind()) {
+            case TypeInfo::Struct: return ClassMemberAccess(type, node);
+            case TypeInfo::Union: return UnionMemberAccess(type, node);
+            default: break;
+        }
+        throw TypeError("Left is not a class or union");
+    }
+
+    std::shared_ptr<SemObject> Analyzer::ClassMemberAccess(const std::shared_ptr<TypeInfo> &type, MemberAccessNode *node) {
         auto theClass = std::dynamic_pointer_cast<StructTypeInfo>(type);
         if (theClass == nullptr) {
             if (const auto ptr = std::dynamic_pointer_cast<PointerTypeInfo>(type)) {
@@ -253,20 +262,39 @@ namespace riddle {
                 throw runtime_error("Left is not a class");
             }
         }
-        node->theClass = theClass->theClass.lock();
-        if (node->theClass->hasMember(node->right)) {
-            node->type = MemberAccessNode::Member;
-            const auto child = node->theClass->getMember(node->right);
+        node->theObject = theClass->theClass.lock();
+        if (get<0>(node->theObject)->hasMember(node->right)) {
+            node->type = MemberAccessNode::ClassMember;
+            const auto child = get<0>(node->theObject)->getMember(node->right);
             node->childObj = child;
             return toSNPtr(child);
         }
-        if (node->theClass->hasMethod(node->right)) {
-            node->type = MemberAccessNode::Method;
-            const auto child = node->theClass->getMethod(node->right);
+        if (get<0>(node->theObject)->hasMethod(node->right)) {
+            node->type = MemberAccessNode::ClassMethod;
+            const auto child = get<0>(node->theObject)->getMethod(node->right);
             node->childObj = child;
             return toSNPtr(child);
         }
         throw runtime_error("Right Not Member or Method");
+    }
+
+    std::shared_ptr<SemObject> Analyzer::UnionMemberAccess(const std::shared_ptr<TypeInfo> &type, MemberAccessNode *node) {
+        auto theUnion = std::dynamic_pointer_cast<UnionTypeInfo>(type);
+        if (theUnion == nullptr) {
+            if (const auto ptr = std::dynamic_pointer_cast<PointerTypeInfo>(type)) {
+                theUnion = std::dynamic_pointer_cast<UnionTypeInfo>(ptr->pointe);
+            } else {
+                throw runtime_error("Left is not a union");
+            }
+        }
+        node->theObject = theUnion->theUnion.lock();
+        if (get<1>(node->theObject)->hasMember(node->right)) {
+            node->type = MemberAccessNode::UnionMember;
+            const auto child = get<1>(node->theObject)->getMember(node->right);
+            node->childObj = child;
+            return toSNPtr(child);
+        }
+        throw runtime_error("Right Not Member");
     }
 
     std::any Analyzer::visitClassDecl(ClassDeclNode *node) {
@@ -408,7 +436,11 @@ namespace riddle {
     }
 
     std::any Analyzer::visitUnion(UnionNode *node) {
-        vector<shared_ptr<TypeInfo>> types;
+        const auto type = make_shared<UnionTypeInfo>(vector<shared_ptr<TypeInfo>>{});
+        auto obj = make_shared<SemUnion>(node->name, type);
+        node->obj = obj;
+        type->theUnion = obj;
+
         symbols.joinScope();
         for (const auto i: node->members) {
             i->needGen = false;
@@ -417,12 +449,10 @@ namespace riddle {
             if (val == nullptr) {
                 throw runtime_error("Result Not a Variable");
             }
-            types.emplace_back(val->type);
+            obj->addMember(val);
+            type->types.emplace_back(val->type);
         }
         symbols.leaveScope();
-        const auto type = make_shared<UnionTypeInfo>(types);
-        auto obj = make_shared<SemUnion>(node->name, type);
-        node->obj = obj;
         symbols.addObject(obj);
         return obj;
     }

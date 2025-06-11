@@ -47,6 +47,12 @@ namespace riddle {
 
         std::any visitMemberAccess(MemberAccessNode *node) override;
 
+        llvm::Value *handleMemberAccess(llvm::Value *left, const MemberAccessNode *node, llvm::Type *sty);
+
+        static llvm::Value *handleMethodAccess(const MemberAccessNode *node);
+
+        llvm::Value *handleUnionMemberAccess(llvm::Value *left, const MemberAccessNode *node, llvm::Type *sty);
+
         std::any visitBinaryOp(BinaryOpNode *node) override;
 
         std::any visitCompoundOp(CompoundOpNode *node) override;
