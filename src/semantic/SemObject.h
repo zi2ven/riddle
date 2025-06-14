@@ -3,6 +3,7 @@
 #include <ranges>
 #include <utility>
 
+#include "Modifier.h"
 #include "TypeInfo.h"
 
 namespace llvm {
@@ -52,6 +53,7 @@ namespace riddle {
     public:
         llvm::Value *alloca = nullptr;
         bool isLocalVar = false;
+        Modifier modifier;
 
         SemVariable(const std::string &name, const std::shared_ptr<TypeInfo> &type): SemValue(type, name, Variable) {}
     };
@@ -61,6 +63,7 @@ namespace riddle {
         std::shared_ptr<TypeInfo> returnType;
         std::vector<std::shared_ptr<SemVariable>> args;
         llvm::Function *func = nullptr;
+        Modifier modifier;
 
         SemFunction(const std::string &name, const std::shared_ptr<TypeInfo> &returnType,
                     std::vector<std::shared_ptr<SemVariable>> args = {}): SemObject(name, Function),

@@ -11,6 +11,13 @@
 using namespace std;
 
 namespace riddle {
+    inline llvm::Value *extractAndRemove(llvm::LoadInst *inst) {
+        const auto result = inst->getPointerOperand();
+        inst->dropAllReferences();
+        inst->eraseFromParent();
+        return result;
+    }
+
     llvm::Type *Generate::getPrimitiveType(const string &name) {
         static const unordered_map<string, llvm::Type *> mp = {
             {"int", builder.getInt32Ty()},
@@ -119,7 +126,7 @@ namespace riddle {
         }
 
         const auto returnType = parseType(node->obj->returnType);
-        const auto funcType = llvm::FunctionType::get(returnType, argTypes, false);
+        const auto funcType = llvm::FunctionType::get(returnType, argTypes, node->isVarArg);
         const auto func = llvm::Function::Create(funcType, llvm::GlobalValue::ExternalLinkage, node->name, info->module.get());
 
         // reset arg's memory
@@ -163,7 +170,7 @@ namespace riddle {
 
         if (!value)return {};
 
-        if (node->obj->isLocalVar) {
+        if (node->isLocalVar) {
             builder.CreateStore(value, node->obj->alloca);
         } else {
             if (llvm::dyn_cast<llvm::Constant>(value) == nullptr) {
@@ -184,12 +191,7 @@ namespace riddle {
         switch (node->obj->getKind()) {
             case SemObject::Variable: {
                 const auto var = dynamic_pointer_cast<SemVariable>(node->obj);
-                llvm::Value *value;
-                if (var->isLocalVar) {
-                    value = this->builder.CreateLoad(parseType(var->type), var->alloca);
-                } else {
-                    value = var->alloca;
-                }
+                llvm::Value *value = this->builder.CreateLoad(parseType(var->type), var->alloca);
                 return value;
             }
             case SemObject::Function: {
@@ -227,7 +229,7 @@ namespace riddle {
             const auto child = dynamic_cast<MemberAccessNode *>(node->value);
             auto self = child->parentValue;
             if (llvm::isa<llvm::LoadInst>(self)) {
-                self = llvm::dyn_cast<llvm::LoadInst>(self)->getPointerOperand();
+                self = extractAndRemove(llvm::dyn_cast<llvm::LoadInst>(self));
             }
             args.insert(args.begin(), self);
         }
@@ -240,8 +242,14 @@ namespace riddle {
         for (const auto &i: node->obj->getStructType()->types) {
             types.emplace_back(parseType(i));
         }
-        llvm::StructType *type = llvm::StructType::create(types, "class." + node->name);
+        llvm::StructType *type = llvm::StructType::create(*context, types, "class." + node->name);
         node->obj->type->type = type;
+        for (const auto i:node->members) {
+            if (i->modifier.get(Modifier::Static)) {
+                i->isLocalVar = false;
+                visit(i);
+            }
+        }
         for (const auto &i: node->methods) {
             visit(i);
         }
@@ -249,6 +257,18 @@ namespace riddle {
     }
 
     std::any Generate::visitMemberAccess(MemberAccessNode *node) {
+        if (node->isStatic) {
+            switch (node->type) {
+                case MemberAccessNode::ClassMember: {
+                    const auto child = std::dynamic_pointer_cast<SemVariable>(node->childObj);
+                    return builder.CreateLoad(parseType(child->type), child->alloca);
+                }
+                case MemberAccessNode::ClassMethod: {
+                    return handleMethodAccess(node);
+                }
+                default: throw runtime_error("Unknown MemberAccessNode::Type");
+            }
+        }
         const auto left = std::any_cast<llvm::Value *>(visit(node->left));
         node->parentValue = left;
         switch (node->type) {
@@ -269,8 +289,7 @@ namespace riddle {
 
     llvm::Value *Generate::handleMemberAccess(llvm::Value *left, const MemberAccessNode *node, llvm::Type *sty) {
         if (llvm::isa<llvm::LoadInst>(left)) {
-            const auto ld = llvm::dyn_cast<llvm::LoadInst>(left);
-            left = ld->getPointerOperand();
+            left = extractAndRemove(llvm::dyn_cast<llvm::LoadInst>(left));
         }
         const auto index = get<0>(node->theObject)->getMemberIndex(node->right);
         const auto member = builder.CreateStructGEP(sty, left, index);
@@ -284,14 +303,11 @@ namespace riddle {
 
     llvm::Value *Generate::handleUnionMemberAccess(llvm::Value *left, const MemberAccessNode *node, llvm::Type *sty) {
         if (llvm::isa<llvm::LoadInst>(left)) {
-            const auto ld = llvm::dyn_cast<llvm::LoadInst>(left);
-            left = ld->getPointerOperand();
-            // ld->dropAllReferences();
-            // ld->eraseFromParent();
+            left = extractAndRemove(llvm::dyn_cast<llvm::LoadInst>(left));
         }
         const auto memberType = get<1>(node->theObject)->getMember(node->right)->type;;
-        const auto result = builder.CreateBitCast(left, llvm::PointerType::get(parseType(memberType),0));
-        return builder.CreateLoad(parseType(memberType),result);
+        const auto result = builder.CreateBitCast(left, llvm::PointerType::get(parseType(memberType), 0));
+        return builder.CreateLoad(parseType(memberType), result);
     }
 
     std::any Generate::visitBinaryOp(BinaryOpNode *node) {
@@ -338,7 +354,7 @@ namespace riddle {
     std::any Generate::visitCompoundOp(CompoundOpNode *node) {
         auto left = std::any_cast<llvm::Value *>(visit(node->left));
         if (llvm::isa<llvm::LoadInst>(left)) {
-            left = llvm::dyn_cast<llvm::LoadInst>(left)->getPointerOperand();
+            left = extractAndRemove(llvm::dyn_cast<llvm::LoadInst>(left));
         }
         const auto value = std::any_cast<llvm::Value *>(visitBinaryOp(node));
         llvm::Value *result = builder.CreateStore(value, left);

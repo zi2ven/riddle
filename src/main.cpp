@@ -14,8 +14,6 @@
 
 void init() {
     riddle::globalContext = std::make_shared<llvm::LLVMContext>();
-    LLVMInitializeNativeTarget();
-    LLVMInitializeNativeAsmPrinter();
 }
 
 
@@ -29,7 +27,6 @@ int main(int argc, char **argv) {
     std::stringstream buffer;
     buffer << in.rdbuf();
     std::string code = buffer.str();
-    code.push_back('\n');
     antlr4::ANTLRInputStream input(code);
     RiddleLexer lexer(&input);
     antlr4::CommonTokenStream tokens(&lexer);

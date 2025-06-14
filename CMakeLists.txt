@@ -28,7 +28,6 @@ target_link_options(riddlec PRIVATE
 target_include_directories(riddlec PUBLIC ${LLVM_INCLUDE_DIRS} ${ANTLR4_INCLUDE_DIR} src/ ${LLD_INCLUDE_DIRS})
 
 set(llvm_components core irreader support analysis passes codegen target mc object linker option)
-list(APPEND llvm_components x86asmparser x86desc x86codegen x86disassembler x86targetmca)
 llvm_map_components_to_libnames(llvm_libs ${llvm_components})
 
 target_link_libraries(riddlec PRIVATE

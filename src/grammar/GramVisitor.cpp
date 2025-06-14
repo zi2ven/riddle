@@ -107,7 +107,7 @@ any GramVisitor::visitFuncDecl(RiddleParser::FuncDeclContext *context) {
 
     const auto args = any_cast<vector<ArgDeclNode *>>(visitDeclArgs(context->declArgs()));
 
-    const auto node = new FuncDeclNode(name, returnType, args, body);
+    const auto node = new FuncDeclNode(name, returnType, args, context->declArgs()->isVar, body);
     node->modifier = any_cast<Modifier>(visit(context->modifierList()));
     program->nodes.emplace_back(node);
     return toSNPtr(node);
@@ -160,6 +160,7 @@ any GramVisitor::visitVarDecl(RiddleParser::VarDeclContext *context) {
     const string name = context->name->getText();
     ExprNode *type = nullptr;
     ExprNode *value = nullptr;
+    auto modifier = std::any_cast<Modifier>(visit(context->modifierList()));
     if (context->type) {
         type = nodeVisit(context->type);
     }
@@ -167,6 +168,7 @@ any GramVisitor::visitVarDecl(RiddleParser::VarDeclContext *context) {
         value = nodeVisit(context->value);
     }
     const auto node = new VarDeclNode(name, type, value);
+    node->modifier = move(modifier);
     program->nodes.emplace_back(node);
     return toSNPtr(node);
 }
@@ -241,6 +243,14 @@ std::any GramVisitor::visitMemberAccess(RiddleParser::MemberAccessContext *conte
     const auto left = nodeVisit(context->left);
     const auto right = context->right->getText();
     const auto node = new MemberAccessNode(left, right);
+    program->nodes.emplace_back(node);
+    return toSNPtr(node);
+}
+
+std::any GramVisitor::visitScopeAccess(RiddleParser::ScopeAccessContext *context) {
+    const auto left = nodeVisit(context->left);
+    const auto right = context->right->getText();
+    const auto node = new MemberAccessNode(left, right, true);
     program->nodes.emplace_back(node);
     return toSNPtr(node);
 }
@@ -348,9 +358,9 @@ std::any GramVisitor::visitWhileStmt(RiddleParser::WhileStmtContext *context) {
 std::any GramVisitor::visitUnionDecl(RiddleParser::UnionDeclContext *context) {
     const auto name = context->name->getText();
     const auto body = dynamic_cast<BlockNode *>(nodeVisit(context->body));
-    vector<VarDeclNode*> members;
+    vector<VarDeclNode *> members;
     for (const auto i: body->body) {
-        if (const auto var = dynamic_cast<VarDeclNode*>(i)) {
+        if (const auto var = dynamic_cast<VarDeclNode *>(i)) {
             members.emplace_back(var);
         }
     }

@@ -7,6 +7,7 @@
 
 #include "nodes.h"
 #include "TypeInfo.h"
+#include "semantic/Modifier.h"
 #include "semantic/SemObject.h"
 
 namespace riddle {
@@ -65,23 +66,6 @@ namespace riddle {
         std::any accept(NodeVisitor *visitor) override;
     };
 
-    class Modifier {
-        std::bitset<32> bs;
-
-    public:
-        enum ModifierType : char {
-            Static
-        };
-
-        void set(const ModifierType type, const bool flag) {
-            bs[type] = flag;
-        }
-
-        bool get(const ModifierType type) {
-            return bs[type];
-        }
-    };
-
     class FuncDeclNode final : public ExprNode {
     public:
         std::string name;
@@ -93,13 +77,16 @@ namespace riddle {
         std::shared_ptr<SemClass> theClass;
         Modifier modifier;
         std::vector<std::shared_ptr<SemVariable>> allocList;
+        bool isVarArg;
 
         explicit FuncDeclNode(std::string name,
                               ExprNode *return_type,
                               std::vector<ArgDeclNode *> args,
+                              const bool isVarArg = false,
                               BlockNode *body = nullptr): name(std::move(name)),
                                                           returnType(return_type),
-                                                          body(body), args(std::move(args)) {}
+                                                          body(body), args(std::move(args)),
+                                                          isVarArg(isVarArg) {}
 
         std::any accept(NodeVisitor *visitor) override;
     };
@@ -152,6 +139,8 @@ namespace riddle {
         ExprNode *value;
         std::shared_ptr<SemVariable> obj = nullptr;
         bool needGen = true;
+        bool isLocalVar = true;
+        Modifier modifier;
 
         VarDeclNode(std::string name,
                     ExprNode *type,
@@ -218,10 +207,12 @@ namespace riddle {
         std::variant<std::shared_ptr<SemClass>, std::shared_ptr<SemUnion>> theObject;
         std::shared_ptr<SemObject> childObj;
         llvm::Value *parentValue = nullptr;
-        MemberAccessNode(ExprNode *left, std::string right): left(left), right(std::move(right)) {}
+        bool isStatic; ///< 是否只能访问静态成员
+        MemberAccessNode(ExprNode *left, std::string right, const bool isStatic = false): left(left), right(std::move(right)), isStatic(isStatic) {}
 
         std::any accept(NodeVisitor *visitor) override;
     };
+
 
     // only for types
     class PointerToNode final : public ExprNode {

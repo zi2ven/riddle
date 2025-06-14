@@ -105,9 +105,9 @@ packStmt
     ;
 
 varDecl
-    : (modifier)* varType=(Var | Val) name=id Colon type=expression Assign value=expression
-    | (modifier)* varType=(Var | Val) name=id Assign value=expression
-    | (modifier)* varType=(Var | Val) name=id Colon type=expression
+    : modifierList varType=(Var | Val) name=id Colon type=expression Assign value=expression
+    | modifierList varType=(Var | Val) name=id Assign value=expression
+    | modifierList varType=(Var | Val) name=id Colon type=expression
     ;
 
 block

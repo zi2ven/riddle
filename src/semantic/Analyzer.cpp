@@ -66,6 +66,7 @@ namespace riddle {
         const auto returnType = cast<SemType>(objVisit(node->returnType));
 
         const auto obj = make_shared<SemFunction>(node->name, returnType->type);
+        obj->modifier = node->modifier;
         node->obj = obj;
         symbols.addObject(obj);
 
@@ -141,11 +142,11 @@ namespace riddle {
         const auto obj = make_shared<SemVariable>(node->name, type);
         node->obj = obj;
 
-        obj->isLocalVar = !symbols.isGlobal();
+        node->isLocalVar = !symbols.isGlobal();
 
         if (!node->needGen)return toSNPtr(obj);
 
-        if (obj->isLocalVar) {
+        if (node->isLocalVar && !node->modifier.get(Modifier::Static)) {
             const auto func = parent.top();
             func->allocList.push_back(obj);
         }
@@ -227,24 +228,52 @@ namespace riddle {
         }
         if (dynamic_cast<MemberAccessNode *>(node->value)) {
             node->call_type = CallNode::CallType::Self;
+            if (const auto func = std::dynamic_pointer_cast<SemFunction>(obj)) {
+                if (func->modifier.get(Modifier::Static)) {
+                    node->call_type = CallNode::CallType::Standard;
+                }
+            }
         }
         const auto func = dynamic_pointer_cast<SemFunction>(obj);
+
+        // Check if the number of arguments matches
+        if (func->args.size() != node->args.size()) {
+            throw TypeError(std::format("Function '{}' expects {} arguments, but {} were provided",
+                                        func->name, func->args.size(), node->args.size()));
+        }
+
         int index = 0;
         for (const auto &i: node->args) {
             const auto rel = objVisit(i);
             const auto value = std::dynamic_pointer_cast<SemValue>(rel);
             if (value == nullptr) {
-                throw TypeError(std::format("'{}' object not a value", value->name));
+                throw TypeError(std::format("Argument {} is not a valid value", index + 1));
             }
+
+            // Ensure func->args[index] is not null
+            if (!func->args[index]) {
+                throw TypeError(std::format("Function '{}' has an invalid argument type at index {}", func->name, index));
+            }
+
+            // Validate and adjust the value
             validateAndAdjustValue(func->args[index]->type, value, i);
             index++;
         }
+
         return make<SemValue>(func->returnType);
     }
 
     std::any Analyzer::visitMemberAccess(MemberAccessNode *node) {
         const auto obj = objVisit(node->left);
-        const auto type = std::dynamic_pointer_cast<SemValue>(obj)->type;
+        std::shared_ptr<TypeInfo> type;
+        if (const auto semValue = std::dynamic_pointer_cast<SemValue>(obj)) {
+            type = semValue->type;
+        } else if (const auto semClass = std::dynamic_pointer_cast<SemClass>(obj)) {
+            type = semClass->type;
+        } else {
+            throw TypeError("Left is not a valid object with type information");
+        }
+
         switch (type->getTypeKind()) {
             case TypeInfo::Struct: return ClassMemberAccess(type, node);
             case TypeInfo::Union: return UnionMemberAccess(type, node);
@@ -307,10 +336,13 @@ namespace riddle {
         // member parser
         int index = 0;
         for (const auto &i: node->members) {
-            i->needGen = false;
+            const bool isStatic = i->modifier.get(Modifier::Static);
+            if (!isStatic) {
+                i->needGen = false;
+            }
             const auto result = objVisit(i);
             if (const auto var = dynamic_pointer_cast<SemVariable>(result)) {
-                obj->addMember(var, index++);
+                obj->addMember(var, isStatic ? -1 : index++);
             } else {
                 throw runtime_error("Result Not a Variable");
             }
@@ -320,6 +352,7 @@ namespace riddle {
         const auto structType = obj->getStructType();
         structType->types.resize(index);
         for (const auto &[idx, var]: obj->members | views::values) {
+            if (idx == -1)continue;
             structType->types[idx] = var->type;
         }
         structType->theClass = obj;
