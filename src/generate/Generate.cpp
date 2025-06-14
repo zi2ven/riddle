@@ -261,7 +261,8 @@ namespace riddle {
             switch (node->type) {
                 case MemberAccessNode::ClassMember: {
                     const auto child = std::dynamic_pointer_cast<SemVariable>(node->childObj);
-                    return builder.CreateLoad(parseType(child->type), child->alloca);
+                    llvm::Value* result = builder.CreateLoad(parseType(child->type), child->alloca);
+                    return result;
                 }
                 case MemberAccessNode::ClassMethod: {
                     return handleMethodAccess(node);
