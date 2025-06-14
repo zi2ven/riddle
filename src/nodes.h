@@ -115,6 +115,14 @@ namespace riddle {
         std::any accept(NodeVisitor *visitor) override;
     };
 
+    class StringNode final : public ExprNode {
+    public:
+        std::string value;
+        explicit StringNode(std::string value): value(std::move(value)) {}
+
+        std::any accept(NodeVisitor *visitor) override;
+    };
+
     class BooleanNode final : public ExprNode {
     public:
         bool value;

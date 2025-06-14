@@ -29,6 +29,8 @@ namespace riddle {
 
         std::any visitBoolean(RiddleParser::BooleanContext *context) override;
 
+        std::any visitString(RiddleParser::StringContext *context) override;
+
         std::any visitObject(RiddleParser::ObjectContext *context) override;
 
         std::any visitVarDecl(RiddleParser::VarDeclContext *context) override;

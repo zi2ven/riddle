@@ -50,6 +50,10 @@ std::any NodeVisitor::visitChar(CharNode *node) {
     return {};
 }
 
+std::any NodeVisitor::visitString(StringNode *node) {
+    return {};
+}
+
 std::any NodeVisitor::visitBoolean(BooleanNode *node) {
     return {};
 }

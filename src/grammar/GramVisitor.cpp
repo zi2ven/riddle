@@ -150,6 +150,37 @@ std::any GramVisitor::visitBoolean(RiddleParser::BooleanContext *context) {
     return toSNPtr(node);
 }
 
+std::any GramVisitor::visitString(RiddleParser::StringContext *context) {
+    string lit = context->getText();
+    lit = lit.substr(1, lit.size() - 2);
+    string result = "";
+    const auto add = [&](const char c) {
+        result.push_back(c);
+    };
+    for (size_t i = 0; i < lit.size(); i++) {
+        const char ch = lit[i];
+        if (ch == '\\') {
+            switch (lit[++i]) {
+                case 'n': add('\n');
+                    break;
+                case 't': add('\t');
+                    break;
+                case 'r': add('\r');
+                    break;
+                case 'b': add('\b');
+                    break;
+                case 'a': add('\a');
+                    break;
+                default: break;
+            }
+        }else {
+            add(ch);
+        }
+    }
+    const auto node = new StringNode(result);
+    return toSNPtr(node);
+}
+
 any GramVisitor::visitObject(RiddleParser::ObjectContext *context) {
     const auto node = new ObjectNode(context->getText());
     program->nodes.emplace_back(node);
@@ -168,7 +199,7 @@ any GramVisitor::visitVarDecl(RiddleParser::VarDeclContext *context) {
         value = nodeVisit(context->value);
     }
     const auto node = new VarDeclNode(name, type, value);
-    node->modifier = move(modifier);
+    node->modifier = modifier;
     program->nodes.emplace_back(node);
     return toSNPtr(node);
 }

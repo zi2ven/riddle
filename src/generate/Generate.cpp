@@ -118,6 +118,11 @@ namespace riddle {
         return value;
     }
 
+    std::any Generate::visitString(StringNode *node) {
+        llvm::Value *value = builder.CreateGlobalString(node->value);
+        return value;
+    }
+
     any Generate::visitFuncDecl(FuncDeclNode *node) {
         // get args
         vector<llvm::Type *> argTypes;
@@ -244,7 +249,7 @@ namespace riddle {
         }
         llvm::StructType *type = llvm::StructType::create(*context, types, "class." + node->name);
         node->obj->type->type = type;
-        for (const auto i:node->members) {
+        for (const auto i: node->members) {
             if (i->modifier.get(Modifier::Static)) {
                 i->isLocalVar = false;
                 visit(i);
@@ -261,7 +266,7 @@ namespace riddle {
             switch (node->type) {
                 case MemberAccessNode::ClassMember: {
                     const auto child = std::dynamic_pointer_cast<SemVariable>(node->childObj);
-                    llvm::Value* result = builder.CreateLoad(parseType(child->type), child->alloca);
+                    llvm::Value *result = builder.CreateLoad(parseType(child->type), child->alloca);
                     return result;
                 }
                 case MemberAccessNode::ClassMethod: {

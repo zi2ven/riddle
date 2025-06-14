@@ -31,6 +31,10 @@ std::any CharNode::accept(NodeVisitor *visitor) {
     return visitor->visitChar(this);
 }
 
+std::any StringNode::accept(NodeVisitor *visitor) {
+    return visitor->visitString(this);
+}
+
 std::any BooleanNode::accept(NodeVisitor *visitor) {
     return visitor->visitBoolean(this);
 }

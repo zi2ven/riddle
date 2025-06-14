@@ -88,7 +88,7 @@ namespace riddle {
         static inline char bits = 64;
         std::shared_ptr<TypeInfo> pointe;
 
-        explicit PointerTypeInfo(const std::shared_ptr<TypeInfo> &type): TypeInfo("*"), pointe(type) {
+        explicit PointerTypeInfo(const std::shared_ptr<TypeInfo> &type): TypeInfo("ptr"), pointe(type) {
             kind = Pointer;
         }
 

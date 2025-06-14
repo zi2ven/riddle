@@ -114,6 +114,10 @@ namespace riddle {
         return make<SemValue>(getPrimitiveType("char"));
     }
 
+    std::any Analyzer::visitString(StringNode *node) {
+        return make<SemValue>(make_shared<PointerTypeInfo>(getPrimitiveType("char")));
+    }
+
     std::any Analyzer::visitBoolean(BooleanNode *node) {
         return make<SemValue>(getPrimitiveType("bool"));
     }

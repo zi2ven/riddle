@@ -51,6 +51,9 @@ bool op::isLosslessConvertible(const std::shared_ptr<TypeInfo> &from, const std:
     if (from->getTypeKind() == TypeInfo::Primitive && to->getTypeKind() == TypeInfo::Pointer) {
         return true;
     }
+    if (from->getTypeKind() == TypeInfo::Pointer && to->getTypeKind() == TypeInfo::Pointer) {
+        return true;
+    }
     if (from->getTypeKind() != TypeInfo::Primitive || to->getTypeKind() != TypeInfo::Primitive) {
         return false;
     }

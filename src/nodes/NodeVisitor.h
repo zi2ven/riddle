@@ -24,6 +24,8 @@ namespace riddle {
 
         virtual std::any visitChar(CharNode *node);
 
+        virtual std::any visitString(StringNode *node);
+
         virtual std::any visitBoolean(BooleanNode *node);
 
         virtual std::any visitObject(ObjectNode *node);
