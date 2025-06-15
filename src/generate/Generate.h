@@ -23,6 +23,8 @@ namespace riddle {
 
         std::any visitProgram(ProgramNode *node) override;
 
+        static void eraseErrorTerminator(llvm::Function *func);
+
         std::any visitInteger(IntegerNode *node) override;
 
         std::any visitFloat(FloatNode *node) override;

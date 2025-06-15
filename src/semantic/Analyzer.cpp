@@ -65,7 +65,7 @@ namespace riddle {
     std::any Analyzer::visitFuncDecl(FuncDeclNode *node) {
         const auto returnType = cast<SemType>(objVisit(node->returnType));
 
-        const auto obj = make_shared<SemFunction>(node->name, returnType->type);
+        const auto obj = make_shared<SemFunction>(node->name, returnType->type, vector<shared_ptr<SemVariable>>{}, node->isVarArg);
         obj->modifier = node->modifier;
         node->obj = obj;
         symbols.addObject(obj);
@@ -85,6 +85,7 @@ namespace riddle {
         for (const auto &i: node->args) {
             const auto param = dynamic_pointer_cast<SemVariable>(objVisit(i));
             obj->args.emplace_back(param);
+            param->needLoad = false;
         }
         if (node->body) {
             visit(node->body);
@@ -148,9 +149,13 @@ namespace riddle {
 
         node->isLocalVar = !symbols.isGlobal();
 
+        if (node->modifier.get(Modifier::Static)) {
+            node->isLocalVar = false;
+        }
+
         if (!node->needGen)return toSNPtr(obj);
 
-        if (node->isLocalVar && !node->modifier.get(Modifier::Static)) {
+        if (node->isLocalVar) {
             const auto func = parent.top();
             func->allocList.push_back(obj);
         }
@@ -240,15 +245,19 @@ namespace riddle {
         }
         const auto func = dynamic_pointer_cast<SemFunction>(obj);
 
-        // Check if the number of arguments matches
-        if (func->args.size() != node->args.size()) {
+        // Check if the number of arguments matches or supports variadic arguments
+        if (!func->isVarArg && func->args.size() != node->args.size()) {
             throw TypeError(std::format("Function '{}' expects {} arguments, but {} were provided",
                                         func->name, func->args.size(), node->args.size()));
         }
+        if (func->isVarArg && node->args.size() < func->args.size() - 1) {
+            throw TypeError(std::format("Function '{}' expects at least {} arguments, but {} were provided",
+                                        func->name, func->args.size() - 1, node->args.size()));
+        }
 
         int index = 0;
-        for (const auto &i: node->args) {
-            const auto rel = objVisit(i);
+        for (; index < func->args.size(); ++index) {
+            const auto rel = objVisit(node->args[index]);
             const auto value = std::dynamic_pointer_cast<SemValue>(rel);
             if (value == nullptr) {
                 throw TypeError(std::format("Argument {} is not a valid value", index + 1));
@@ -260,8 +269,17 @@ namespace riddle {
             }
 
             // Validate and adjust the value
-            validateAndAdjustValue(func->args[index]->type, value, i);
-            index++;
+            validateAndAdjustValue(func->args[index]->type, value, node->args[index]);
+        }
+
+        if (func->isVarArg) {
+            for (; index < node->args.size(); ++index) {
+                const auto rel = objVisit(node->args[index]);
+                const auto value = std::dynamic_pointer_cast<SemValue>(rel);
+                if (value == nullptr) {
+                    throw TypeError(std::format("Argument {} is not a valid value", index + 1));
+                }
+            }
         }
 
         return make<SemValue>(func->returnType);

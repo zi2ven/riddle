@@ -67,6 +67,12 @@ namespace riddle {
 
         std::any visitUnaryOp(RiddleParser::UnaryOpContext *context) override;
 
+        std::any visitMulOp(RiddleParser::MulOpContext *context) override;
+
+        std::any visitRelOp(RiddleParser::RelOpContext *context) override;
+
+        std::any visitShiftOp(RiddleParser::ShiftOpContext *context) override;
+
         std::any visitCompoundAssignOp(RiddleParser::CompoundAssignOpContext *context) override;
 
         std::any visitIfStmt(RiddleParser::IfStmtContext *context) override;

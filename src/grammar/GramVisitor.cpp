@@ -340,6 +340,18 @@ std::any GramVisitor::visitUnaryOp(RiddleParser::UnaryOpContext *context) {
     return toSNPtr(node);
 }
 
+std::any GramVisitor::visitMulOp(RiddleParser::MulOpContext *context) {
+    binaryOp()
+}
+
+std::any GramVisitor::visitRelOp(RiddleParser::RelOpContext *context) {
+    binaryOp()
+}
+
+std::any GramVisitor::visitShiftOp(RiddleParser::ShiftOpContext *context) {
+    binaryOp()
+}
+
 std::any GramVisitor::visitCompoundAssignOp(RiddleParser::CompoundAssignOpContext *context) {
     const auto left = nodeVisit(context->left);
     const auto right = nodeVisit(context->right);

@@ -55,6 +55,18 @@ namespace {
         opMap.emplace(std::tuple{typeName, typeName, "!="}, [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
             return builder.CreateICmpNE(lhs, rhs);
         });
+        opMap.emplace(std::tuple{typeName, typeName, "<"}, [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
+            return builder.CreateICmpSLT(lhs,rhs);
+        });
+        opMap.emplace(std::tuple{typeName, typeName, "<="}, [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
+            return builder.CreateICmpSLE(lhs, rhs);
+        });
+        opMap.emplace(std::tuple{typeName, typeName, ">"}, [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
+            return builder.CreateICmpSGT(lhs, rhs);
+        });
+        opMap.emplace(std::tuple{typeName, typeName, ">="}, [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
+            return builder.CreateICmpSGE(lhs, rhs);
+        });
     }
 
     void initUnsignedInteger(const std::string &typeName) {

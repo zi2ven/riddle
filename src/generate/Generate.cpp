@@ -98,6 +98,22 @@ namespace riddle {
         return {};
     }
 
+    void Generate::eraseErrorTerminator(llvm::Function *func) {
+        for (auto &i: *func) {
+            for (auto &j: i) {
+                const auto inst = llvm::dyn_cast<llvm::Instruction>(&j);
+                if (inst->isTerminator()) {
+                    llvm::Instruction *I = inst->getNextNode();
+                    while (I) {
+                        llvm::Instruction *Next = I->getNextNode();
+                        I->eraseFromParent();
+                        I = Next;
+                    }
+                }
+            }
+        }
+    }
+
     any Generate::visitInteger(IntegerNode *node) {
         llvm::Value *value = builder.getInt32(node->value);;
         return value;
@@ -155,6 +171,8 @@ namespace riddle {
 
             visit(node->body);
         }
+
+        eraseErrorTerminator(func);
         return {};
     }
 
@@ -196,7 +214,10 @@ namespace riddle {
         switch (node->obj->getKind()) {
             case SemObject::Variable: {
                 const auto var = dynamic_pointer_cast<SemVariable>(node->obj);
-                llvm::Value *value = this->builder.CreateLoad(parseType(var->type), var->alloca);
+                llvm::Value *value = var->alloca;
+                if (var->needLoad) {
+                    value = builder.CreateLoad(parseType(var->type), var->alloca);
+                }
                 return value;
             }
             case SemObject::Function: {

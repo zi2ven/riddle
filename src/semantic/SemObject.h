@@ -53,6 +53,7 @@ namespace riddle {
     public:
         llvm::Value *alloca = nullptr;
         bool isLocalVar = false;
+        bool needLoad = true;
         Modifier modifier;
 
         SemVariable(const std::string &name, const std::shared_ptr<TypeInfo> &type): SemValue(type, name, Variable) {}
@@ -64,10 +65,14 @@ namespace riddle {
         std::vector<std::shared_ptr<SemVariable>> args;
         llvm::Function *func = nullptr;
         Modifier modifier;
+        bool isVarArg;
 
-        SemFunction(const std::string &name, const std::shared_ptr<TypeInfo> &returnType,
-                    std::vector<std::shared_ptr<SemVariable>> args = {}): SemObject(name, Function),
-                                                                          returnType(returnType), args(std::move(args)) {}
+        SemFunction(const std::string &name,
+                    const std::shared_ptr<TypeInfo> &returnType,
+                    std::vector<std::shared_ptr<SemVariable>> args = {},
+                    const bool isVarArg = false): SemObject(name, Function),
+                                                  returnType(returnType), args(std::move(args)),
+                                                  isVarArg(isVarArg) {}
     };
 
     class SemType : public SemObject {
