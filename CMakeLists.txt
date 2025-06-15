@@ -32,8 +32,6 @@ llvm_map_components_to_libnames(llvm_libs ${llvm_components})
 
 target_link_libraries(riddlec PRIVATE
         ${llvm_libs}
-        antlr4_static
-        lldCommon
         ClangDriver       # 驱动模块 (Driver, ToolChain)
         ClangBasic        # 基础库 (DiagnosticIDs, DiagnosticsEngine)
         ClangFrontend     # 前端支持 (TextDiagnosticPrinter)
@@ -46,6 +44,14 @@ target_link_libraries(riddlec PRIVATE
         ClangLex          # 词法分析
         ClangAnalysis     # 静态分析
 )
+
+if(TARGET antlr4_static)
+    target_link_libraries(riddlec PRIVATE antlr4_static)
+elseif(TARGET antlr4_shared)
+    target_link_libraries(riddlec PRIVATE antlr4_shared)
+else()
+    message(FATAL_ERROR "No library targets found for antlr4-runtime")
+endif()
 
 if (WIN32)
     target_link_libraries(riddlec PRIVATE
