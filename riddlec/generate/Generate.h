@@ -16,6 +16,12 @@ namespace riddle {
 
         llvm::Type *getPrimitiveType(const std::string &name);
 
+        /**
+         * Parsing a TypeInfo Type to an llvm:: Type* Type is used to generate the LLVM IR
+         * @param type TypeInfo to parse
+         * @param depth Recursion depth when parsing PointerTypeInfo, preventing infinite recursion
+         * @return llvm:: Type* corresponding to this TypeInfo
+         */
         llvm::Type *parseType(const std::shared_ptr<TypeInfo> &type, size_t depth = 0);
 
     public:
@@ -23,7 +29,10 @@ namespace riddle {
 
         std::any visitProgram(ProgramNode *node) override;
 
-        static void eraseErrorTerminator(llvm::Function *func);
+        /**
+         * Delete all instructions in a function after the first termination instruction of a BasicBlock
+         */
+        static void clearPostTerminator(llvm::Function *func);
 
         std::any visitInteger(IntegerNode *node) override;
 

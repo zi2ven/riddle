@@ -10,22 +10,17 @@ find_package(Clang REQUIRED CONFIG)
 message(STATUS "LLVM Version ${LLVM_PACKAGE_VERSION}")
 
 include(AddLLVM)
-include(cmake/optimize.cmake)
 
-file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.h")
+file(GLOB_RECURSE SOURCES "riddlec/*.cpp" "riddlec/*.h")
 
 add_executable(riddlec ${SOURCES})
 
 target_link_options(riddlec PRIVATE
-        $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:
-        -fuse-ld=lld   # 使用 LLVM 的 lld 链接器（更快）
-        >
-        $<$<CXX_COMPILER_ID:MSVC>:
-        /LTCG          # 链接时代码生成（MSVC 的 LTO）
-        >
+        $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:-fuse-ld=lld>
+        $<$<CXX_COMPILER_ID:MSVC>:/LTCG>
 )
 
-target_include_directories(riddlec PUBLIC ${LLVM_INCLUDE_DIRS} ${ANTLR4_INCLUDE_DIR} src/ ${LLD_INCLUDE_DIRS})
+target_include_directories(riddlec PUBLIC ${LLVM_INCLUDE_DIRS} ${ANTLR4_INCLUDE_DIR} riddlec/ ${LLD_INCLUDE_DIRS})
 
 set(llvm_components core irreader support analysis passes codegen target mc object linker option)
 llvm_map_components_to_libnames(llvm_libs ${llvm_components})
@@ -45,13 +40,13 @@ target_link_libraries(riddlec PRIVATE
         ClangAnalysis     # 静态分析
 )
 
-if(TARGET antlr4_static)
+if (TARGET antlr4_static)
     target_link_libraries(riddlec PRIVATE antlr4_static)
-elseif(TARGET antlr4_shared)
+elseif (TARGET antlr4_shared)
     target_link_libraries(riddlec PRIVATE antlr4_shared)
-else()
+else ()
     message(FATAL_ERROR "No library targets found for antlr4-runtime")
-endif()
+endif ()
 
 if (WIN32)
     target_link_libraries(riddlec PRIVATE
@@ -59,3 +54,5 @@ if (WIN32)
             version
     )
 endif ()
+
+add_subdirectory(lsp)

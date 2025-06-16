@@ -13,7 +13,7 @@ Riddle Language 是一个内存安全的编程语言，用于修复 C/C++ 的不
 
 如果你需要代码补全和语言支持，请看
 
-- [VSCode 插件](https://github.com/wangziwenhk/riddle-lang-vscode)
+- [VSCode 插件](https://github.com/wangziwenhk/riddle-vscode)
 - [Riddle 手册](https://wangziwenhk.github.io/riddle-docs/)
 
 QQ群号：677741637
@@ -25,3 +25,26 @@ QQ群号：677741637
 - 简洁和表达力：Riddle Language 提供了简洁且富有表达力的语法，促进代码的可读性和可维护性。它提供了现代语言结构、强大的抽象和丰富的库集，以简化开发过程。
 - 并发和并行：Riddle Language 内置对并发和并行编程的支持。它提供轻量级线程、异步编程模型和同步原语，简化了可扩展和高效应用程序的开发。
 - 互操作性：Riddle Language 无缝集成现有的代码库和用其他语言编写的库。它提供了与 C 和 C++ 的简单绑定，并支持与流行框架和生态系统的互操作性。
+
+# 所需库
+
+- LLVM 18 - 20
+- Antlr 4.13.x
+- Clang 18-20 以及其的开发包
+
+# 构建
+
+首先，克隆该仓库到本地
+```bash
+git clone https://github.com/wangziwenhk/riddle --depth 1
+cd riddle
+```
+
+然后编译
+
+```bash
+mkdir build
+cd build
+cmake ..
+cmake --build .
+```

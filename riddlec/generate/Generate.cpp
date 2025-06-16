@@ -98,7 +98,7 @@ namespace riddle {
         return {};
     }
 
-    void Generate::eraseErrorTerminator(llvm::Function *func) {
+    void Generate::clearPostTerminator(llvm::Function *func) {
         for (auto &i: *func) {
             for (auto &j: i) {
                 const auto inst = llvm::dyn_cast<llvm::Instruction>(&j);
@@ -172,7 +172,7 @@ namespace riddle {
             visit(node->body);
         }
 
-        eraseErrorTerminator(func);
+        clearPostTerminator(func);
         return {};
     }
 
