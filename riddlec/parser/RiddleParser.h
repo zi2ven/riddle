@@ -1,4 +1,21 @@
 
+/*
+ * Copyright (c) 2025 wangziwenhk
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 #include "RiddleLexer.h"
 
 
@@ -36,11 +53,11 @@ public:
 
   enum {
     RuleProgram = 0, RuleTerminator = 1, RuleExpressionEnd = 2, RuleExpression = 3, 
-    RuleStatement = 4, RuleEnumValue = 5, RuleEnumStmt = 6, RuleAnnotation = 7, 
-    RulePackStmt = 8, RuleVarDecl = 9, RuleBlock = 10, RuleInitList = 11, 
-    RuleDeclArgs = 12, RuleModifierList = 13, RuleModifier = 14, RuleFuncDecl = 15, 
-    RuleIfStmt = 16, RuleWhileStmt = 17, RuleForStmt = 18, RuleReturnStmt = 19, 
-    RuleClassDecl = 20, RuleUnionDecl = 21, RuleId = 22
+    RuleStatement = 4, RuleImportStmt = 5, RuleEnumValue = 6, RuleEnumStmt = 7, 
+    RuleAnnotation = 8, RulePackStmt = 9, RuleVarDecl = 10, RuleBlock = 11, 
+    RuleInitList = 12, RuleDeclArgs = 13, RuleModifierList = 14, RuleModifier = 15, 
+    RuleFuncDecl = 16, RuleIfStmt = 17, RuleWhileStmt = 18, RuleForStmt = 19, 
+    RuleReturnStmt = 20, RuleClassDecl = 21, RuleUnionDecl = 22, RuleId = 23
   };
 
   explicit RiddleParser(antlr4::TokenStream *input);
@@ -81,6 +98,7 @@ public:
   class ExpressionEndContext;
   class ExpressionContext;
   class StatementContext;
+  class ImportStmtContext;
   class EnumValueContext;
   class EnumStmtContext;
   class AnnotationContext;
@@ -559,6 +577,7 @@ public:
     AnnotationContext *annotation();
     EnumStmtContext *enumStmt();
     UnionDeclContext *unionDecl();
+    ImportStmtContext *importStmt();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -568,6 +587,25 @@ public:
   };
 
   StatementContext* statement();
+
+  class  ImportStmtContext : public antlr4::ParserRuleContext {
+  public:
+    ImportStmtContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *Import();
+    std::vector<IdContext *> id();
+    IdContext* id(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> Dot();
+    antlr4::tree::TerminalNode* Dot(size_t i);
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  ImportStmtContext* importStmt();
 
   class  EnumValueContext : public antlr4::ParserRuleContext {
   public:

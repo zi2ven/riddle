@@ -84,6 +84,11 @@ statement
     | annotation
     | enumStmt
     | unionDecl
+    | importStmt
+    ;
+
+importStmt
+    : Import (id (Dot id)*)
     ;
 
 enumValue returns [bool hasType = true]

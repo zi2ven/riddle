@@ -14,5 +14,18 @@
  * limitations under the License.
  *
  */
+#pragma once
+#include <string>
+#include <vector>
 
-#include "support/Trie.hpp"
+namespace riddle {
+    class ExprNode;
+
+    class Annotation final {
+        std::string name;
+        std::vector<ExprNode *> params;
+
+        Annotation(const std::string &name,
+                   const std::vector<ExprNode *> &params): name(name), params(params) {}
+    };
+}

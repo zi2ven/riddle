@@ -1,4 +1,21 @@
 
+/*
+ * Copyright (c) 2025 wangziwenhk
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 #include "RiddleLexer.h"
 
 
@@ -57,9 +74,10 @@ void riddleparserParserInitialize() {
   auto staticData = std::make_unique<RiddleParserStaticData>(
     std::vector<std::string>{
       "program", "terminator", "expressionEnd", "expression", "statement", 
-      "enumValue", "enumStmt", "annotation", "packStmt", "varDecl", "block", 
-      "initList", "declArgs", "modifierList", "modifier", "funcDecl", "ifStmt", 
-      "whileStmt", "forStmt", "returnStmt", "classDecl", "unionDecl", "id"
+      "importStmt", "enumValue", "enumStmt", "annotation", "packStmt", "varDecl", 
+      "block", "initList", "declArgs", "modifierList", "modifier", "funcDecl", 
+      "ifStmt", "whileStmt", "forStmt", "returnStmt", "classDecl", "unionDecl", 
+      "id"
     },
     std::vector<std::string>{
       "", "'var'", "'val'", "'for'", "'while'", "'continue'", "'break'", 
@@ -91,141 +109,146 @@ void riddleparserParserInitialize() {
     }
   );
   static const int32_t serializedATNSegment[] = {
-  	4,1,90,393,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
+  	4,1,90,405,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
   	7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,14,7,
   	14,2,15,7,15,2,16,7,16,2,17,7,17,2,18,7,18,2,19,7,19,2,20,7,20,2,21,7,
-  	21,2,22,7,22,1,0,4,0,48,8,0,11,0,12,0,49,1,0,1,0,1,1,1,1,1,1,3,1,57,8,
-  	1,1,2,1,2,1,2,1,2,3,2,63,8,2,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,
-  	1,3,1,3,1,3,1,3,1,3,1,3,3,3,81,8,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,
-  	3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,
+  	21,2,22,7,22,2,23,7,23,1,0,4,0,50,8,0,11,0,12,0,51,1,0,1,0,1,1,1,1,1,
+  	1,3,1,59,8,1,1,2,1,2,1,2,1,2,3,2,65,8,2,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,
+  	3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,3,3,83,8,3,1,3,1,3,1,3,1,3,1,3,1,3,
   	1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,
-  	3,1,3,5,3,128,8,3,10,3,12,3,131,9,3,3,3,133,8,3,1,3,1,3,1,3,5,3,138,8,
-  	3,10,3,12,3,141,9,3,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,
-  	4,3,4,156,8,4,1,5,1,5,1,5,1,5,1,5,1,5,1,5,1,5,1,5,1,5,1,5,1,5,5,5,170,
-  	8,5,10,5,12,5,173,9,5,1,5,1,5,3,5,177,8,5,1,6,1,6,1,6,1,6,1,6,1,6,5,6,
-  	185,8,6,10,6,12,6,188,9,6,3,6,190,8,6,1,6,3,6,193,8,6,1,6,1,6,1,7,1,7,
-  	1,7,1,7,1,7,1,7,5,7,203,8,7,10,7,12,7,206,9,7,1,7,1,7,3,7,210,8,7,1,7,
-  	3,7,213,8,7,1,7,1,7,1,8,1,8,1,8,1,8,5,8,221,8,8,10,8,12,8,224,9,8,1,9,
-  	1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,
-  	9,1,9,3,9,246,8,9,1,10,1,10,5,10,250,8,10,10,10,12,10,253,9,10,1,10,1,
-  	10,1,11,1,11,1,11,1,11,5,11,261,8,11,10,11,12,11,264,9,11,3,11,266,8,
-  	11,1,11,1,11,1,12,1,12,1,12,1,12,1,12,5,12,275,8,12,10,12,12,12,278,9,
-  	12,1,12,1,12,1,12,1,12,3,12,284,8,12,1,12,1,12,1,12,1,12,1,12,1,12,4,
-  	12,292,8,12,11,12,12,12,293,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,
-  	12,3,12,305,8,12,1,13,5,13,308,8,13,10,13,12,13,311,9,13,1,14,1,14,1,
-  	14,1,14,1,14,1,14,1,14,3,14,320,8,14,1,15,1,15,1,15,1,15,1,15,1,15,1,
-  	15,1,15,1,15,3,15,331,8,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,
-  	15,1,15,1,15,1,15,1,15,3,15,346,8,15,1,16,1,16,1,16,1,16,1,16,1,16,1,
-  	16,3,16,355,8,16,1,17,1,17,1,17,1,17,1,17,1,17,1,18,1,18,1,18,3,18,366,
-  	8,18,1,18,1,18,3,18,370,8,18,1,18,1,18,3,18,374,8,18,1,18,1,18,1,18,1,
-  	19,1,19,3,19,381,8,19,1,20,1,20,1,20,1,20,1,21,1,21,1,21,1,21,1,22,1,
-  	22,1,22,0,1,6,23,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,
-  	38,40,42,44,0,9,3,0,50,51,55,55,64,64,1,0,14,15,1,0,52,54,1,0,50,51,1,
-  	0,47,48,1,0,43,46,1,0,40,41,2,0,42,42,65,74,1,0,1,2,444,0,47,1,0,0,0,
-  	2,56,1,0,0,0,4,62,1,0,0,0,6,80,1,0,0,0,8,155,1,0,0,0,10,176,1,0,0,0,12,
-  	178,1,0,0,0,14,196,1,0,0,0,16,216,1,0,0,0,18,245,1,0,0,0,20,247,1,0,0,
-  	0,22,256,1,0,0,0,24,304,1,0,0,0,26,309,1,0,0,0,28,319,1,0,0,0,30,345,
-  	1,0,0,0,32,347,1,0,0,0,34,356,1,0,0,0,36,362,1,0,0,0,38,378,1,0,0,0,40,
-  	382,1,0,0,0,42,386,1,0,0,0,44,390,1,0,0,0,46,48,3,4,2,0,47,46,1,0,0,0,
-  	48,49,1,0,0,0,49,47,1,0,0,0,49,50,1,0,0,0,50,51,1,0,0,0,51,52,5,0,0,1,
-  	52,1,1,0,0,0,53,57,5,30,0,0,54,57,5,0,0,1,55,57,4,1,0,0,56,53,1,0,0,0,
-  	56,54,1,0,0,0,56,55,1,0,0,0,57,3,1,0,0,0,58,59,3,6,3,0,59,60,3,2,1,0,
-  	60,63,1,0,0,0,61,63,5,31,0,0,62,58,1,0,0,0,62,61,1,0,0,0,63,5,1,0,0,0,
-  	64,65,6,3,-1,0,65,81,3,8,4,0,66,67,5,52,0,0,67,81,3,6,3,20,68,69,7,0,
-  	0,0,69,81,3,6,3,19,70,81,5,77,0,0,71,81,5,80,0,0,72,81,7,1,0,0,73,81,
-  	5,86,0,0,74,81,5,87,0,0,75,81,3,44,22,0,76,77,5,32,0,0,77,78,3,6,3,0,
-  	78,79,5,33,0,0,79,81,1,0,0,0,80,64,1,0,0,0,80,66,1,0,0,0,80,68,1,0,0,
-  	0,80,70,1,0,0,0,80,71,1,0,0,0,80,72,1,0,0,0,80,73,1,0,0,0,80,74,1,0,0,
-  	0,80,75,1,0,0,0,80,76,1,0,0,0,81,139,1,0,0,0,82,83,10,24,0,0,83,84,5,
-  	38,0,0,84,85,5,38,0,0,85,138,3,6,3,25,86,87,10,23,0,0,87,88,5,61,0,0,
-  	88,138,3,6,3,24,89,90,10,18,0,0,90,91,7,2,0,0,91,138,3,6,3,19,92,93,10,
-  	17,0,0,93,94,7,3,0,0,94,138,3,6,3,18,95,96,10,16,0,0,96,97,7,4,0,0,97,
-  	138,3,6,3,17,98,99,10,15,0,0,99,100,7,5,0,0,100,138,3,6,3,16,101,102,
-  	10,14,0,0,102,103,7,6,0,0,103,138,3,6,3,15,104,105,10,13,0,0,105,106,
-  	5,56,0,0,106,138,3,6,3,14,107,108,10,12,0,0,108,109,5,60,0,0,109,138,
-  	3,6,3,13,110,111,10,11,0,0,111,112,5,58,0,0,112,138,3,6,3,12,113,114,
-  	10,10,0,0,114,115,5,57,0,0,115,138,3,6,3,11,116,117,10,9,0,0,117,118,
-  	5,59,0,0,118,138,3,6,3,10,119,120,10,8,0,0,120,121,7,7,0,0,121,138,3,
-  	6,3,9,122,123,10,22,0,0,123,132,5,32,0,0,124,129,3,6,3,0,125,126,5,39,
-  	0,0,126,128,3,6,3,0,127,125,1,0,0,0,128,131,1,0,0,0,129,127,1,0,0,0,129,
-  	130,1,0,0,0,130,133,1,0,0,0,131,129,1,0,0,0,132,124,1,0,0,0,132,133,1,
-  	0,0,0,133,134,1,0,0,0,134,138,5,33,0,0,135,136,10,21,0,0,136,138,5,52,
-  	0,0,137,82,1,0,0,0,137,86,1,0,0,0,137,89,1,0,0,0,137,92,1,0,0,0,137,95,
-  	1,0,0,0,137,98,1,0,0,0,137,101,1,0,0,0,137,104,1,0,0,0,137,107,1,0,0,
-  	0,137,110,1,0,0,0,137,113,1,0,0,0,137,116,1,0,0,0,137,119,1,0,0,0,137,
-  	122,1,0,0,0,137,135,1,0,0,0,138,141,1,0,0,0,139,137,1,0,0,0,139,140,1,
-  	0,0,0,140,7,1,0,0,0,141,139,1,0,0,0,142,156,3,18,9,0,143,156,3,30,15,
-  	0,144,156,3,40,20,0,145,156,3,22,11,0,146,156,3,20,10,0,147,156,3,38,
-  	19,0,148,156,3,16,8,0,149,156,3,32,16,0,150,156,3,34,17,0,151,156,3,36,
-  	18,0,152,156,3,14,7,0,153,156,3,12,6,0,154,156,3,42,21,0,155,142,1,0,
-  	0,0,155,143,1,0,0,0,155,144,1,0,0,0,155,145,1,0,0,0,155,146,1,0,0,0,155,
-  	147,1,0,0,0,155,148,1,0,0,0,155,149,1,0,0,0,155,150,1,0,0,0,155,151,1,
-  	0,0,0,155,152,1,0,0,0,155,153,1,0,0,0,155,154,1,0,0,0,156,9,1,0,0,0,157,
-  	158,3,44,22,0,158,159,6,5,-1,0,159,177,1,0,0,0,160,161,3,44,22,0,161,
-  	162,5,32,0,0,162,163,5,33,0,0,163,177,1,0,0,0,164,165,3,44,22,0,165,166,
-  	5,32,0,0,166,171,3,6,3,0,167,168,5,39,0,0,168,170,3,6,3,0,169,167,1,0,
-  	0,0,170,173,1,0,0,0,171,169,1,0,0,0,171,172,1,0,0,0,172,174,1,0,0,0,173,
-  	171,1,0,0,0,174,175,5,33,0,0,175,177,1,0,0,0,176,157,1,0,0,0,176,160,
-  	1,0,0,0,176,164,1,0,0,0,177,11,1,0,0,0,178,179,5,28,0,0,179,180,3,44,
-  	22,0,180,189,5,36,0,0,181,186,3,10,5,0,182,183,5,39,0,0,183,185,3,10,
-  	5,0,184,182,1,0,0,0,185,188,1,0,0,0,186,184,1,0,0,0,186,187,1,0,0,0,187,
-  	190,1,0,0,0,188,186,1,0,0,0,189,181,1,0,0,0,189,190,1,0,0,0,190,192,1,
-  	0,0,0,191,193,5,39,0,0,192,191,1,0,0,0,192,193,1,0,0,0,193,194,1,0,0,
-  	0,194,195,5,37,0,0,195,13,1,0,0,0,196,197,5,49,0,0,197,209,3,44,22,0,
-  	198,199,5,32,0,0,199,204,3,6,3,0,200,201,5,39,0,0,201,203,3,6,3,0,202,
-  	200,1,0,0,0,203,206,1,0,0,0,204,202,1,0,0,0,204,205,1,0,0,0,205,207,1,
-  	0,0,0,206,204,1,0,0,0,207,208,5,33,0,0,208,210,1,0,0,0,209,198,1,0,0,
-  	0,209,210,1,0,0,0,210,212,1,0,0,0,211,213,5,30,0,0,212,211,1,0,0,0,212,
-  	213,1,0,0,0,213,214,1,0,0,0,214,215,3,8,4,0,215,15,1,0,0,0,216,217,5,
-  	12,0,0,217,222,3,44,22,0,218,219,5,61,0,0,219,221,3,44,22,0,220,218,1,
-  	0,0,0,221,224,1,0,0,0,222,220,1,0,0,0,222,223,1,0,0,0,223,17,1,0,0,0,
-  	224,222,1,0,0,0,225,226,3,26,13,0,226,227,7,8,0,0,227,228,3,44,22,0,228,
-  	229,5,38,0,0,229,230,3,6,3,0,230,231,5,42,0,0,231,232,3,6,3,0,232,246,
-  	1,0,0,0,233,234,3,26,13,0,234,235,7,8,0,0,235,236,3,44,22,0,236,237,5,
-  	42,0,0,237,238,3,6,3,0,238,246,1,0,0,0,239,240,3,26,13,0,240,241,7,8,
-  	0,0,241,242,3,44,22,0,242,243,5,38,0,0,243,244,3,6,3,0,244,246,1,0,0,
-  	0,245,225,1,0,0,0,245,233,1,0,0,0,245,239,1,0,0,0,246,19,1,0,0,0,247,
-  	251,5,36,0,0,248,250,3,4,2,0,249,248,1,0,0,0,250,253,1,0,0,0,251,249,
-  	1,0,0,0,251,252,1,0,0,0,252,254,1,0,0,0,253,251,1,0,0,0,254,255,5,37,
-  	0,0,255,21,1,0,0,0,256,265,5,36,0,0,257,262,3,6,3,0,258,259,5,39,0,0,
-  	259,261,3,6,3,0,260,258,1,0,0,0,261,264,1,0,0,0,262,260,1,0,0,0,262,263,
-  	1,0,0,0,263,266,1,0,0,0,264,262,1,0,0,0,265,257,1,0,0,0,265,266,1,0,0,
-  	0,266,267,1,0,0,0,267,268,5,37,0,0,268,23,1,0,0,0,269,270,3,44,22,0,270,
-  	271,5,38,0,0,271,272,3,6,3,0,272,273,5,39,0,0,273,275,1,0,0,0,274,269,
-  	1,0,0,0,275,278,1,0,0,0,276,274,1,0,0,0,276,277,1,0,0,0,277,283,1,0,0,
-  	0,278,276,1,0,0,0,279,280,3,44,22,0,280,281,5,38,0,0,281,282,3,6,3,0,
-  	282,284,1,0,0,0,283,279,1,0,0,0,283,284,1,0,0,0,284,285,1,0,0,0,285,305,
-  	6,12,-1,0,286,287,3,44,22,0,287,288,5,38,0,0,288,289,3,6,3,0,289,290,
-  	5,39,0,0,290,292,1,0,0,0,291,286,1,0,0,0,292,293,1,0,0,0,293,291,1,0,
-  	0,0,293,294,1,0,0,0,294,295,1,0,0,0,295,296,5,61,0,0,296,297,5,61,0,0,
-  	297,298,5,61,0,0,298,299,6,12,-1,0,299,305,1,0,0,0,300,301,5,61,0,0,301,
-  	302,5,61,0,0,302,303,5,61,0,0,303,305,6,12,-1,0,304,276,1,0,0,0,304,291,
-  	1,0,0,0,304,300,1,0,0,0,305,25,1,0,0,0,306,308,3,28,14,0,307,306,1,0,
-  	0,0,308,311,1,0,0,0,309,307,1,0,0,0,309,310,1,0,0,0,310,27,1,0,0,0,311,
-  	309,1,0,0,0,312,320,5,21,0,0,313,320,5,23,0,0,314,320,5,24,0,0,315,320,
-  	5,25,0,0,316,320,5,20,0,0,317,318,5,19,0,0,318,320,5,86,0,0,319,312,1,
-  	0,0,0,319,313,1,0,0,0,319,314,1,0,0,0,319,315,1,0,0,0,319,316,1,0,0,0,
-  	319,317,1,0,0,0,320,29,1,0,0,0,321,322,3,26,13,0,322,323,5,9,0,0,323,
-  	324,3,44,22,0,324,325,5,32,0,0,325,326,3,24,12,0,326,330,5,33,0,0,327,
-  	328,5,51,0,0,328,329,5,43,0,0,329,331,3,6,3,0,330,327,1,0,0,0,330,331,
-  	1,0,0,0,331,332,1,0,0,0,332,333,3,20,10,0,333,346,1,0,0,0,334,335,3,26,
-  	13,0,335,336,5,9,0,0,336,337,3,44,22,0,337,338,5,32,0,0,338,339,3,24,
-  	12,0,339,340,5,33,0,0,340,341,5,51,0,0,341,342,5,43,0,0,342,343,3,6,3,
-  	0,343,344,5,30,0,0,344,346,1,0,0,0,345,321,1,0,0,0,345,334,1,0,0,0,346,
-  	31,1,0,0,0,347,348,5,7,0,0,348,349,5,32,0,0,349,350,3,6,3,0,350,351,5,
-  	33,0,0,351,354,3,20,10,0,352,353,5,8,0,0,353,355,3,20,10,0,354,352,1,
-  	0,0,0,354,355,1,0,0,0,355,33,1,0,0,0,356,357,5,4,0,0,357,358,5,32,0,0,
-  	358,359,3,6,3,0,359,360,5,33,0,0,360,361,3,20,10,0,361,35,1,0,0,0,362,
-  	363,5,3,0,0,363,365,5,32,0,0,364,366,3,6,3,0,365,364,1,0,0,0,365,366,
-  	1,0,0,0,366,367,1,0,0,0,367,369,5,30,0,0,368,370,3,6,3,0,369,368,1,0,
-  	0,0,369,370,1,0,0,0,370,371,1,0,0,0,371,373,5,30,0,0,372,374,3,6,3,0,
-  	373,372,1,0,0,0,373,374,1,0,0,0,374,375,1,0,0,0,375,376,5,33,0,0,376,
-  	377,3,20,10,0,377,37,1,0,0,0,378,380,5,10,0,0,379,381,3,6,3,0,380,379,
-  	1,0,0,0,380,381,1,0,0,0,381,39,1,0,0,0,382,383,5,13,0,0,383,384,3,44,
-  	22,0,384,385,3,20,10,0,385,41,1,0,0,0,386,387,5,29,0,0,387,388,3,44,22,
-  	0,388,389,3,20,10,0,389,43,1,0,0,0,390,391,5,75,0,0,391,45,1,0,0,0,35,
-  	49,56,62,80,129,132,137,139,155,171,176,186,189,192,204,209,212,222,245,
-  	251,262,265,276,283,293,304,309,319,330,345,354,365,369,373,380
+  	3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,
+  	1,3,1,3,1,3,1,3,5,3,130,8,3,10,3,12,3,133,9,3,3,3,135,8,3,1,3,1,3,1,3,
+  	5,3,140,8,3,10,3,12,3,143,9,3,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,
+  	1,4,1,4,1,4,1,4,3,4,159,8,4,1,5,1,5,1,5,1,5,5,5,165,8,5,10,5,12,5,168,
+  	9,5,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,5,6,182,8,6,10,6,
+  	12,6,185,9,6,1,6,1,6,3,6,189,8,6,1,7,1,7,1,7,1,7,1,7,1,7,5,7,197,8,7,
+  	10,7,12,7,200,9,7,3,7,202,8,7,1,7,3,7,205,8,7,1,7,1,7,1,8,1,8,1,8,1,8,
+  	1,8,1,8,5,8,215,8,8,10,8,12,8,218,9,8,1,8,1,8,3,8,222,8,8,1,8,3,8,225,
+  	8,8,1,8,1,8,1,9,1,9,1,9,1,9,5,9,233,8,9,10,9,12,9,236,9,9,1,10,1,10,1,
+  	10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,
+  	10,1,10,1,10,1,10,3,10,258,8,10,1,11,1,11,5,11,262,8,11,10,11,12,11,265,
+  	9,11,1,11,1,11,1,12,1,12,1,12,1,12,5,12,273,8,12,10,12,12,12,276,9,12,
+  	3,12,278,8,12,1,12,1,12,1,13,1,13,1,13,1,13,1,13,5,13,287,8,13,10,13,
+  	12,13,290,9,13,1,13,1,13,1,13,1,13,3,13,296,8,13,1,13,1,13,1,13,1,13,
+  	1,13,1,13,4,13,304,8,13,11,13,12,13,305,1,13,1,13,1,13,1,13,1,13,1,13,
+  	1,13,1,13,1,13,3,13,317,8,13,1,14,5,14,320,8,14,10,14,12,14,323,9,14,
+  	1,15,1,15,1,15,1,15,1,15,1,15,1,15,3,15,332,8,15,1,16,1,16,1,16,1,16,
+  	1,16,1,16,1,16,1,16,1,16,3,16,343,8,16,1,16,1,16,1,16,1,16,1,16,1,16,
+  	1,16,1,16,1,16,1,16,1,16,1,16,1,16,3,16,358,8,16,1,17,1,17,1,17,1,17,
+  	1,17,1,17,1,17,3,17,367,8,17,1,18,1,18,1,18,1,18,1,18,1,18,1,19,1,19,
+  	1,19,3,19,378,8,19,1,19,1,19,3,19,382,8,19,1,19,1,19,3,19,386,8,19,1,
+  	19,1,19,1,19,1,20,1,20,3,20,393,8,20,1,21,1,21,1,21,1,21,1,22,1,22,1,
+  	22,1,22,1,23,1,23,1,23,0,1,6,24,0,2,4,6,8,10,12,14,16,18,20,22,24,26,
+  	28,30,32,34,36,38,40,42,44,46,0,9,3,0,50,51,55,55,64,64,1,0,14,15,1,0,
+  	52,54,1,0,50,51,1,0,47,48,1,0,43,46,1,0,40,41,2,0,42,42,65,74,1,0,1,2,
+  	457,0,49,1,0,0,0,2,58,1,0,0,0,4,64,1,0,0,0,6,82,1,0,0,0,8,158,1,0,0,0,
+  	10,160,1,0,0,0,12,188,1,0,0,0,14,190,1,0,0,0,16,208,1,0,0,0,18,228,1,
+  	0,0,0,20,257,1,0,0,0,22,259,1,0,0,0,24,268,1,0,0,0,26,316,1,0,0,0,28,
+  	321,1,0,0,0,30,331,1,0,0,0,32,357,1,0,0,0,34,359,1,0,0,0,36,368,1,0,0,
+  	0,38,374,1,0,0,0,40,390,1,0,0,0,42,394,1,0,0,0,44,398,1,0,0,0,46,402,
+  	1,0,0,0,48,50,3,4,2,0,49,48,1,0,0,0,50,51,1,0,0,0,51,49,1,0,0,0,51,52,
+  	1,0,0,0,52,53,1,0,0,0,53,54,5,0,0,1,54,1,1,0,0,0,55,59,5,30,0,0,56,59,
+  	5,0,0,1,57,59,4,1,0,0,58,55,1,0,0,0,58,56,1,0,0,0,58,57,1,0,0,0,59,3,
+  	1,0,0,0,60,61,3,6,3,0,61,62,3,2,1,0,62,65,1,0,0,0,63,65,5,31,0,0,64,60,
+  	1,0,0,0,64,63,1,0,0,0,65,5,1,0,0,0,66,67,6,3,-1,0,67,83,3,8,4,0,68,69,
+  	5,52,0,0,69,83,3,6,3,20,70,71,7,0,0,0,71,83,3,6,3,19,72,83,5,77,0,0,73,
+  	83,5,80,0,0,74,83,7,1,0,0,75,83,5,86,0,0,76,83,5,87,0,0,77,83,3,46,23,
+  	0,78,79,5,32,0,0,79,80,3,6,3,0,80,81,5,33,0,0,81,83,1,0,0,0,82,66,1,0,
+  	0,0,82,68,1,0,0,0,82,70,1,0,0,0,82,72,1,0,0,0,82,73,1,0,0,0,82,74,1,0,
+  	0,0,82,75,1,0,0,0,82,76,1,0,0,0,82,77,1,0,0,0,82,78,1,0,0,0,83,141,1,
+  	0,0,0,84,85,10,24,0,0,85,86,5,38,0,0,86,87,5,38,0,0,87,140,3,6,3,25,88,
+  	89,10,23,0,0,89,90,5,61,0,0,90,140,3,6,3,24,91,92,10,18,0,0,92,93,7,2,
+  	0,0,93,140,3,6,3,19,94,95,10,17,0,0,95,96,7,3,0,0,96,140,3,6,3,18,97,
+  	98,10,16,0,0,98,99,7,4,0,0,99,140,3,6,3,17,100,101,10,15,0,0,101,102,
+  	7,5,0,0,102,140,3,6,3,16,103,104,10,14,0,0,104,105,7,6,0,0,105,140,3,
+  	6,3,15,106,107,10,13,0,0,107,108,5,56,0,0,108,140,3,6,3,14,109,110,10,
+  	12,0,0,110,111,5,60,0,0,111,140,3,6,3,13,112,113,10,11,0,0,113,114,5,
+  	58,0,0,114,140,3,6,3,12,115,116,10,10,0,0,116,117,5,57,0,0,117,140,3,
+  	6,3,11,118,119,10,9,0,0,119,120,5,59,0,0,120,140,3,6,3,10,121,122,10,
+  	8,0,0,122,123,7,7,0,0,123,140,3,6,3,9,124,125,10,22,0,0,125,134,5,32,
+  	0,0,126,131,3,6,3,0,127,128,5,39,0,0,128,130,3,6,3,0,129,127,1,0,0,0,
+  	130,133,1,0,0,0,131,129,1,0,0,0,131,132,1,0,0,0,132,135,1,0,0,0,133,131,
+  	1,0,0,0,134,126,1,0,0,0,134,135,1,0,0,0,135,136,1,0,0,0,136,140,5,33,
+  	0,0,137,138,10,21,0,0,138,140,5,52,0,0,139,84,1,0,0,0,139,88,1,0,0,0,
+  	139,91,1,0,0,0,139,94,1,0,0,0,139,97,1,0,0,0,139,100,1,0,0,0,139,103,
+  	1,0,0,0,139,106,1,0,0,0,139,109,1,0,0,0,139,112,1,0,0,0,139,115,1,0,0,
+  	0,139,118,1,0,0,0,139,121,1,0,0,0,139,124,1,0,0,0,139,137,1,0,0,0,140,
+  	143,1,0,0,0,141,139,1,0,0,0,141,142,1,0,0,0,142,7,1,0,0,0,143,141,1,0,
+  	0,0,144,159,3,20,10,0,145,159,3,32,16,0,146,159,3,42,21,0,147,159,3,24,
+  	12,0,148,159,3,22,11,0,149,159,3,40,20,0,150,159,3,18,9,0,151,159,3,34,
+  	17,0,152,159,3,36,18,0,153,159,3,38,19,0,154,159,3,16,8,0,155,159,3,14,
+  	7,0,156,159,3,44,22,0,157,159,3,10,5,0,158,144,1,0,0,0,158,145,1,0,0,
+  	0,158,146,1,0,0,0,158,147,1,0,0,0,158,148,1,0,0,0,158,149,1,0,0,0,158,
+  	150,1,0,0,0,158,151,1,0,0,0,158,152,1,0,0,0,158,153,1,0,0,0,158,154,1,
+  	0,0,0,158,155,1,0,0,0,158,156,1,0,0,0,158,157,1,0,0,0,159,9,1,0,0,0,160,
+  	161,5,11,0,0,161,166,3,46,23,0,162,163,5,61,0,0,163,165,3,46,23,0,164,
+  	162,1,0,0,0,165,168,1,0,0,0,166,164,1,0,0,0,166,167,1,0,0,0,167,11,1,
+  	0,0,0,168,166,1,0,0,0,169,170,3,46,23,0,170,171,6,6,-1,0,171,189,1,0,
+  	0,0,172,173,3,46,23,0,173,174,5,32,0,0,174,175,5,33,0,0,175,189,1,0,0,
+  	0,176,177,3,46,23,0,177,178,5,32,0,0,178,183,3,6,3,0,179,180,5,39,0,0,
+  	180,182,3,6,3,0,181,179,1,0,0,0,182,185,1,0,0,0,183,181,1,0,0,0,183,184,
+  	1,0,0,0,184,186,1,0,0,0,185,183,1,0,0,0,186,187,5,33,0,0,187,189,1,0,
+  	0,0,188,169,1,0,0,0,188,172,1,0,0,0,188,176,1,0,0,0,189,13,1,0,0,0,190,
+  	191,5,28,0,0,191,192,3,46,23,0,192,201,5,36,0,0,193,198,3,12,6,0,194,
+  	195,5,39,0,0,195,197,3,12,6,0,196,194,1,0,0,0,197,200,1,0,0,0,198,196,
+  	1,0,0,0,198,199,1,0,0,0,199,202,1,0,0,0,200,198,1,0,0,0,201,193,1,0,0,
+  	0,201,202,1,0,0,0,202,204,1,0,0,0,203,205,5,39,0,0,204,203,1,0,0,0,204,
+  	205,1,0,0,0,205,206,1,0,0,0,206,207,5,37,0,0,207,15,1,0,0,0,208,209,5,
+  	49,0,0,209,221,3,46,23,0,210,211,5,32,0,0,211,216,3,6,3,0,212,213,5,39,
+  	0,0,213,215,3,6,3,0,214,212,1,0,0,0,215,218,1,0,0,0,216,214,1,0,0,0,216,
+  	217,1,0,0,0,217,219,1,0,0,0,218,216,1,0,0,0,219,220,5,33,0,0,220,222,
+  	1,0,0,0,221,210,1,0,0,0,221,222,1,0,0,0,222,224,1,0,0,0,223,225,5,30,
+  	0,0,224,223,1,0,0,0,224,225,1,0,0,0,225,226,1,0,0,0,226,227,3,8,4,0,227,
+  	17,1,0,0,0,228,229,5,12,0,0,229,234,3,46,23,0,230,231,5,61,0,0,231,233,
+  	3,46,23,0,232,230,1,0,0,0,233,236,1,0,0,0,234,232,1,0,0,0,234,235,1,0,
+  	0,0,235,19,1,0,0,0,236,234,1,0,0,0,237,238,3,28,14,0,238,239,7,8,0,0,
+  	239,240,3,46,23,0,240,241,5,38,0,0,241,242,3,6,3,0,242,243,5,42,0,0,243,
+  	244,3,6,3,0,244,258,1,0,0,0,245,246,3,28,14,0,246,247,7,8,0,0,247,248,
+  	3,46,23,0,248,249,5,42,0,0,249,250,3,6,3,0,250,258,1,0,0,0,251,252,3,
+  	28,14,0,252,253,7,8,0,0,253,254,3,46,23,0,254,255,5,38,0,0,255,256,3,
+  	6,3,0,256,258,1,0,0,0,257,237,1,0,0,0,257,245,1,0,0,0,257,251,1,0,0,0,
+  	258,21,1,0,0,0,259,263,5,36,0,0,260,262,3,4,2,0,261,260,1,0,0,0,262,265,
+  	1,0,0,0,263,261,1,0,0,0,263,264,1,0,0,0,264,266,1,0,0,0,265,263,1,0,0,
+  	0,266,267,5,37,0,0,267,23,1,0,0,0,268,277,5,36,0,0,269,274,3,6,3,0,270,
+  	271,5,39,0,0,271,273,3,6,3,0,272,270,1,0,0,0,273,276,1,0,0,0,274,272,
+  	1,0,0,0,274,275,1,0,0,0,275,278,1,0,0,0,276,274,1,0,0,0,277,269,1,0,0,
+  	0,277,278,1,0,0,0,278,279,1,0,0,0,279,280,5,37,0,0,280,25,1,0,0,0,281,
+  	282,3,46,23,0,282,283,5,38,0,0,283,284,3,6,3,0,284,285,5,39,0,0,285,287,
+  	1,0,0,0,286,281,1,0,0,0,287,290,1,0,0,0,288,286,1,0,0,0,288,289,1,0,0,
+  	0,289,295,1,0,0,0,290,288,1,0,0,0,291,292,3,46,23,0,292,293,5,38,0,0,
+  	293,294,3,6,3,0,294,296,1,0,0,0,295,291,1,0,0,0,295,296,1,0,0,0,296,297,
+  	1,0,0,0,297,317,6,13,-1,0,298,299,3,46,23,0,299,300,5,38,0,0,300,301,
+  	3,6,3,0,301,302,5,39,0,0,302,304,1,0,0,0,303,298,1,0,0,0,304,305,1,0,
+  	0,0,305,303,1,0,0,0,305,306,1,0,0,0,306,307,1,0,0,0,307,308,5,61,0,0,
+  	308,309,5,61,0,0,309,310,5,61,0,0,310,311,6,13,-1,0,311,317,1,0,0,0,312,
+  	313,5,61,0,0,313,314,5,61,0,0,314,315,5,61,0,0,315,317,6,13,-1,0,316,
+  	288,1,0,0,0,316,303,1,0,0,0,316,312,1,0,0,0,317,27,1,0,0,0,318,320,3,
+  	30,15,0,319,318,1,0,0,0,320,323,1,0,0,0,321,319,1,0,0,0,321,322,1,0,0,
+  	0,322,29,1,0,0,0,323,321,1,0,0,0,324,332,5,21,0,0,325,332,5,23,0,0,326,
+  	332,5,24,0,0,327,332,5,25,0,0,328,332,5,20,0,0,329,330,5,19,0,0,330,332,
+  	5,86,0,0,331,324,1,0,0,0,331,325,1,0,0,0,331,326,1,0,0,0,331,327,1,0,
+  	0,0,331,328,1,0,0,0,331,329,1,0,0,0,332,31,1,0,0,0,333,334,3,28,14,0,
+  	334,335,5,9,0,0,335,336,3,46,23,0,336,337,5,32,0,0,337,338,3,26,13,0,
+  	338,342,5,33,0,0,339,340,5,51,0,0,340,341,5,43,0,0,341,343,3,6,3,0,342,
+  	339,1,0,0,0,342,343,1,0,0,0,343,344,1,0,0,0,344,345,3,22,11,0,345,358,
+  	1,0,0,0,346,347,3,28,14,0,347,348,5,9,0,0,348,349,3,46,23,0,349,350,5,
+  	32,0,0,350,351,3,26,13,0,351,352,5,33,0,0,352,353,5,51,0,0,353,354,5,
+  	43,0,0,354,355,3,6,3,0,355,356,5,30,0,0,356,358,1,0,0,0,357,333,1,0,0,
+  	0,357,346,1,0,0,0,358,33,1,0,0,0,359,360,5,7,0,0,360,361,5,32,0,0,361,
+  	362,3,6,3,0,362,363,5,33,0,0,363,366,3,22,11,0,364,365,5,8,0,0,365,367,
+  	3,22,11,0,366,364,1,0,0,0,366,367,1,0,0,0,367,35,1,0,0,0,368,369,5,4,
+  	0,0,369,370,5,32,0,0,370,371,3,6,3,0,371,372,5,33,0,0,372,373,3,22,11,
+  	0,373,37,1,0,0,0,374,375,5,3,0,0,375,377,5,32,0,0,376,378,3,6,3,0,377,
+  	376,1,0,0,0,377,378,1,0,0,0,378,379,1,0,0,0,379,381,5,30,0,0,380,382,
+  	3,6,3,0,381,380,1,0,0,0,381,382,1,0,0,0,382,383,1,0,0,0,383,385,5,30,
+  	0,0,384,386,3,6,3,0,385,384,1,0,0,0,385,386,1,0,0,0,386,387,1,0,0,0,387,
+  	388,5,33,0,0,388,389,3,22,11,0,389,39,1,0,0,0,390,392,5,10,0,0,391,393,
+  	3,6,3,0,392,391,1,0,0,0,392,393,1,0,0,0,393,41,1,0,0,0,394,395,5,13,0,
+  	0,395,396,3,46,23,0,396,397,3,22,11,0,397,43,1,0,0,0,398,399,5,29,0,0,
+  	399,400,3,46,23,0,400,401,3,22,11,0,401,45,1,0,0,0,402,403,5,75,0,0,403,
+  	47,1,0,0,0,36,51,58,64,82,131,134,139,141,158,166,183,188,198,201,204,
+  	216,221,224,234,257,263,274,277,288,295,305,316,321,331,342,357,366,377,
+  	381,385,392
   };
   staticData->serializedATN = antlr4::atn::SerializedATNView(serializedATNSegment, sizeof(serializedATNSegment) / sizeof(serializedATNSegment[0]));
 
@@ -331,19 +354,19 @@ RiddleParser::ProgramContext* RiddleParser::program() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(47); 
+    setState(49); 
     _errHandler->sync(this);
     _la = _input->LA(1);
     do {
-      setState(46);
+      setState(48);
       expressionEnd();
-      setState(49); 
+      setState(51); 
       _errHandler->sync(this);
       _la = _input->LA(1);
     } while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 44473122349971102) != 0) || ((((_la - 64) & ~ 0x3fULL) == 0) &&
+      ((1ULL << _la) & 44473122349973150) != 0) || ((((_la - 64) & ~ 0x3fULL) == 0) &&
       ((1ULL << (_la - 64)) & 12658689) != 0));
-    setState(51);
+    setState(53);
     match(RiddleParser::EOF);
    
   }
@@ -407,26 +430,26 @@ RiddleParser::TerminatorContext* RiddleParser::terminator() {
     exitRule();
   });
   try {
-    setState(56);
+    setState(58);
     _errHandler->sync(this);
     switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 1, _ctx)) {
     case 1: {
       enterOuterAlt(_localctx, 1);
-      setState(53);
+      setState(55);
       match(RiddleParser::Semi);
       break;
     }
 
     case 2: {
       enterOuterAlt(_localctx, 2);
-      setState(54);
+      setState(56);
       match(RiddleParser::EOF);
       break;
     }
 
     case 3: {
       enterOuterAlt(_localctx, 3);
-      setState(55);
+      setState(57);
 
       if (!( lineTerminatorAhead() )) throw FailedPredicateException(this, " lineTerminatorAhead() ");
       break;
@@ -501,7 +524,7 @@ RiddleParser::ExpressionEndContext* RiddleParser::expressionEnd() {
     exitRule();
   });
   try {
-    setState(62);
+    setState(64);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
       case RiddleParser::Var:
@@ -511,6 +534,7 @@ RiddleParser::ExpressionEndContext* RiddleParser::expressionEnd() {
       case RiddleParser::If:
       case RiddleParser::Func:
       case RiddleParser::Return:
+      case RiddleParser::Import:
       case RiddleParser::Package:
       case RiddleParser::Class:
       case RiddleParser::True:
@@ -537,16 +561,16 @@ RiddleParser::ExpressionEndContext* RiddleParser::expressionEnd() {
       case RiddleParser::STRING:
       case RiddleParser::CHAR: {
         enterOuterAlt(_localctx, 1);
-        setState(58);
+        setState(60);
         expression(0);
-        setState(59);
+        setState(61);
         terminator();
         break;
       }
 
       case RiddleParser::Endl: {
         enterOuterAlt(_localctx, 2);
-        setState(61);
+        setState(63);
         match(RiddleParser::Endl);
         break;
       }
@@ -1467,7 +1491,7 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(80);
+    setState(82);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
       case RiddleParser::Var:
@@ -1477,6 +1501,7 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
       case RiddleParser::If:
       case RiddleParser::Func:
       case RiddleParser::Return:
+      case RiddleParser::Import:
       case RiddleParser::Package:
       case RiddleParser::Class:
       case RiddleParser::Extern:
@@ -1493,7 +1518,7 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
         _ctx = _localctx;
         previousContext = _localctx;
 
-        setState(65);
+        setState(67);
         statement();
         break;
       }
@@ -1502,9 +1527,9 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
         _localctx = _tracker.createInstance<LoadExprContext>(_localctx);
         _ctx = _localctx;
         previousContext = _localctx;
-        setState(66);
+        setState(68);
         match(RiddleParser::Star);
-        setState(67);
+        setState(69);
         antlrcpp::downCast<LoadExprContext *>(_localctx)->obj = expression(20);
         break;
       }
@@ -1516,7 +1541,7 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
         _localctx = _tracker.createInstance<UnaryOpContext>(_localctx);
         _ctx = _localctx;
         previousContext = _localctx;
-        setState(68);
+        setState(70);
         antlrcpp::downCast<UnaryOpContext *>(_localctx)->op = _input->LT(1);
         _la = _input->LA(1);
         if (!(((((_la - 50) & ~ 0x3fULL) == 0) &&
@@ -1527,7 +1552,7 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
           _errHandler->reportMatch(this);
           consume();
         }
-        setState(69);
+        setState(71);
         antlrcpp::downCast<UnaryOpContext *>(_localctx)->value = expression(19);
         break;
       }
@@ -1536,7 +1561,7 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
         _localctx = _tracker.createInstance<IntegerContext>(_localctx);
         _ctx = _localctx;
         previousContext = _localctx;
-        setState(70);
+        setState(72);
         match(RiddleParser::Decimal);
         break;
       }
@@ -1545,7 +1570,7 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
         _localctx = _tracker.createInstance<FloatContext>(_localctx);
         _ctx = _localctx;
         previousContext = _localctx;
-        setState(71);
+        setState(73);
         match(RiddleParser::Float);
         break;
       }
@@ -1555,7 +1580,7 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
         _localctx = _tracker.createInstance<BooleanContext>(_localctx);
         _ctx = _localctx;
         previousContext = _localctx;
-        setState(72);
+        setState(74);
         _la = _input->LA(1);
         if (!(_la == RiddleParser::True
 
@@ -1573,7 +1598,7 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
         _localctx = _tracker.createInstance<StringContext>(_localctx);
         _ctx = _localctx;
         previousContext = _localctx;
-        setState(73);
+        setState(75);
         match(RiddleParser::STRING);
         break;
       }
@@ -1582,7 +1607,7 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
         _localctx = _tracker.createInstance<CharContext>(_localctx);
         _ctx = _localctx;
         previousContext = _localctx;
-        setState(74);
+        setState(76);
         match(RiddleParser::CHAR);
         break;
       }
@@ -1591,7 +1616,7 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
         _localctx = _tracker.createInstance<ObjectContext>(_localctx);
         _ctx = _localctx;
         previousContext = _localctx;
-        setState(75);
+        setState(77);
         id();
         break;
       }
@@ -1600,11 +1625,11 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
         _localctx = _tracker.createInstance<ParenExprContext>(_localctx);
         _ctx = _localctx;
         previousContext = _localctx;
-        setState(76);
-        match(RiddleParser::LeftParen);
-        setState(77);
-        antlrcpp::downCast<ParenExprContext *>(_localctx)->value = expression(0);
         setState(78);
+        match(RiddleParser::LeftParen);
+        setState(79);
+        antlrcpp::downCast<ParenExprContext *>(_localctx)->value = expression(0);
+        setState(80);
         match(RiddleParser::RightParen);
         break;
       }
@@ -1613,7 +1638,7 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
       throw NoViableAltException(this);
     }
     _ctx->stop = _input->LT(-1);
-    setState(139);
+    setState(141);
     _errHandler->sync(this);
     alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 7, _ctx);
     while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
@@ -1621,7 +1646,7 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
         if (!_parseListeners.empty())
           triggerExitRuleEvent();
         previousContext = _localctx;
-        setState(137);
+        setState(139);
         _errHandler->sync(this);
         switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 6, _ctx)) {
         case 1: {
@@ -1629,14 +1654,14 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
           _localctx = newContext;
           newContext->left = previousContext;
           pushNewRecursionContext(newContext, startState, RuleExpression);
-          setState(82);
+          setState(84);
 
           if (!(precpred(_ctx, 24))) throw FailedPredicateException(this, "precpred(_ctx, 24)");
-          setState(83);
-          match(RiddleParser::Colon);
-          setState(84);
-          match(RiddleParser::Colon);
           setState(85);
+          match(RiddleParser::Colon);
+          setState(86);
+          match(RiddleParser::Colon);
+          setState(87);
           antlrcpp::downCast<ScopeAccessContext *>(_localctx)->right = expression(25);
           break;
         }
@@ -1646,12 +1671,12 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
           _localctx = newContext;
           newContext->left = previousContext;
           pushNewRecursionContext(newContext, startState, RuleExpression);
-          setState(86);
+          setState(88);
 
           if (!(precpred(_ctx, 23))) throw FailedPredicateException(this, "precpred(_ctx, 23)");
-          setState(87);
+          setState(89);
           match(RiddleParser::Dot);
-          setState(88);
+          setState(90);
           antlrcpp::downCast<MemberAccessContext *>(_localctx)->right = expression(24);
           break;
         }
@@ -1661,10 +1686,10 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
           _localctx = newContext;
           newContext->left = previousContext;
           pushNewRecursionContext(newContext, startState, RuleExpression);
-          setState(89);
+          setState(91);
 
           if (!(precpred(_ctx, 18))) throw FailedPredicateException(this, "precpred(_ctx, 18)");
-          setState(90);
+          setState(92);
           antlrcpp::downCast<MulOpContext *>(_localctx)->op = _input->LT(1);
           _la = _input->LA(1);
           if (!((((_la & ~ 0x3fULL) == 0) &&
@@ -1675,7 +1700,7 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
             _errHandler->reportMatch(this);
             consume();
           }
-          setState(91);
+          setState(93);
           antlrcpp::downCast<MulOpContext *>(_localctx)->right = expression(19);
           break;
         }
@@ -1685,10 +1710,10 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
           _localctx = newContext;
           newContext->left = previousContext;
           pushNewRecursionContext(newContext, startState, RuleExpression);
-          setState(92);
+          setState(94);
 
           if (!(precpred(_ctx, 17))) throw FailedPredicateException(this, "precpred(_ctx, 17)");
-          setState(93);
+          setState(95);
           antlrcpp::downCast<AddOpContext *>(_localctx)->op = _input->LT(1);
           _la = _input->LA(1);
           if (!(_la == RiddleParser::Add
@@ -1700,7 +1725,7 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
             _errHandler->reportMatch(this);
             consume();
           }
-          setState(94);
+          setState(96);
           antlrcpp::downCast<AddOpContext *>(_localctx)->right = expression(18);
           break;
         }
@@ -1710,10 +1735,10 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
           _localctx = newContext;
           newContext->left = previousContext;
           pushNewRecursionContext(newContext, startState, RuleExpression);
-          setState(95);
+          setState(97);
 
           if (!(precpred(_ctx, 16))) throw FailedPredicateException(this, "precpred(_ctx, 16)");
-          setState(96);
+          setState(98);
           antlrcpp::downCast<ShiftOpContext *>(_localctx)->op = _input->LT(1);
           _la = _input->LA(1);
           if (!(_la == RiddleParser::LeftShift
@@ -1725,7 +1750,7 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
             _errHandler->reportMatch(this);
             consume();
           }
-          setState(97);
+          setState(99);
           antlrcpp::downCast<ShiftOpContext *>(_localctx)->right = expression(17);
           break;
         }
@@ -1735,10 +1760,10 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
           _localctx = newContext;
           newContext->left = previousContext;
           pushNewRecursionContext(newContext, startState, RuleExpression);
-          setState(98);
+          setState(100);
 
           if (!(precpred(_ctx, 15))) throw FailedPredicateException(this, "precpred(_ctx, 15)");
-          setState(99);
+          setState(101);
           antlrcpp::downCast<RelOpContext *>(_localctx)->op = _input->LT(1);
           _la = _input->LA(1);
           if (!((((_la & ~ 0x3fULL) == 0) &&
@@ -1749,7 +1774,7 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
             _errHandler->reportMatch(this);
             consume();
           }
-          setState(100);
+          setState(102);
           antlrcpp::downCast<RelOpContext *>(_localctx)->right = expression(16);
           break;
         }
@@ -1759,10 +1784,10 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
           _localctx = newContext;
           newContext->left = previousContext;
           pushNewRecursionContext(newContext, startState, RuleExpression);
-          setState(101);
+          setState(103);
 
           if (!(precpred(_ctx, 14))) throw FailedPredicateException(this, "precpred(_ctx, 14)");
-          setState(102);
+          setState(104);
           antlrcpp::downCast<EqOpContext *>(_localctx)->op = _input->LT(1);
           _la = _input->LA(1);
           if (!(_la == RiddleParser::Equal
@@ -1774,7 +1799,7 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
             _errHandler->reportMatch(this);
             consume();
           }
-          setState(103);
+          setState(105);
           antlrcpp::downCast<EqOpContext *>(_localctx)->right = expression(15);
           break;
         }
@@ -1784,12 +1809,12 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
           _localctx = newContext;
           newContext->left = previousContext;
           pushNewRecursionContext(newContext, startState, RuleExpression);
-          setState(104);
+          setState(106);
 
           if (!(precpred(_ctx, 13))) throw FailedPredicateException(this, "precpred(_ctx, 13)");
-          setState(105);
+          setState(107);
           antlrcpp::downCast<BitAndContext *>(_localctx)->op = match(RiddleParser::And);
-          setState(106);
+          setState(108);
           antlrcpp::downCast<BitAndContext *>(_localctx)->right = expression(14);
           break;
         }
@@ -1799,12 +1824,12 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
           _localctx = newContext;
           newContext->left = previousContext;
           pushNewRecursionContext(newContext, startState, RuleExpression);
-          setState(107);
+          setState(109);
 
           if (!(precpred(_ctx, 12))) throw FailedPredicateException(this, "precpred(_ctx, 12)");
-          setState(108);
+          setState(110);
           antlrcpp::downCast<BitXorContext *>(_localctx)->op = match(RiddleParser::Xor);
-          setState(109);
+          setState(111);
           antlrcpp::downCast<BitXorContext *>(_localctx)->right = expression(13);
           break;
         }
@@ -1814,12 +1839,12 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
           _localctx = newContext;
           newContext->left = previousContext;
           pushNewRecursionContext(newContext, startState, RuleExpression);
-          setState(110);
+          setState(112);
 
           if (!(precpred(_ctx, 11))) throw FailedPredicateException(this, "precpred(_ctx, 11)");
-          setState(111);
+          setState(113);
           antlrcpp::downCast<BitOrContext *>(_localctx)->op = match(RiddleParser::Or);
-          setState(112);
+          setState(114);
           antlrcpp::downCast<BitOrContext *>(_localctx)->right = expression(12);
           break;
         }
@@ -1829,12 +1854,12 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
           _localctx = newContext;
           newContext->left = previousContext;
           pushNewRecursionContext(newContext, startState, RuleExpression);
-          setState(113);
+          setState(115);
 
           if (!(precpred(_ctx, 10))) throw FailedPredicateException(this, "precpred(_ctx, 10)");
-          setState(114);
+          setState(116);
           antlrcpp::downCast<LogicAndContext *>(_localctx)->op = match(RiddleParser::AndAnd);
-          setState(115);
+          setState(117);
           antlrcpp::downCast<LogicAndContext *>(_localctx)->right = expression(11);
           break;
         }
@@ -1844,12 +1869,12 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
           _localctx = newContext;
           newContext->left = previousContext;
           pushNewRecursionContext(newContext, startState, RuleExpression);
-          setState(116);
+          setState(118);
 
           if (!(precpred(_ctx, 9))) throw FailedPredicateException(this, "precpred(_ctx, 9)");
-          setState(117);
+          setState(119);
           antlrcpp::downCast<LogicOrContext *>(_localctx)->op = match(RiddleParser::OrOr);
-          setState(118);
+          setState(120);
           antlrcpp::downCast<LogicOrContext *>(_localctx)->right = expression(10);
           break;
         }
@@ -1859,10 +1884,10 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
           _localctx = newContext;
           newContext->left = previousContext;
           pushNewRecursionContext(newContext, startState, RuleExpression);
-          setState(119);
+          setState(121);
 
           if (!(precpred(_ctx, 8))) throw FailedPredicateException(this, "precpred(_ctx, 8)");
-          setState(120);
+          setState(122);
           antlrcpp::downCast<CompoundAssignOpContext *>(_localctx)->op = _input->LT(1);
           _la = _input->LA(1);
           if (!(((((_la - 42) & ~ 0x3fULL) == 0) &&
@@ -1873,7 +1898,7 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
             _errHandler->reportMatch(this);
             consume();
           }
-          setState(121);
+          setState(123);
           antlrcpp::downCast<CompoundAssignOpContext *>(_localctx)->right = expression(9);
           break;
         }
@@ -1883,34 +1908,34 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
           _localctx = newContext;
           newContext->obj = previousContext;
           pushNewRecursionContext(newContext, startState, RuleExpression);
-          setState(122);
+          setState(124);
 
           if (!(precpred(_ctx, 22))) throw FailedPredicateException(this, "precpred(_ctx, 22)");
-          setState(123);
+          setState(125);
           match(RiddleParser::LeftParen);
-          setState(132);
+          setState(134);
           _errHandler->sync(this);
 
           _la = _input->LA(1);
           if ((((_la & ~ 0x3fULL) == 0) &&
-            ((1ULL << _la) & 44473120202487454) != 0) || ((((_la - 64) & ~ 0x3fULL) == 0) &&
+            ((1ULL << _la) & 44473120202489502) != 0) || ((((_la - 64) & ~ 0x3fULL) == 0) &&
             ((1ULL << (_la - 64)) & 12658689) != 0)) {
-            setState(124);
+            setState(126);
             expression(0);
-            setState(129);
+            setState(131);
             _errHandler->sync(this);
             _la = _input->LA(1);
             while (_la == RiddleParser::Comma) {
-              setState(125);
+              setState(127);
               match(RiddleParser::Comma);
-              setState(126);
+              setState(128);
               expression(0);
-              setState(131);
+              setState(133);
               _errHandler->sync(this);
               _la = _input->LA(1);
             }
           }
-          setState(134);
+          setState(136);
           match(RiddleParser::RightParen);
           break;
         }
@@ -1920,10 +1945,10 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
           _localctx = newContext;
           newContext->obj = previousContext;
           pushNewRecursionContext(newContext, startState, RuleExpression);
-          setState(135);
+          setState(137);
 
           if (!(precpred(_ctx, 21))) throw FailedPredicateException(this, "precpred(_ctx, 21)");
-          setState(136);
+          setState(138);
           match(RiddleParser::Star);
           break;
         }
@@ -1932,7 +1957,7 @@ RiddleParser::ExpressionContext* RiddleParser::expression(int precedence) {
           break;
         } 
       }
-      setState(141);
+      setState(143);
       _errHandler->sync(this);
       alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 7, _ctx);
     }
@@ -2003,6 +2028,10 @@ RiddleParser::UnionDeclContext* RiddleParser::StatementContext::unionDecl() {
   return getRuleContext<RiddleParser::UnionDeclContext>(0);
 }
 
+RiddleParser::ImportStmtContext* RiddleParser::StatementContext::importStmt() {
+  return getRuleContext<RiddleParser::ImportStmtContext>(0);
+}
+
 
 size_t RiddleParser::StatementContext::getRuleIndex() const {
   return RiddleParser::RuleStatement;
@@ -2040,102 +2069,204 @@ RiddleParser::StatementContext* RiddleParser::statement() {
     exitRule();
   });
   try {
-    setState(155);
+    setState(158);
     _errHandler->sync(this);
     switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 8, _ctx)) {
     case 1: {
       enterOuterAlt(_localctx, 1);
-      setState(142);
+      setState(144);
       varDecl();
       break;
     }
 
     case 2: {
       enterOuterAlt(_localctx, 2);
-      setState(143);
+      setState(145);
       funcDecl();
       break;
     }
 
     case 3: {
       enterOuterAlt(_localctx, 3);
-      setState(144);
+      setState(146);
       classDecl();
       break;
     }
 
     case 4: {
       enterOuterAlt(_localctx, 4);
-      setState(145);
+      setState(147);
       initList();
       break;
     }
 
     case 5: {
       enterOuterAlt(_localctx, 5);
-      setState(146);
+      setState(148);
       block();
       break;
     }
 
     case 6: {
       enterOuterAlt(_localctx, 6);
-      setState(147);
+      setState(149);
       returnStmt();
       break;
     }
 
     case 7: {
       enterOuterAlt(_localctx, 7);
-      setState(148);
+      setState(150);
       packStmt();
       break;
     }
 
     case 8: {
       enterOuterAlt(_localctx, 8);
-      setState(149);
+      setState(151);
       ifStmt();
       break;
     }
 
     case 9: {
       enterOuterAlt(_localctx, 9);
-      setState(150);
+      setState(152);
       whileStmt();
       break;
     }
 
     case 10: {
       enterOuterAlt(_localctx, 10);
-      setState(151);
+      setState(153);
       forStmt();
       break;
     }
 
     case 11: {
       enterOuterAlt(_localctx, 11);
-      setState(152);
+      setState(154);
       annotation();
       break;
     }
 
     case 12: {
       enterOuterAlt(_localctx, 12);
-      setState(153);
+      setState(155);
       enumStmt();
       break;
     }
 
     case 13: {
       enterOuterAlt(_localctx, 13);
-      setState(154);
+      setState(156);
       unionDecl();
+      break;
+    }
+
+    case 14: {
+      enterOuterAlt(_localctx, 14);
+      setState(157);
+      importStmt();
       break;
     }
 
     default:
       break;
+    }
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- ImportStmtContext ------------------------------------------------------------------
+
+RiddleParser::ImportStmtContext::ImportStmtContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+tree::TerminalNode* RiddleParser::ImportStmtContext::Import() {
+  return getToken(RiddleParser::Import, 0);
+}
+
+std::vector<RiddleParser::IdContext *> RiddleParser::ImportStmtContext::id() {
+  return getRuleContexts<RiddleParser::IdContext>();
+}
+
+RiddleParser::IdContext* RiddleParser::ImportStmtContext::id(size_t i) {
+  return getRuleContext<RiddleParser::IdContext>(i);
+}
+
+std::vector<tree::TerminalNode *> RiddleParser::ImportStmtContext::Dot() {
+  return getTokens(RiddleParser::Dot);
+}
+
+tree::TerminalNode* RiddleParser::ImportStmtContext::Dot(size_t i) {
+  return getToken(RiddleParser::Dot, i);
+}
+
+
+size_t RiddleParser::ImportStmtContext::getRuleIndex() const {
+  return RiddleParser::RuleImportStmt;
+}
+
+void RiddleParser::ImportStmtContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<RiddleParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterImportStmt(this);
+}
+
+void RiddleParser::ImportStmtContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<RiddleParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitImportStmt(this);
+}
+
+
+std::any RiddleParser::ImportStmtContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<RiddleParserVisitor*>(visitor))
+    return parserVisitor->visitImportStmt(this);
+  else
+    return visitor->visitChildren(this);
+}
+
+RiddleParser::ImportStmtContext* RiddleParser::importStmt() {
+  ImportStmtContext *_localctx = _tracker.createInstance<ImportStmtContext>(_ctx, getState());
+  enterRule(_localctx, 10, RiddleParser::RuleImportStmt);
+
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
+  auto onExit = finally([=] {
+#endif
+    exitRule();
+  });
+  try {
+    size_t alt;
+    enterOuterAlt(_localctx, 1);
+    setState(160);
+    match(RiddleParser::Import);
+
+    setState(161);
+    id();
+    setState(166);
+    _errHandler->sync(this);
+    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 9, _ctx);
+    while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
+      if (alt == 1) {
+        setState(162);
+        match(RiddleParser::Dot);
+        setState(163);
+        id(); 
+      }
+      setState(168);
+      _errHandler->sync(this);
+      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 9, _ctx);
     }
    
   }
@@ -2209,7 +2340,7 @@ std::any RiddleParser::EnumValueContext::accept(tree::ParseTreeVisitor *visitor)
 
 RiddleParser::EnumValueContext* RiddleParser::enumValue() {
   EnumValueContext *_localctx = _tracker.createInstance<EnumValueContext>(_ctx, getState());
-  enterRule(_localctx, 10, RiddleParser::RuleEnumValue);
+  enterRule(_localctx, 12, RiddleParser::RuleEnumValue);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -2220,12 +2351,12 @@ RiddleParser::EnumValueContext* RiddleParser::enumValue() {
     exitRule();
   });
   try {
-    setState(176);
+    setState(188);
     _errHandler->sync(this);
-    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 10, _ctx)) {
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 11, _ctx)) {
     case 1: {
       enterOuterAlt(_localctx, 1);
-      setState(157);
+      setState(169);
       id();
       antlrcpp::downCast<EnumValueContext *>(_localctx)->hasType =  false;
       break;
@@ -2233,36 +2364,36 @@ RiddleParser::EnumValueContext* RiddleParser::enumValue() {
 
     case 2: {
       enterOuterAlt(_localctx, 2);
-      setState(160);
+      setState(172);
       id();
-      setState(161);
+      setState(173);
       match(RiddleParser::LeftParen);
-      setState(162);
+      setState(174);
       match(RiddleParser::RightParen);
       break;
     }
 
     case 3: {
       enterOuterAlt(_localctx, 3);
-      setState(164);
+      setState(176);
       id();
-      setState(165);
+      setState(177);
       match(RiddleParser::LeftParen);
-      setState(166);
+      setState(178);
       expression(0);
-      setState(171);
+      setState(183);
       _errHandler->sync(this);
       _la = _input->LA(1);
       while (_la == RiddleParser::Comma) {
-        setState(167);
+        setState(179);
         match(RiddleParser::Comma);
-        setState(168);
+        setState(180);
         expression(0);
-        setState(173);
+        setState(185);
         _errHandler->sync(this);
         _la = _input->LA(1);
       }
-      setState(174);
+      setState(186);
       match(RiddleParser::RightParen);
       break;
     }
@@ -2346,7 +2477,7 @@ std::any RiddleParser::EnumStmtContext::accept(tree::ParseTreeVisitor *visitor) 
 
 RiddleParser::EnumStmtContext* RiddleParser::enumStmt() {
   EnumStmtContext *_localctx = _tracker.createInstance<EnumStmtContext>(_ctx, getState());
-  enterRule(_localctx, 12, RiddleParser::RuleEnumStmt);
+  enterRule(_localctx, 14, RiddleParser::RuleEnumStmt);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -2359,43 +2490,43 @@ RiddleParser::EnumStmtContext* RiddleParser::enumStmt() {
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(178);
+    setState(190);
     match(RiddleParser::Enum);
-    setState(179);
+    setState(191);
     antlrcpp::downCast<EnumStmtContext *>(_localctx)->name = id();
-    setState(180);
+    setState(192);
     match(RiddleParser::LeftCurly);
-    setState(189);
+    setState(201);
     _errHandler->sync(this);
 
     _la = _input->LA(1);
     if (_la == RiddleParser::Identifier) {
-      setState(181);
+      setState(193);
       enumValue();
-      setState(186);
+      setState(198);
       _errHandler->sync(this);
-      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 11, _ctx);
+      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 12, _ctx);
       while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
         if (alt == 1) {
-          setState(182);
+          setState(194);
           match(RiddleParser::Comma);
-          setState(183);
+          setState(195);
           enumValue(); 
         }
-        setState(188);
+        setState(200);
         _errHandler->sync(this);
-        alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 11, _ctx);
+        alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 12, _ctx);
       }
     }
-    setState(192);
+    setState(204);
     _errHandler->sync(this);
 
     _la = _input->LA(1);
     if (_la == RiddleParser::Comma) {
-      setState(191);
+      setState(203);
       match(RiddleParser::Comma);
     }
-    setState(194);
+    setState(206);
     match(RiddleParser::RightCurly);
    
   }
@@ -2481,7 +2612,7 @@ std::any RiddleParser::AnnotationContext::accept(tree::ParseTreeVisitor *visitor
 
 RiddleParser::AnnotationContext* RiddleParser::annotation() {
   AnnotationContext *_localctx = _tracker.createInstance<AnnotationContext>(_ctx, getState());
-  enterRule(_localctx, 14, RiddleParser::RuleAnnotation);
+  enterRule(_localctx, 16, RiddleParser::RuleAnnotation);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -2493,43 +2624,43 @@ RiddleParser::AnnotationContext* RiddleParser::annotation() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(196);
+    setState(208);
     match(RiddleParser::At);
-    setState(197);
-    id();
     setState(209);
+    id();
+    setState(221);
     _errHandler->sync(this);
 
     _la = _input->LA(1);
     if (_la == RiddleParser::LeftParen) {
-      setState(198);
+      setState(210);
       match(RiddleParser::LeftParen);
-      setState(199);
+      setState(211);
       expression(0);
-      setState(204);
+      setState(216);
       _errHandler->sync(this);
       _la = _input->LA(1);
       while (_la == RiddleParser::Comma) {
-        setState(200);
+        setState(212);
         match(RiddleParser::Comma);
-        setState(201);
+        setState(213);
         expression(0);
-        setState(206);
+        setState(218);
         _errHandler->sync(this);
         _la = _input->LA(1);
       }
-      setState(207);
+      setState(219);
       match(RiddleParser::RightParen);
     }
-    setState(212);
+    setState(224);
     _errHandler->sync(this);
 
     _la = _input->LA(1);
     if (_la == RiddleParser::Semi) {
-      setState(211);
+      setState(223);
       match(RiddleParser::Semi);
     }
-    setState(214);
+    setState(226);
     antlrcpp::downCast<AnnotationContext *>(_localctx)->stmt = statement();
    
   }
@@ -2595,7 +2726,7 @@ std::any RiddleParser::PackStmtContext::accept(tree::ParseTreeVisitor *visitor) 
 
 RiddleParser::PackStmtContext* RiddleParser::packStmt() {
   PackStmtContext *_localctx = _tracker.createInstance<PackStmtContext>(_ctx, getState());
-  enterRule(_localctx, 16, RiddleParser::RulePackStmt);
+  enterRule(_localctx, 18, RiddleParser::RulePackStmt);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -2607,23 +2738,23 @@ RiddleParser::PackStmtContext* RiddleParser::packStmt() {
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(216);
+    setState(228);
     match(RiddleParser::Package);
-    setState(217);
+    setState(229);
     id();
-    setState(222);
+    setState(234);
     _errHandler->sync(this);
-    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 17, _ctx);
+    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 18, _ctx);
     while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
       if (alt == 1) {
-        setState(218);
+        setState(230);
         match(RiddleParser::Dot);
-        setState(219);
+        setState(231);
         id(); 
       }
-      setState(224);
+      setState(236);
       _errHandler->sync(this);
-      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 17, _ctx);
+      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 18, _ctx);
     }
    
   }
@@ -2701,7 +2832,7 @@ std::any RiddleParser::VarDeclContext::accept(tree::ParseTreeVisitor *visitor) {
 
 RiddleParser::VarDeclContext* RiddleParser::varDecl() {
   VarDeclContext *_localctx = _tracker.createInstance<VarDeclContext>(_ctx, getState());
-  enterRule(_localctx, 18, RiddleParser::RuleVarDecl);
+  enterRule(_localctx, 20, RiddleParser::RuleVarDecl);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -2712,14 +2843,14 @@ RiddleParser::VarDeclContext* RiddleParser::varDecl() {
     exitRule();
   });
   try {
-    setState(245);
+    setState(257);
     _errHandler->sync(this);
-    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 18, _ctx)) {
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 19, _ctx)) {
     case 1: {
       enterOuterAlt(_localctx, 1);
-      setState(225);
+      setState(237);
       modifierList();
-      setState(226);
+      setState(238);
       antlrcpp::downCast<VarDeclContext *>(_localctx)->varType = _input->LT(1);
       _la = _input->LA(1);
       if (!(_la == RiddleParser::Var
@@ -2731,24 +2862,24 @@ RiddleParser::VarDeclContext* RiddleParser::varDecl() {
         _errHandler->reportMatch(this);
         consume();
       }
-      setState(227);
+      setState(239);
       antlrcpp::downCast<VarDeclContext *>(_localctx)->name = id();
-      setState(228);
+      setState(240);
       match(RiddleParser::Colon);
-      setState(229);
+      setState(241);
       antlrcpp::downCast<VarDeclContext *>(_localctx)->type = expression(0);
-      setState(230);
+      setState(242);
       match(RiddleParser::Assign);
-      setState(231);
+      setState(243);
       antlrcpp::downCast<VarDeclContext *>(_localctx)->value = expression(0);
       break;
     }
 
     case 2: {
       enterOuterAlt(_localctx, 2);
-      setState(233);
+      setState(245);
       modifierList();
-      setState(234);
+      setState(246);
       antlrcpp::downCast<VarDeclContext *>(_localctx)->varType = _input->LT(1);
       _la = _input->LA(1);
       if (!(_la == RiddleParser::Var
@@ -2760,20 +2891,20 @@ RiddleParser::VarDeclContext* RiddleParser::varDecl() {
         _errHandler->reportMatch(this);
         consume();
       }
-      setState(235);
+      setState(247);
       antlrcpp::downCast<VarDeclContext *>(_localctx)->name = id();
-      setState(236);
+      setState(248);
       match(RiddleParser::Assign);
-      setState(237);
+      setState(249);
       antlrcpp::downCast<VarDeclContext *>(_localctx)->value = expression(0);
       break;
     }
 
     case 3: {
       enterOuterAlt(_localctx, 3);
-      setState(239);
+      setState(251);
       modifierList();
-      setState(240);
+      setState(252);
       antlrcpp::downCast<VarDeclContext *>(_localctx)->varType = _input->LT(1);
       _la = _input->LA(1);
       if (!(_la == RiddleParser::Var
@@ -2785,11 +2916,11 @@ RiddleParser::VarDeclContext* RiddleParser::varDecl() {
         _errHandler->reportMatch(this);
         consume();
       }
-      setState(241);
+      setState(253);
       antlrcpp::downCast<VarDeclContext *>(_localctx)->name = id();
-      setState(242);
+      setState(254);
       match(RiddleParser::Colon);
-      setState(243);
+      setState(255);
       antlrcpp::downCast<VarDeclContext *>(_localctx)->type = expression(0);
       break;
     }
@@ -2857,7 +2988,7 @@ std::any RiddleParser::BlockContext::accept(tree::ParseTreeVisitor *visitor) {
 
 RiddleParser::BlockContext* RiddleParser::block() {
   BlockContext *_localctx = _tracker.createInstance<BlockContext>(_ctx, getState());
-  enterRule(_localctx, 20, RiddleParser::RuleBlock);
+  enterRule(_localctx, 22, RiddleParser::RuleBlock);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -2869,21 +3000,21 @@ RiddleParser::BlockContext* RiddleParser::block() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(247);
+    setState(259);
     match(RiddleParser::LeftCurly);
-    setState(251);
+    setState(263);
     _errHandler->sync(this);
     _la = _input->LA(1);
     while ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 44473122349971102) != 0) || ((((_la - 64) & ~ 0x3fULL) == 0) &&
+      ((1ULL << _la) & 44473122349973150) != 0) || ((((_la - 64) & ~ 0x3fULL) == 0) &&
       ((1ULL << (_la - 64)) & 12658689) != 0)) {
-      setState(248);
+      setState(260);
       expressionEnd();
-      setState(253);
+      setState(265);
       _errHandler->sync(this);
       _la = _input->LA(1);
     }
-    setState(254);
+    setState(266);
     match(RiddleParser::RightCurly);
    
   }
@@ -2953,7 +3084,7 @@ std::any RiddleParser::InitListContext::accept(tree::ParseTreeVisitor *visitor) 
 
 RiddleParser::InitListContext* RiddleParser::initList() {
   InitListContext *_localctx = _tracker.createInstance<InitListContext>(_ctx, getState());
-  enterRule(_localctx, 22, RiddleParser::RuleInitList);
+  enterRule(_localctx, 24, RiddleParser::RuleInitList);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -2965,31 +3096,31 @@ RiddleParser::InitListContext* RiddleParser::initList() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(256);
+    setState(268);
     match(RiddleParser::LeftCurly);
-    setState(265);
+    setState(277);
     _errHandler->sync(this);
 
     _la = _input->LA(1);
     if ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 44473120202487454) != 0) || ((((_la - 64) & ~ 0x3fULL) == 0) &&
+      ((1ULL << _la) & 44473120202489502) != 0) || ((((_la - 64) & ~ 0x3fULL) == 0) &&
       ((1ULL << (_la - 64)) & 12658689) != 0)) {
-      setState(257);
+      setState(269);
       expression(0);
-      setState(262);
+      setState(274);
       _errHandler->sync(this);
       _la = _input->LA(1);
       while (_la == RiddleParser::Comma) {
-        setState(258);
+        setState(270);
         match(RiddleParser::Comma);
-        setState(259);
+        setState(271);
         expression(0);
-        setState(264);
+        setState(276);
         _errHandler->sync(this);
         _la = _input->LA(1);
       }
     }
-    setState(267);
+    setState(279);
     match(RiddleParser::RightCurly);
    
   }
@@ -3075,7 +3206,7 @@ std::any RiddleParser::DeclArgsContext::accept(tree::ParseTreeVisitor *visitor) 
 
 RiddleParser::DeclArgsContext* RiddleParser::declArgs() {
   DeclArgsContext *_localctx = _tracker.createInstance<DeclArgsContext>(_ctx, getState());
-  enterRule(_localctx, 24, RiddleParser::RuleDeclArgs);
+  enterRule(_localctx, 26, RiddleParser::RuleDeclArgs);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -3087,39 +3218,39 @@ RiddleParser::DeclArgsContext* RiddleParser::declArgs() {
   });
   try {
     size_t alt;
-    setState(304);
+    setState(316);
     _errHandler->sync(this);
-    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 25, _ctx)) {
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 26, _ctx)) {
     case 1: {
       enterOuterAlt(_localctx, 1);
-      setState(276);
+      setState(288);
       _errHandler->sync(this);
-      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 22, _ctx);
+      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 23, _ctx);
       while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
         if (alt == 1) {
-          setState(269);
+          setState(281);
           id();
-          setState(270);
+          setState(282);
           match(RiddleParser::Colon);
-          setState(271);
+          setState(283);
           expression(0);
-          setState(272);
+          setState(284);
           match(RiddleParser::Comma); 
         }
-        setState(278);
+        setState(290);
         _errHandler->sync(this);
-        alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 22, _ctx);
+        alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 23, _ctx);
       }
-      setState(283);
+      setState(295);
       _errHandler->sync(this);
 
       _la = _input->LA(1);
       if (_la == RiddleParser::Identifier) {
-        setState(279);
+        setState(291);
         id();
-        setState(280);
+        setState(292);
         match(RiddleParser::Colon);
-        setState(281);
+        setState(293);
         expression(0);
       }
       antlrcpp::downCast<DeclArgsContext *>(_localctx)->isVar = false;
@@ -3128,27 +3259,27 @@ RiddleParser::DeclArgsContext* RiddleParser::declArgs() {
 
     case 2: {
       enterOuterAlt(_localctx, 2);
-      setState(291); 
+      setState(303); 
       _errHandler->sync(this);
       _la = _input->LA(1);
       do {
-        setState(286);
+        setState(298);
         id();
-        setState(287);
+        setState(299);
         match(RiddleParser::Colon);
-        setState(288);
+        setState(300);
         expression(0);
-        setState(289);
+        setState(301);
         match(RiddleParser::Comma);
-        setState(293); 
+        setState(305); 
         _errHandler->sync(this);
         _la = _input->LA(1);
       } while (_la == RiddleParser::Identifier);
-      setState(295);
+      setState(307);
       match(RiddleParser::Dot);
-      setState(296);
+      setState(308);
       match(RiddleParser::Dot);
-      setState(297);
+      setState(309);
       match(RiddleParser::Dot);
       antlrcpp::downCast<DeclArgsContext *>(_localctx)->isVar = true;
       break;
@@ -3156,11 +3287,11 @@ RiddleParser::DeclArgsContext* RiddleParser::declArgs() {
 
     case 3: {
       enterOuterAlt(_localctx, 3);
-      setState(300);
+      setState(312);
       match(RiddleParser::Dot);
-      setState(301);
+      setState(313);
       match(RiddleParser::Dot);
-      setState(302);
+      setState(314);
       match(RiddleParser::Dot);
       antlrcpp::downCast<DeclArgsContext *>(_localctx)->isVar = true;
       break;
@@ -3221,7 +3352,7 @@ std::any RiddleParser::ModifierListContext::accept(tree::ParseTreeVisitor *visit
 
 RiddleParser::ModifierListContext* RiddleParser::modifierList() {
   ModifierListContext *_localctx = _tracker.createInstance<ModifierListContext>(_ctx, getState());
-  enterRule(_localctx, 26, RiddleParser::RuleModifierList);
+  enterRule(_localctx, 28, RiddleParser::RuleModifierList);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -3233,14 +3364,14 @@ RiddleParser::ModifierListContext* RiddleParser::modifierList() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(309);
+    setState(321);
     _errHandler->sync(this);
     _la = _input->LA(1);
     while ((((_la & ~ 0x3fULL) == 0) &&
       ((1ULL << _la) & 62390272) != 0)) {
-      setState(306);
+      setState(318);
       modifier();
-      setState(311);
+      setState(323);
       _errHandler->sync(this);
       _la = _input->LA(1);
     }
@@ -3316,7 +3447,7 @@ std::any RiddleParser::ModifierContext::accept(tree::ParseTreeVisitor *visitor) 
 
 RiddleParser::ModifierContext* RiddleParser::modifier() {
   ModifierContext *_localctx = _tracker.createInstance<ModifierContext>(_ctx, getState());
-  enterRule(_localctx, 28, RiddleParser::RuleModifier);
+  enterRule(_localctx, 30, RiddleParser::RuleModifier);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -3326,50 +3457,50 @@ RiddleParser::ModifierContext* RiddleParser::modifier() {
     exitRule();
   });
   try {
-    setState(319);
+    setState(331);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
       case RiddleParser::Static: {
         enterOuterAlt(_localctx, 1);
-        setState(312);
+        setState(324);
         match(RiddleParser::Static);
         break;
       }
 
       case RiddleParser::Public: {
         enterOuterAlt(_localctx, 2);
-        setState(313);
+        setState(325);
         match(RiddleParser::Public);
         break;
       }
 
       case RiddleParser::Protected: {
         enterOuterAlt(_localctx, 3);
-        setState(314);
+        setState(326);
         match(RiddleParser::Protected);
         break;
       }
 
       case RiddleParser::Private: {
         enterOuterAlt(_localctx, 4);
-        setState(315);
+        setState(327);
         match(RiddleParser::Private);
         break;
       }
 
       case RiddleParser::Override: {
         enterOuterAlt(_localctx, 5);
-        setState(316);
+        setState(328);
         match(RiddleParser::Override);
         break;
       }
 
       case RiddleParser::Extern: {
         enterOuterAlt(_localctx, 6);
-        setState(317);
+        setState(329);
         match(RiddleParser::Extern);
 
-        setState(318);
+        setState(330);
         match(RiddleParser::STRING);
         break;
       }
@@ -3465,7 +3596,7 @@ std::any RiddleParser::FuncDeclContext::accept(tree::ParseTreeVisitor *visitor) 
 
 RiddleParser::FuncDeclContext* RiddleParser::funcDecl() {
   FuncDeclContext *_localctx = _tracker.createInstance<FuncDeclContext>(_ctx, getState());
-  enterRule(_localctx, 30, RiddleParser::RuleFuncDecl);
+  enterRule(_localctx, 32, RiddleParser::RuleFuncDecl);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -3476,61 +3607,61 @@ RiddleParser::FuncDeclContext* RiddleParser::funcDecl() {
     exitRule();
   });
   try {
-    setState(345);
+    setState(357);
     _errHandler->sync(this);
-    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 29, _ctx)) {
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 30, _ctx)) {
     case 1: {
       enterOuterAlt(_localctx, 1);
-      setState(321);
+      setState(333);
       modifierList();
-      setState(322);
+      setState(334);
       match(RiddleParser::Func);
-      setState(323);
+      setState(335);
       antlrcpp::downCast<FuncDeclContext *>(_localctx)->name = id();
-      setState(324);
+      setState(336);
       match(RiddleParser::LeftParen);
-      setState(325);
+      setState(337);
       declArgs();
-      setState(326);
+      setState(338);
       match(RiddleParser::RightParen);
-      setState(330);
+      setState(342);
       _errHandler->sync(this);
 
       _la = _input->LA(1);
       if (_la == RiddleParser::Sub) {
-        setState(327);
+        setState(339);
         match(RiddleParser::Sub);
-        setState(328);
+        setState(340);
         match(RiddleParser::Greater);
-        setState(329);
+        setState(341);
         antlrcpp::downCast<FuncDeclContext *>(_localctx)->return_type = expression(0);
       }
-      setState(332);
+      setState(344);
       antlrcpp::downCast<FuncDeclContext *>(_localctx)->body = block();
       break;
     }
 
     case 2: {
       enterOuterAlt(_localctx, 2);
-      setState(334);
+      setState(346);
       modifierList();
-      setState(335);
+      setState(347);
       match(RiddleParser::Func);
-      setState(336);
+      setState(348);
       antlrcpp::downCast<FuncDeclContext *>(_localctx)->name = id();
-      setState(337);
+      setState(349);
       match(RiddleParser::LeftParen);
-      setState(338);
+      setState(350);
       declArgs();
-      setState(339);
+      setState(351);
       match(RiddleParser::RightParen);
-      setState(340);
+      setState(352);
       match(RiddleParser::Sub);
-      setState(341);
+      setState(353);
       match(RiddleParser::Greater);
-      setState(342);
+      setState(354);
       antlrcpp::downCast<FuncDeclContext *>(_localctx)->return_type = expression(0);
-      setState(343);
+      setState(355);
       match(RiddleParser::Semi);
       break;
     }
@@ -3610,7 +3741,7 @@ std::any RiddleParser::IfStmtContext::accept(tree::ParseTreeVisitor *visitor) {
 
 RiddleParser::IfStmtContext* RiddleParser::ifStmt() {
   IfStmtContext *_localctx = _tracker.createInstance<IfStmtContext>(_ctx, getState());
-  enterRule(_localctx, 32, RiddleParser::RuleIfStmt);
+  enterRule(_localctx, 34, RiddleParser::RuleIfStmt);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -3621,24 +3752,24 @@ RiddleParser::IfStmtContext* RiddleParser::ifStmt() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(347);
+    setState(359);
     match(RiddleParser::If);
-    setState(348);
+    setState(360);
     match(RiddleParser::LeftParen);
-    setState(349);
+    setState(361);
     antlrcpp::downCast<IfStmtContext *>(_localctx)->cond = expression(0);
-    setState(350);
+    setState(362);
     match(RiddleParser::RightParen);
-    setState(351);
+    setState(363);
     antlrcpp::downCast<IfStmtContext *>(_localctx)->then = block();
-    setState(354);
+    setState(366);
     _errHandler->sync(this);
 
-    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 30, _ctx)) {
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 31, _ctx)) {
     case 1: {
-      setState(352);
+      setState(364);
       match(RiddleParser::Else);
-      setState(353);
+      setState(365);
       antlrcpp::downCast<IfStmtContext *>(_localctx)->else_ = block();
       break;
     }
@@ -3710,7 +3841,7 @@ std::any RiddleParser::WhileStmtContext::accept(tree::ParseTreeVisitor *visitor)
 
 RiddleParser::WhileStmtContext* RiddleParser::whileStmt() {
   WhileStmtContext *_localctx = _tracker.createInstance<WhileStmtContext>(_ctx, getState());
-  enterRule(_localctx, 34, RiddleParser::RuleWhileStmt);
+  enterRule(_localctx, 36, RiddleParser::RuleWhileStmt);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -3721,15 +3852,15 @@ RiddleParser::WhileStmtContext* RiddleParser::whileStmt() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(356);
+    setState(368);
     match(RiddleParser::While);
-    setState(357);
+    setState(369);
     match(RiddleParser::LeftParen);
-    setState(358);
+    setState(370);
     antlrcpp::downCast<WhileStmtContext *>(_localctx)->cond = expression(0);
-    setState(359);
+    setState(371);
     match(RiddleParser::RightParen);
-    setState(360);
+    setState(372);
     antlrcpp::downCast<WhileStmtContext *>(_localctx)->body = block();
    
   }
@@ -3807,7 +3938,7 @@ std::any RiddleParser::ForStmtContext::accept(tree::ParseTreeVisitor *visitor) {
 
 RiddleParser::ForStmtContext* RiddleParser::forStmt() {
   ForStmtContext *_localctx = _tracker.createInstance<ForStmtContext>(_ctx, getState());
-  enterRule(_localctx, 36, RiddleParser::RuleForStmt);
+  enterRule(_localctx, 38, RiddleParser::RuleForStmt);
   size_t _la = 0;
 
 #if __cplusplus > 201703L
@@ -3819,47 +3950,47 @@ RiddleParser::ForStmtContext* RiddleParser::forStmt() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(362);
+    setState(374);
     match(RiddleParser::For);
-    setState(363);
+    setState(375);
     match(RiddleParser::LeftParen);
-    setState(365);
+    setState(377);
     _errHandler->sync(this);
 
     _la = _input->LA(1);
     if ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 44473120202487454) != 0) || ((((_la - 64) & ~ 0x3fULL) == 0) &&
+      ((1ULL << _la) & 44473120202489502) != 0) || ((((_la - 64) & ~ 0x3fULL) == 0) &&
       ((1ULL << (_la - 64)) & 12658689) != 0)) {
-      setState(364);
+      setState(376);
       antlrcpp::downCast<ForStmtContext *>(_localctx)->init = expression(0);
     }
-    setState(367);
+    setState(379);
     match(RiddleParser::Semi);
-    setState(369);
+    setState(381);
     _errHandler->sync(this);
 
     _la = _input->LA(1);
     if ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 44473120202487454) != 0) || ((((_la - 64) & ~ 0x3fULL) == 0) &&
+      ((1ULL << _la) & 44473120202489502) != 0) || ((((_la - 64) & ~ 0x3fULL) == 0) &&
       ((1ULL << (_la - 64)) & 12658689) != 0)) {
-      setState(368);
+      setState(380);
       antlrcpp::downCast<ForStmtContext *>(_localctx)->cond = expression(0);
     }
-    setState(371);
+    setState(383);
     match(RiddleParser::Semi);
-    setState(373);
+    setState(385);
     _errHandler->sync(this);
 
     _la = _input->LA(1);
     if ((((_la & ~ 0x3fULL) == 0) &&
-      ((1ULL << _la) & 44473120202487454) != 0) || ((((_la - 64) & ~ 0x3fULL) == 0) &&
+      ((1ULL << _la) & 44473120202489502) != 0) || ((((_la - 64) & ~ 0x3fULL) == 0) &&
       ((1ULL << (_la - 64)) & 12658689) != 0)) {
-      setState(372);
+      setState(384);
       antlrcpp::downCast<ForStmtContext *>(_localctx)->change = expression(0);
     }
-    setState(375);
+    setState(387);
     match(RiddleParser::RightParen);
-    setState(376);
+    setState(388);
     antlrcpp::downCast<ForStmtContext *>(_localctx)->body = block();
    
   }
@@ -3913,7 +4044,7 @@ std::any RiddleParser::ReturnStmtContext::accept(tree::ParseTreeVisitor *visitor
 
 RiddleParser::ReturnStmtContext* RiddleParser::returnStmt() {
   ReturnStmtContext *_localctx = _tracker.createInstance<ReturnStmtContext>(_ctx, getState());
-  enterRule(_localctx, 38, RiddleParser::RuleReturnStmt);
+  enterRule(_localctx, 40, RiddleParser::RuleReturnStmt);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -3924,14 +4055,14 @@ RiddleParser::ReturnStmtContext* RiddleParser::returnStmt() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(378);
+    setState(390);
     match(RiddleParser::Return);
-    setState(380);
+    setState(392);
     _errHandler->sync(this);
 
-    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 34, _ctx)) {
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 35, _ctx)) {
     case 1: {
-      setState(379);
+      setState(391);
       antlrcpp::downCast<ReturnStmtContext *>(_localctx)->result = expression(0);
       break;
     }
@@ -3995,7 +4126,7 @@ std::any RiddleParser::ClassDeclContext::accept(tree::ParseTreeVisitor *visitor)
 
 RiddleParser::ClassDeclContext* RiddleParser::classDecl() {
   ClassDeclContext *_localctx = _tracker.createInstance<ClassDeclContext>(_ctx, getState());
-  enterRule(_localctx, 40, RiddleParser::RuleClassDecl);
+  enterRule(_localctx, 42, RiddleParser::RuleClassDecl);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -4006,11 +4137,11 @@ RiddleParser::ClassDeclContext* RiddleParser::classDecl() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(382);
+    setState(394);
     match(RiddleParser::Class);
-    setState(383);
+    setState(395);
     antlrcpp::downCast<ClassDeclContext *>(_localctx)->name = id();
-    setState(384);
+    setState(396);
     antlrcpp::downCast<ClassDeclContext *>(_localctx)->body = block();
    
   }
@@ -4068,7 +4199,7 @@ std::any RiddleParser::UnionDeclContext::accept(tree::ParseTreeVisitor *visitor)
 
 RiddleParser::UnionDeclContext* RiddleParser::unionDecl() {
   UnionDeclContext *_localctx = _tracker.createInstance<UnionDeclContext>(_ctx, getState());
-  enterRule(_localctx, 42, RiddleParser::RuleUnionDecl);
+  enterRule(_localctx, 44, RiddleParser::RuleUnionDecl);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -4079,11 +4210,11 @@ RiddleParser::UnionDeclContext* RiddleParser::unionDecl() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(386);
+    setState(398);
     match(RiddleParser::Union);
-    setState(387);
+    setState(399);
     antlrcpp::downCast<UnionDeclContext *>(_localctx)->name = id();
-    setState(388);
+    setState(400);
     antlrcpp::downCast<UnionDeclContext *>(_localctx)->body = block();
    
   }
@@ -4133,7 +4264,7 @@ std::any RiddleParser::IdContext::accept(tree::ParseTreeVisitor *visitor) {
 
 RiddleParser::IdContext* RiddleParser::id() {
   IdContext *_localctx = _tracker.createInstance<IdContext>(_ctx, getState());
-  enterRule(_localctx, 44, RiddleParser::RuleId);
+  enterRule(_localctx, 46, RiddleParser::RuleId);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -4144,7 +4275,7 @@ RiddleParser::IdContext* RiddleParser::id() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(390);
+    setState(402);
     match(RiddleParser::Identifier);
    
   }
