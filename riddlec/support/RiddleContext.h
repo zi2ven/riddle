@@ -15,20 +15,12 @@
  *
  */
 #pragma once
-#include <string>
-#include <utility>
-#include <vector>
 
 namespace riddle {
-    class ExprNode;
 
-    class Annotation final {
-    public:
-        std::string name;
-        std::vector<ExprNode *> params;
+class RiddleContext {
 
-        Annotation(std::string name,
-                   const std::vector<ExprNode *> &params): name(std::move(name)),
-                                                           params(params) {}
-    };
-}
+};
+
+} // riddle
+

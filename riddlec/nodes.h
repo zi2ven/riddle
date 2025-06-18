@@ -24,6 +24,7 @@
 
 #include "nodes.h"
 #include "TypeInfo.h"
+#include "semantic/Annoataion.h"
 #include "semantic/Modifier.h"
 #include "semantic/SemObject.h"
 
@@ -68,42 +69,6 @@ namespace riddle {
         BlockNode() = default;
 
         explicit BlockNode(std::vector<ExprNode *> body): body(std::move(body)) {}
-
-        std::any accept(NodeVisitor *visitor) override;
-    };
-
-    class ArgDeclNode final : public ExprNode {
-    public:
-        std::string name;
-        ExprNode *type;
-        std::shared_ptr<SemVariable> obj;
-
-        ArgDeclNode(std::string name, ExprNode *type): name(std::move(name)), type(type) {}
-
-        std::any accept(NodeVisitor *visitor) override;
-    };
-
-    class FuncDeclNode final : public ExprNode {
-    public:
-        std::string name;
-        ExprNode *returnType;
-        BlockNode *body;
-        std::vector<ArgDeclNode *> args;
-        bool isGlobal = true;
-        std::shared_ptr<SemFunction> obj = nullptr;
-        std::shared_ptr<SemClass> theClass;
-        Modifier modifier;
-        std::vector<std::shared_ptr<SemVariable>> allocList;
-        bool isVarArg;
-
-        explicit FuncDeclNode(std::string name,
-                              ExprNode *return_type,
-                              std::vector<ArgDeclNode *> args,
-                              const bool isVarArg = false,
-                              BlockNode *body = nullptr): name(std::move(name)),
-                                                          returnType(return_type),
-                                                          body(body), args(std::move(args)),
-                                                          isVarArg(isVarArg) {}
 
         std::any accept(NodeVisitor *visitor) override;
     };
@@ -157,19 +122,60 @@ namespace riddle {
         std::any accept(NodeVisitor *visitor) override;
     };
 
-    class VarDeclNode final : public ExprNode {
+    class DeclNode : public ExprNode {
+    public:
+        Modifier modifier;
+        bool isNeedGen = true;
+        bool isGlobal = true;
+        std::string name;
+        std::optional<Annotation> annotation;
+
+        explicit DeclNode(std::string name): name(std::move(name)) {}
+    };
+
+    class ArgDeclNode final : public ExprNode {
+    public:
+        std::string name;
+        ExprNode *type;
+        std::shared_ptr<SemVariable> obj;
+
+        ArgDeclNode(std::string name, ExprNode *type): name(std::move(name)), type(type) {}
+
+        std::any accept(NodeVisitor *visitor) override;
+    };
+
+    class FuncDeclNode final : public DeclNode {
+    public:
+        ExprNode *returnType;
+        BlockNode *body;
+        std::vector<ArgDeclNode *> args;
+        std::shared_ptr<SemFunction> obj = nullptr;
+        std::shared_ptr<SemClass> theClass;
+        std::vector<std::shared_ptr<SemVariable>> allocList;
+        bool isVarArg;
+
+        explicit FuncDeclNode(std::string name,
+                              ExprNode *return_type,
+                              std::vector<ArgDeclNode *> args,
+                              const bool isVarArg = false,
+                              BlockNode *body = nullptr): DeclNode(std::move(name)),
+                                                          returnType(return_type),
+                                                          body(body), args(std::move(args)),
+                                                          isVarArg(isVarArg) {}
+
+        std::any accept(NodeVisitor *visitor) override;
+    };
+
+    class VarDeclNode final : public DeclNode {
     public:
         std::string name;
         ExprNode *type;
         ExprNode *value;
         std::shared_ptr<SemVariable> obj = nullptr;
-        bool needGen = true;
-        bool isLocalVar = true;
-        Modifier modifier;
 
         VarDeclNode(std::string name,
                     ExprNode *type,
-                    ExprNode *value = nullptr): name(std::move(name)), type(type),
+                    ExprNode *value = nullptr): DeclNode(std::move(name)), type(type),
                                                 value(value) {}
 
         std::any accept(NodeVisitor *visitor) override;

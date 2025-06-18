@@ -20,6 +20,7 @@
 #include <stacktrace>
 
 #include "nodes.h"
+#include "semantic/Annoataion.h"
 #include "support/Trie.hpp"
 
 using namespace riddle;
@@ -125,7 +126,10 @@ any GramVisitor::visitFuncDecl(RiddleParser::FuncDeclContext *context) {
     const auto args = any_cast<vector<ArgDeclNode *>>(visitDeclArgs(context->declArgs()));
 
     const auto node = new FuncDeclNode(name, returnType, args, context->declArgs()->isVar, body);
-    node->modifier = any_cast<Modifier>(visit(context->modifierList()));
+    node->modifier = any_cast<Modifier>(visitModifierList(context->modifierList()));
+    if (context->annotation()) {
+        node->annotation = any_cast<Annotation>(visitAnnotation(context->annotation()));
+    }
     program->nodes.emplace_back(node);
     return toSNPtr(node);
 }
@@ -190,7 +194,7 @@ std::any GramVisitor::visitString(RiddleParser::StringContext *context) {
                     break;
                 default: break;
             }
-        }else {
+        } else {
             add(ch);
         }
     }
@@ -454,4 +458,15 @@ std::any GramVisitor::visitEnumStmt(RiddleParser::EnumStmtContext *context) {
         }
     }
     return toSNPtr(node);
+}
+
+std::any GramVisitor::visitAnnotation(RiddleParser::AnnotationContext *context) {
+    const auto name = context->name->getText();
+    vector<ExprNode *> expr;
+    for (const auto i: context->children) {
+        if (antlrcpp::is<RiddleParser::ExpressionContext *>(i)) {
+            expr.push_back(nodeVisit(i));
+        }
+    }
+    return Annotation(name, expr);
 }

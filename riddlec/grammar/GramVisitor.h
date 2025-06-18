@@ -103,5 +103,7 @@ namespace riddle {
         std::any visitEnumValue(RiddleParser::EnumValueContext *context) override;
 
         std::any visitEnumStmt(RiddleParser::EnumStmtContext *context) override;
+
+        std::any visitAnnotation(RiddleParser::AnnotationContext *context) override;
     };
 } // riddle

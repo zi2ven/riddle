@@ -164,15 +164,15 @@ namespace riddle {
         const auto obj = make_shared<SemVariable>(node->name, type);
         node->obj = obj;
 
-        node->isLocalVar = !symbols.isGlobal();
+        node->isGlobal = symbols.isGlobal();
 
         if (node->modifier.get(Modifier::Static)) {
-            node->isLocalVar = false;
+            node->isGlobal = true;
         }
 
-        if (!node->needGen)return toSNPtr(obj);
+        if (!node->isNeedGen)return toSNPtr(obj);
 
-        if (node->isLocalVar) {
+        if (!node->isGlobal) {
             const auto func = parent.top();
             func->allocList.push_back(obj);
         }
@@ -377,7 +377,7 @@ namespace riddle {
         for (const auto &i: node->members) {
             const bool isStatic = i->modifier.get(Modifier::Static);
             if (!isStatic) {
-                i->needGen = false;
+                i->isNeedGen = false;
             }
             const auto result = objVisit(i);
             if (const auto var = dynamic_pointer_cast<SemVariable>(result)) {
@@ -515,7 +515,7 @@ namespace riddle {
 
         symbols.joinScope();
         for (const auto i: node->members) {
-            i->needGen = false;
+            i->isNeedGen = false;
             const auto result = objVisit(i);
             const auto val = std::dynamic_pointer_cast<SemVariable>(result);
             if (val == nullptr) {

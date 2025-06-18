@@ -574,7 +574,6 @@ public:
     IfStmtContext *ifStmt();
     WhileStmtContext *whileStmt();
     ForStmtContext *forStmt();
-    AnnotationContext *annotation();
     EnumStmtContext *enumStmt();
     UnionDeclContext *unionDecl();
     ImportStmtContext *importStmt();
@@ -654,12 +653,11 @@ public:
 
   class  AnnotationContext : public antlr4::ParserRuleContext {
   public:
-    RiddleParser::StatementContext *stmt = nullptr;
+    RiddleParser::IdContext *name = nullptr;
     AnnotationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *At();
     IdContext *id();
-    StatementContext *statement();
     antlr4::tree::TerminalNode *LeftParen();
     std::vector<ExpressionContext *> expression();
     ExpressionContext* expression(size_t i);
@@ -836,6 +834,7 @@ public:
     antlr4::tree::TerminalNode *RightParen();
     IdContext *id();
     BlockContext *block();
+    AnnotationContext *annotation();
     antlr4::tree::TerminalNode *Sub();
     antlr4::tree::TerminalNode *Greater();
     ExpressionContext *expression();

@@ -176,6 +176,18 @@ namespace riddle {
 
         node->obj->func = func;
 
+        // section
+        if (node->annotation) {
+            if (node->annotation.value().params.size() != 1) {
+                throw runtime_error("Invalid annotation");
+            }
+            const auto str = dynamic_cast<StringNode*>(node->annotation.value().params[0]);
+            if (str == nullptr) {
+                throw runtime_error("Invalid annotation");
+            }
+            func->setSection(str->value);
+        }
+
         if (node->body) {
             const auto entry = llvm::BasicBlock::Create(*context, "entry", func);
             builder.SetInsertPoint(entry);
@@ -210,11 +222,14 @@ namespace riddle {
 
         if (!value)return {};
 
-        if (node->isLocalVar) {
+        if (!node->isGlobal) {
             builder.CreateStore(value, node->obj->alloca);
         } else {
             if (llvm::dyn_cast<llvm::Constant>(value) == nullptr) {
                 throw TypeError("Value Must be a Constant");
+            }
+            if (!node->modifier.get(Modifier::Static) && info->module->getNamedGlobal(node->name)) {
+                throw runtime_error(std::format("variable \"{}\" already exists", node->name));
             }
             const auto alloca = info->module->getOrInsertGlobal(
                 node->name,
@@ -289,7 +304,7 @@ namespace riddle {
         node->obj->type->type = type;
         for (const auto i: node->members) {
             if (i->modifier.get(Modifier::Static)) {
-                i->isLocalVar = false;
+                i->isGlobal = true;
                 visit(i);
             }
         }

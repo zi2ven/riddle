@@ -81,7 +81,6 @@ statement
     | ifStmt
     | whileStmt
     | forStmt
-    | annotation
     | enumStmt
     | unionDecl
     | importStmt
@@ -102,7 +101,7 @@ enumStmt
     ;
 
 annotation
-    : At id (LeftParen expression (Comma expression)* RightParen)? Semi? stmt=statement
+    : At name=id (LeftParen expression (Comma expression)* RightParen)? Semi?
     ;
 
 packStmt
@@ -143,8 +142,8 @@ modifier
     ;
 
 funcDecl
-    : modifierList Func name=id LeftParen declArgs RightParen (Sub Greater return_type=expression)? body=block
-    | modifierList Func name=id LeftParen declArgs RightParen Sub Greater return_type=expression Semi
+    : annotation? modifierList Func name=id LeftParen declArgs RightParen (Sub Greater return_type=expression)? body=block
+    | annotation? modifierList Func name=id LeftParen declArgs RightParen Sub Greater return_type=expression Semi
     ;
 
 ifStmt
