@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 3.28)
-project(riddle)
 
 set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS ON)
+
+project(riddle LANGUAGES CXX C)
 
 find_package(LLVM CONFIG REQUIRED)
 find_package(antlr4-runtime CONFIG REQUIRED)
@@ -54,5 +57,3 @@ if (WIN32)
             version
     )
 endif ()
-
-add_subdirectory(lsp)

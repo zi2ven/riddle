@@ -19,7 +19,6 @@
 #include <chrono>
 #include <filesystem>
 #include <iostream>
-#include <llvm-c/Target.h>
 
 #include "args.h"
 #include "generate/config.h"

@@ -16,8 +16,36 @@
  */
 
 #pragma once
+#include <mutex>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
 
 namespace riddle {
-    class DiagnosticEngine {};
+    enum class DiagLevel { Note, Warning, Error, Fatal };
+
+    class DiagnosticEngine {
+    public:
+        class DiagnosticIDs {
+        public:
+            unsigned getCustomDiagID(DiagLevel level, const std::string &formatStr);
+
+            std::string format(unsigned diagID, const std::vector<std::string> &args) const;
+
+        private:
+            struct DiagInfo {
+                DiagLevel level;
+                std::string formatStr;
+            };
+
+            mutable std::mutex mutex_;
+            // Next ID to assign.
+            unsigned nextID_ = 1;
+            // Map from format template to assigned ID.
+            std::unordered_map<std::string, unsigned> formatMap_;
+            // Reverse map: ID -> DiagInfo for formatting.
+            std::unordered_map<unsigned, DiagInfo> idMap_;
+        };
+    };
 } // riddle

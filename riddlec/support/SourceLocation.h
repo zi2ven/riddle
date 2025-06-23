@@ -15,7 +15,13 @@
  *
  */
 
-#include "RiddleContext.h"
+#pragma once
+#include <string>
 
 namespace riddle {
+    struct SourceLocation {
+        std::string filename;
+        unsigned line;
+        unsigned column;
+    };
 } // riddle

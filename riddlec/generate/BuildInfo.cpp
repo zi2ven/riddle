@@ -17,7 +17,6 @@
 
 
 #include "BuildInfo.h"
-#include "args.h"
 
 #include <fstream>
 #include <iostream>
@@ -28,9 +27,14 @@
 #include <clang/Frontend/TextDiagnosticPrinter.h>
 #include <llvm/Support/Program.h>
 #include <llvm/Support/VirtualFileSystem.h>
+#include <llvm/Transforms/IPO/InferFunctionAttrs.h>
+#include <llvm/Passes/PassBuilder.h>
+
+#include "args.h"
 
 namespace riddle {
     void BuildInfo::buildToFile() const {
+
         const auto fileName = build_args.outFile.empty() ? "a" : build_args.outFile;
 
         // 创建输出文件

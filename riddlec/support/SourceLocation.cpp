@@ -14,13 +14,8 @@
  * limitations under the License.
  *
  */
-#pragma once
+
+#include "SourceLocation.h"
 
 namespace riddle {
-
-class RiddleContext {
-
-};
-
 } // riddle
-

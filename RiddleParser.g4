@@ -9,12 +9,10 @@ options {
 }
 
 @parser::members {
-    /** 只看隐藏信道，判断当前 token 左边最近一次出现的是 Endl 还是 EOF */
     bool lineTerminatorAhead() {
         ssize_t i = 1;  // 从当前token的前一个开始
         auto* tokens = dynamic_cast<antlr4::BufferedTokenStream*>(_input);
 
-        // 获取所有隐藏信道token
         std::vector<antlr4::Token*> hidden = tokens->getHiddenTokensToLeft(_input->index());
         for (auto idx : hidden) {
             if (idx->getType() == RiddleLexer::Endl) {

@@ -18,6 +18,7 @@
 #include "Generate.h"
 
 #include <iostream>
+#include <clang/Basic/Specifiers.h>
 #include <llvm/IR/Verifier.h>
 
 #include "nodes.h"
@@ -191,6 +192,8 @@ namespace riddle {
         if (node->body) {
             const auto entry = llvm::BasicBlock::Create(*context, "entry", func);
             builder.SetInsertPoint(entry);
+
+            func->addFnAttr(llvm::Attribute::NoUnwind);
 
             // alloca local variable
             for (const auto &i: node->allocList) {
