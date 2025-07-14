@@ -296,6 +296,7 @@ namespace riddle {
                 if (value == nullptr) {
                     throw TypeError(std::format("Argument {} is not a valid value", index + 1));
                 }
+                // todo 完善
             }
         }
 
@@ -434,8 +435,7 @@ namespace riddle {
             if (node->op == "&&" || node->op == "||") {
                 node->type = OpNode::ShortCircuited;
             }
-            const auto &&type = op::getBuiltinBinary(left->type, right->type, node->op);
-            if (type == nullptr) {
+            if (op::getBuiltinBinary(left->type, right->type, node->op) == nullptr) {
                 throw runtime_error(std::format("Unable to find implementation of operator '{}' '{}' '{}'", left->type->name, node->op, right->type->name));
             }
             return make<SemValue>(op::getBuiltinBinary(left->type, right->type, node->op));

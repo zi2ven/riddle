@@ -194,6 +194,7 @@ namespace riddle {
             builder.SetInsertPoint(entry);
 
             func->addFnAttr(llvm::Attribute::NoUnwind);
+            func->setDSOLocal(true);
 
             // alloca local variable
             for (const auto &i: node->allocList) {
