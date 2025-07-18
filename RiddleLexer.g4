@@ -87,7 +87,7 @@ Identifier: [A-Za-z_] [A-Za-z_0-9]*;
 //十六进制
 Hexadecimal: '0x' [1-9A-F] HEX_DIGIT*;
 //十进制
-Decimal: '0' | [1-9] DIGIT*;
+Decimal: '0' | '-'? [1-9] DIGIT*;
 //八进制
 Octal: '0' [1-7] OCTAL_DIGIT*;
 //二进制
