@@ -57,8 +57,7 @@ std::shared_ptr<TypeInfo> op::getBuiltinBinary(const std::shared_ptr<TypeInfo> &
         return nullptr;
     }
 
-    const string key = std::format("{}_{}_{}", left->name, right->name, op);
-    if (builtinOps.contains(key)) {
+    if (const string key = std::format("{}_{}_{}", left->name, right->name, op); builtinOps.contains(key)) {
         return builtinOps.at(key);
     }
     return nullptr;

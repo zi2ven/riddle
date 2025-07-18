@@ -212,7 +212,7 @@ any GramVisitor::visitVarDecl(RiddleParser::VarDeclContext *context) {
     const string name = context->name->getText();
     ExprNode *type = nullptr;
     ExprNode *value = nullptr;
-    auto modifier = std::any_cast<Modifier>(visit(context->modifierList()));
+    const auto modifier = std::any_cast<Modifier>(visit(context->modifierList()));
     if (context->type) {
         type = nodeVisit(context->type);
     }

@@ -168,14 +168,13 @@ namespace riddle {
 
     class VarDeclNode final : public DeclNode {
     public:
-        std::string name;
         ExprNode *type;
         ExprNode *value;
         std::shared_ptr<SemVariable> obj = nullptr;
 
-        VarDeclNode(std::string name,
+        VarDeclNode(const std::string &name,
                     ExprNode *type,
-                    ExprNode *value = nullptr): DeclNode(std::move(name)), type(type),
+                    ExprNode *value = nullptr): DeclNode(name), type(type),
                                                 value(value) {}
 
         std::any accept(NodeVisitor *visitor) override;

@@ -55,6 +55,7 @@ namespace riddle {
         symbols.addObject(make_shared<SemType>("int", getPrimitiveType("int")));
         symbols.addObject(make_shared<SemType>("long", getPrimitiveType("long")));
         symbols.addObject(make_shared<SemType>("float", getPrimitiveType("float")));
+        symbols.addObject(make_shared<SemType>("double", getPrimitiveType("float")));
         symbols.addObject(make_shared<SemType>("char", getPrimitiveType("char")));
         symbols.addObject(make_shared<SemType>("bool", getPrimitiveType("bool")));
     }

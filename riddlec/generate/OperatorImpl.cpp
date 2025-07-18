@@ -99,6 +99,46 @@ namespace {
         };
     }
 
+    void initFloat(const std::string &typeName) {
+        opMap.emplace(std::tuple{typeName, typeName, "+"}, [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
+            return builder.CreateFAdd(lhs, rhs);
+        });
+        opMap.emplace(std::tuple{typeName, typeName, "-"}, [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
+            return builder.CreateFSub(lhs, rhs);
+        });
+        opMap.emplace(std::tuple{typeName, typeName, "*"}, [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
+            return builder.CreateFMul(lhs, rhs);
+        });
+        opMap.emplace(std::tuple{typeName, typeName, "/"}, [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
+            return builder.CreateFDiv(lhs, rhs);
+        });
+        opMap.emplace(std::tuple{typeName, typeName, "%"}, [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
+            return builder.CreateFRem(lhs, rhs);
+        });
+        opMap.emplace(std::tuple{typeName, typeName, "="}, [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
+            return rhs;
+        });
+        opMap.emplace(std::tuple{typeName, typeName, "=="}, [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
+            return builder.CreateICmpEQ(lhs, rhs);
+        });
+        opMap.emplace(std::tuple{typeName, typeName, "!="}, [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
+            return builder.CreateICmpNE(lhs, rhs);
+        });
+        opMap.emplace(std::tuple{typeName, typeName, "<"}, [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
+            return builder.CreateICmpSLT(lhs,rhs);
+        });
+        opMap.emplace(std::tuple{typeName, typeName, "<="}, [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
+            return builder.CreateICmpSLE(lhs, rhs);
+        });
+        opMap.emplace(std::tuple{typeName, typeName, ">"}, [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
+            return builder.CreateICmpSGT(lhs, rhs);
+        });
+        opMap.emplace(std::tuple{typeName, typeName, ">="}, [](llvm::Value *lhs, llvm::Value *rhs, llvm::IRBuilder<> &builder) -> llvm::Value * {
+            return builder.CreateICmpSGE(lhs, rhs);
+        });
+
+    }
+
     void init() {
         static bool inited = false;
         if (inited)return;
@@ -110,6 +150,8 @@ namespace {
         initSignedInteger("long");
         initUnsignedInteger("char");
         initUnsignedInteger("bool");
+        initFloat("float");
+        initFloat("double");
     }
 }
 
