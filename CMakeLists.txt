@@ -30,6 +30,7 @@ llvm_map_components_to_libnames(llvm_libs ${llvm_components})
 
 target_link_libraries(riddlec PRIVATE
         ${llvm_libs}
+        stdc++exp
         ClangDriver       # 驱动模块 (Driver, ToolChain)
         ClangBasic        # 基础库 (DiagnosticIDs, DiagnosticsEngine)
         ClangFrontend     # 前端支持 (TextDiagnosticPrinter)

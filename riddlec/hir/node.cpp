@@ -16,12 +16,24 @@
 #include "node.h"
 
 namespace riddle::hir {
-    inline HirIntLiteral::HirIntLiteral(const int value): value(value) {
+    HirIntLiteral::HirIntLiteral(const int value): value(value) {
         type = std::make_shared<IntegerType>(32);
     }
 
     int HirIntLiteral::getValue() const {
         return value;
+    }
+
+    HirFloatLiteral::HirFloatLiteral(const float value): value(value) {
+        type = std::make_shared<FloatType>(FloatType::FloatKind::Float);
+    }
+
+    float HirFloatLiteral::getValue() const {
+        return value;
+    }
+
+    HirCharLiteral::HirCharLiteral(const char value): value(value) {
+        type = std::make_shared<CharType>();
     }
 
     char HirCharLiteral::getValue() const {

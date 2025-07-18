@@ -56,8 +56,8 @@ void riddleparserParserInitialize() {
 #endif
   auto staticData = std::make_unique<RiddleParserStaticData>(
     std::vector<std::string>{
-      "program", "terminator", "statementEnd", "statement", "expression", 
-      "literal"
+      "program", "terminator", "statementEnd", "statement", "varDecl", "expression", 
+      "object", "literal"
     },
     std::vector<std::string>{
       "", "'var'", "'val'", "'for'", "'while'", "'continue'", "'break'", 
@@ -89,17 +89,28 @@ void riddleparserParserInitialize() {
     }
   );
   static const int32_t serializedATNSegment[] = {
-  	4,1,90,39,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,1,0,4,0,14,
-  	8,0,11,0,12,0,15,1,0,1,0,1,1,1,1,1,1,3,1,23,8,1,1,2,1,2,1,2,1,2,3,2,29,
-  	8,2,1,3,1,3,1,4,1,4,1,5,1,5,3,5,37,8,5,1,5,0,0,6,0,2,4,6,8,10,0,0,37,
-  	0,13,1,0,0,0,2,22,1,0,0,0,4,28,1,0,0,0,6,30,1,0,0,0,8,32,1,0,0,0,10,36,
-  	1,0,0,0,12,14,3,4,2,0,13,12,1,0,0,0,14,15,1,0,0,0,15,13,1,0,0,0,15,16,
-  	1,0,0,0,16,17,1,0,0,0,17,18,5,0,0,1,18,1,1,0,0,0,19,23,5,30,0,0,20,23,
-  	5,0,0,1,21,23,4,1,0,0,22,19,1,0,0,0,22,20,1,0,0,0,22,21,1,0,0,0,23,3,
-  	1,0,0,0,24,25,3,6,3,0,25,26,3,2,1,0,26,29,1,0,0,0,27,29,5,31,0,0,28,24,
-  	1,0,0,0,28,27,1,0,0,0,29,5,1,0,0,0,30,31,3,8,4,0,31,7,1,0,0,0,32,33,3,
-  	10,5,0,33,9,1,0,0,0,34,37,5,77,0,0,35,37,5,80,0,0,36,34,1,0,0,0,36,35,
-  	1,0,0,0,37,11,1,0,0,0,4,15,22,28,36
+  	4,1,90,72,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,
+  	7,7,1,0,4,0,18,8,0,11,0,12,0,19,1,0,1,0,1,1,1,1,1,1,3,1,27,8,1,1,2,1,
+  	2,1,2,1,2,3,2,33,8,2,1,3,1,3,3,3,37,8,3,1,4,1,4,1,4,1,4,3,4,43,8,4,1,
+  	4,1,4,3,4,47,8,4,1,4,1,4,1,4,1,4,3,4,53,8,4,1,4,1,4,3,4,57,8,4,3,4,59,
+  	8,4,1,5,1,5,3,5,63,8,5,1,6,1,6,1,7,1,7,1,7,3,7,70,8,7,1,7,0,0,8,0,2,4,
+  	6,8,10,12,14,0,0,76,0,17,1,0,0,0,2,26,1,0,0,0,4,32,1,0,0,0,6,36,1,0,0,
+  	0,8,58,1,0,0,0,10,62,1,0,0,0,12,64,1,0,0,0,14,69,1,0,0,0,16,18,3,4,2,
+  	0,17,16,1,0,0,0,18,19,1,0,0,0,19,17,1,0,0,0,19,20,1,0,0,0,20,21,1,0,0,
+  	0,21,22,5,0,0,1,22,1,1,0,0,0,23,27,5,30,0,0,24,27,5,0,0,1,25,27,4,1,0,
+  	0,26,23,1,0,0,0,26,24,1,0,0,0,26,25,1,0,0,0,27,3,1,0,0,0,28,29,3,6,3,
+  	0,29,30,3,2,1,0,30,33,1,0,0,0,31,33,5,31,0,0,32,28,1,0,0,0,32,31,1,0,
+  	0,0,33,5,1,0,0,0,34,37,3,10,5,0,35,37,3,8,4,0,36,34,1,0,0,0,36,35,1,0,
+  	0,0,37,7,1,0,0,0,38,39,5,1,0,0,39,42,5,75,0,0,40,41,5,38,0,0,41,43,3,
+  	10,5,0,42,40,1,0,0,0,42,43,1,0,0,0,43,46,1,0,0,0,44,45,5,42,0,0,45,47,
+  	3,10,5,0,46,44,1,0,0,0,46,47,1,0,0,0,47,59,1,0,0,0,48,49,5,2,0,0,49,52,
+  	5,75,0,0,50,51,5,38,0,0,51,53,3,10,5,0,52,50,1,0,0,0,52,53,1,0,0,0,53,
+  	56,1,0,0,0,54,55,5,42,0,0,55,57,3,10,5,0,56,54,1,0,0,0,56,57,1,0,0,0,
+  	57,59,1,0,0,0,58,38,1,0,0,0,58,48,1,0,0,0,59,9,1,0,0,0,60,63,3,14,7,0,
+  	61,63,3,12,6,0,62,60,1,0,0,0,62,61,1,0,0,0,63,11,1,0,0,0,64,65,5,75,0,
+  	0,65,13,1,0,0,0,66,70,5,77,0,0,67,70,5,80,0,0,68,70,5,87,0,0,69,66,1,
+  	0,0,0,69,67,1,0,0,0,69,68,1,0,0,0,70,15,1,0,0,0,11,19,26,32,36,42,46,
+  	52,56,58,62,69
   };
   staticData->serializedATN = antlr4::atn::SerializedATNView(serializedATNSegment, sizeof(serializedATNSegment) / sizeof(serializedATNSegment[0]));
 
@@ -205,18 +216,19 @@ RiddleParser::ProgramContext* RiddleParser::program() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(13); 
+    setState(17); 
     _errHandler->sync(this);
     _la = _input->LA(1);
     do {
-      setState(12);
+      setState(16);
       statementEnd();
-      setState(15); 
+      setState(19); 
       _errHandler->sync(this);
       _la = _input->LA(1);
-    } while (((((_la - 31) & ~ 0x3fULL) == 0) &&
-      ((1ULL << (_la - 31)) & 633318697598977) != 0));
-    setState(17);
+    } while ((((_la & ~ 0x3fULL) == 0) &&
+      ((1ULL << _la) & 2147483654) != 0) || ((((_la - 75) & ~ 0x3fULL) == 0) &&
+      ((1ULL << (_la - 75)) & 4133) != 0));
+    setState(21);
     match(RiddleParser::EOF);
    
   }
@@ -280,26 +292,26 @@ RiddleParser::TerminatorContext* RiddleParser::terminator() {
     exitRule();
   });
   try {
-    setState(22);
+    setState(26);
     _errHandler->sync(this);
     switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 1, _ctx)) {
     case 1: {
       enterOuterAlt(_localctx, 1);
-      setState(19);
+      setState(23);
       match(RiddleParser::Semi);
       break;
     }
 
     case 2: {
       enterOuterAlt(_localctx, 2);
-      setState(20);
+      setState(24);
       match(RiddleParser::EOF);
       break;
     }
 
     case 3: {
       enterOuterAlt(_localctx, 3);
-      setState(21);
+      setState(25);
 
       if (!( lineTerminatorAhead() )) throw FailedPredicateException(this, " lineTerminatorAhead() ");
       break;
@@ -374,22 +386,26 @@ RiddleParser::StatementEndContext* RiddleParser::statementEnd() {
     exitRule();
   });
   try {
-    setState(28);
+    setState(32);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
+      case RiddleParser::Var:
+      case RiddleParser::Val:
+      case RiddleParser::Identifier:
       case RiddleParser::Decimal:
-      case RiddleParser::Float: {
+      case RiddleParser::Float:
+      case RiddleParser::CHAR: {
         enterOuterAlt(_localctx, 1);
-        setState(24);
+        setState(28);
         statement();
-        setState(25);
+        setState(29);
         terminator();
         break;
       }
 
       case RiddleParser::Endl: {
         enterOuterAlt(_localctx, 2);
-        setState(27);
+        setState(31);
         match(RiddleParser::Endl);
         break;
       }
@@ -416,6 +432,10 @@ RiddleParser::StatementContext::StatementContext(ParserRuleContext *parent, size
 
 RiddleParser::ExpressionContext* RiddleParser::StatementContext::expression() {
   return getRuleContext<RiddleParser::ExpressionContext>(0);
+}
+
+RiddleParser::VarDeclContext* RiddleParser::StatementContext::varDecl() {
+  return getRuleContext<RiddleParser::VarDeclContext>(0);
 }
 
 
@@ -455,9 +475,196 @@ RiddleParser::StatementContext* RiddleParser::statement() {
     exitRule();
   });
   try {
-    enterOuterAlt(_localctx, 1);
-    setState(30);
-    expression();
+    setState(36);
+    _errHandler->sync(this);
+    switch (_input->LA(1)) {
+      case RiddleParser::Identifier:
+      case RiddleParser::Decimal:
+      case RiddleParser::Float:
+      case RiddleParser::CHAR: {
+        enterOuterAlt(_localctx, 1);
+        setState(34);
+        expression();
+        break;
+      }
+
+      case RiddleParser::Var:
+      case RiddleParser::Val: {
+        enterOuterAlt(_localctx, 2);
+        setState(35);
+        varDecl();
+        break;
+      }
+
+    default:
+      throw NoViableAltException(this);
+    }
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- VarDeclContext ------------------------------------------------------------------
+
+RiddleParser::VarDeclContext::VarDeclContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+tree::TerminalNode* RiddleParser::VarDeclContext::Var() {
+  return getToken(RiddleParser::Var, 0);
+}
+
+tree::TerminalNode* RiddleParser::VarDeclContext::Identifier() {
+  return getToken(RiddleParser::Identifier, 0);
+}
+
+tree::TerminalNode* RiddleParser::VarDeclContext::Colon() {
+  return getToken(RiddleParser::Colon, 0);
+}
+
+tree::TerminalNode* RiddleParser::VarDeclContext::Assign() {
+  return getToken(RiddleParser::Assign, 0);
+}
+
+std::vector<RiddleParser::ExpressionContext *> RiddleParser::VarDeclContext::expression() {
+  return getRuleContexts<RiddleParser::ExpressionContext>();
+}
+
+RiddleParser::ExpressionContext* RiddleParser::VarDeclContext::expression(size_t i) {
+  return getRuleContext<RiddleParser::ExpressionContext>(i);
+}
+
+tree::TerminalNode* RiddleParser::VarDeclContext::Val() {
+  return getToken(RiddleParser::Val, 0);
+}
+
+
+size_t RiddleParser::VarDeclContext::getRuleIndex() const {
+  return RiddleParser::RuleVarDecl;
+}
+
+void RiddleParser::VarDeclContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<RiddleParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterVarDecl(this);
+}
+
+void RiddleParser::VarDeclContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<RiddleParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitVarDecl(this);
+}
+
+
+std::any RiddleParser::VarDeclContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<RiddleParserVisitor*>(visitor))
+    return parserVisitor->visitVarDecl(this);
+  else
+    return visitor->visitChildren(this);
+}
+
+RiddleParser::VarDeclContext* RiddleParser::varDecl() {
+  VarDeclContext *_localctx = _tracker.createInstance<VarDeclContext>(_ctx, getState());
+  enterRule(_localctx, 8, RiddleParser::RuleVarDecl);
+
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
+  auto onExit = finally([=] {
+#endif
+    exitRule();
+  });
+  try {
+    setState(58);
+    _errHandler->sync(this);
+    switch (_input->LA(1)) {
+      case RiddleParser::Var: {
+        enterOuterAlt(_localctx, 1);
+        setState(38);
+        match(RiddleParser::Var);
+        setState(39);
+        antlrcpp::downCast<VarDeclContext *>(_localctx)->name = match(RiddleParser::Identifier);
+        setState(42);
+        _errHandler->sync(this);
+
+        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 4, _ctx)) {
+        case 1: {
+          setState(40);
+          match(RiddleParser::Colon);
+          setState(41);
+          antlrcpp::downCast<VarDeclContext *>(_localctx)->type = expression();
+          break;
+        }
+
+        default:
+          break;
+        }
+        setState(46);
+        _errHandler->sync(this);
+
+        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 5, _ctx)) {
+        case 1: {
+          setState(44);
+          match(RiddleParser::Assign);
+          setState(45);
+          antlrcpp::downCast<VarDeclContext *>(_localctx)->value = expression();
+          break;
+        }
+
+        default:
+          break;
+        }
+        break;
+      }
+
+      case RiddleParser::Val: {
+        enterOuterAlt(_localctx, 2);
+        setState(48);
+        match(RiddleParser::Val);
+        setState(49);
+        antlrcpp::downCast<VarDeclContext *>(_localctx)->name = match(RiddleParser::Identifier);
+        setState(52);
+        _errHandler->sync(this);
+
+        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 6, _ctx)) {
+        case 1: {
+          setState(50);
+          match(RiddleParser::Colon);
+          setState(51);
+          antlrcpp::downCast<VarDeclContext *>(_localctx)->type = expression();
+          break;
+        }
+
+        default:
+          break;
+        }
+        setState(56);
+        _errHandler->sync(this);
+
+        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 7, _ctx)) {
+        case 1: {
+          setState(54);
+          match(RiddleParser::Assign);
+          setState(55);
+          antlrcpp::downCast<VarDeclContext *>(_localctx)->value = expression();
+          break;
+        }
+
+        default:
+          break;
+        }
+        break;
+      }
+
+    default:
+      throw NoViableAltException(this);
+    }
    
   }
   catch (RecognitionException &e) {
@@ -477,6 +684,10 @@ RiddleParser::ExpressionContext::ExpressionContext(ParserRuleContext *parent, si
 
 RiddleParser::LiteralContext* RiddleParser::ExpressionContext::literal() {
   return getRuleContext<RiddleParser::LiteralContext>(0);
+}
+
+RiddleParser::ObjectContext* RiddleParser::ExpressionContext::object() {
+  return getRuleContext<RiddleParser::ObjectContext>(0);
 }
 
 
@@ -506,7 +717,87 @@ std::any RiddleParser::ExpressionContext::accept(tree::ParseTreeVisitor *visitor
 
 RiddleParser::ExpressionContext* RiddleParser::expression() {
   ExpressionContext *_localctx = _tracker.createInstance<ExpressionContext>(_ctx, getState());
-  enterRule(_localctx, 8, RiddleParser::RuleExpression);
+  enterRule(_localctx, 10, RiddleParser::RuleExpression);
+
+#if __cplusplus > 201703L
+  auto onExit = finally([=, this] {
+#else
+  auto onExit = finally([=] {
+#endif
+    exitRule();
+  });
+  try {
+    setState(62);
+    _errHandler->sync(this);
+    switch (_input->LA(1)) {
+      case RiddleParser::Decimal:
+      case RiddleParser::Float:
+      case RiddleParser::CHAR: {
+        enterOuterAlt(_localctx, 1);
+        setState(60);
+        literal();
+        break;
+      }
+
+      case RiddleParser::Identifier: {
+        enterOuterAlt(_localctx, 2);
+        setState(61);
+        object();
+        break;
+      }
+
+    default:
+      throw NoViableAltException(this);
+    }
+   
+  }
+  catch (RecognitionException &e) {
+    _errHandler->reportError(this, e);
+    _localctx->exception = std::current_exception();
+    _errHandler->recover(this, _localctx->exception);
+  }
+
+  return _localctx;
+}
+
+//----------------- ObjectContext ------------------------------------------------------------------
+
+RiddleParser::ObjectContext::ObjectContext(ParserRuleContext *parent, size_t invokingState)
+  : ParserRuleContext(parent, invokingState) {
+}
+
+tree::TerminalNode* RiddleParser::ObjectContext::Identifier() {
+  return getToken(RiddleParser::Identifier, 0);
+}
+
+
+size_t RiddleParser::ObjectContext::getRuleIndex() const {
+  return RiddleParser::RuleObject;
+}
+
+void RiddleParser::ObjectContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<RiddleParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterObject(this);
+}
+
+void RiddleParser::ObjectContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<RiddleParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitObject(this);
+}
+
+
+std::any RiddleParser::ObjectContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<RiddleParserVisitor*>(visitor))
+    return parserVisitor->visitObject(this);
+  else
+    return visitor->visitChildren(this);
+}
+
+RiddleParser::ObjectContext* RiddleParser::object() {
+  ObjectContext *_localctx = _tracker.createInstance<ObjectContext>(_ctx, getState());
+  enterRule(_localctx, 12, RiddleParser::RuleObject);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -517,8 +808,8 @@ RiddleParser::ExpressionContext* RiddleParser::expression() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(32);
-    literal();
+    setState(64);
+    match(RiddleParser::Identifier);
    
   }
   catch (RecognitionException &e) {
@@ -595,9 +886,34 @@ std::any RiddleParser::IntLitContext::accept(tree::ParseTreeVisitor *visitor) {
   else
     return visitor->visitChildren(this);
 }
+//----------------- CharLitContext ------------------------------------------------------------------
+
+tree::TerminalNode* RiddleParser::CharLitContext::CHAR() {
+  return getToken(RiddleParser::CHAR, 0);
+}
+
+RiddleParser::CharLitContext::CharLitContext(LiteralContext *ctx) { copyFrom(ctx); }
+
+void RiddleParser::CharLitContext::enterRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<RiddleParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->enterCharLit(this);
+}
+void RiddleParser::CharLitContext::exitRule(tree::ParseTreeListener *listener) {
+  auto parserListener = dynamic_cast<RiddleParserListener *>(listener);
+  if (parserListener != nullptr)
+    parserListener->exitCharLit(this);
+}
+
+std::any RiddleParser::CharLitContext::accept(tree::ParseTreeVisitor *visitor) {
+  if (auto parserVisitor = dynamic_cast<RiddleParserVisitor*>(visitor))
+    return parserVisitor->visitCharLit(this);
+  else
+    return visitor->visitChildren(this);
+}
 RiddleParser::LiteralContext* RiddleParser::literal() {
   LiteralContext *_localctx = _tracker.createInstance<LiteralContext>(_ctx, getState());
-  enterRule(_localctx, 10, RiddleParser::RuleLiteral);
+  enterRule(_localctx, 14, RiddleParser::RuleLiteral);
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -607,13 +923,13 @@ RiddleParser::LiteralContext* RiddleParser::literal() {
     exitRule();
   });
   try {
-    setState(36);
+    setState(69);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
       case RiddleParser::Decimal: {
         _localctx = _tracker.createInstance<RiddleParser::IntLitContext>(_localctx);
         enterOuterAlt(_localctx, 1);
-        setState(34);
+        setState(66);
         match(RiddleParser::Decimal);
         break;
       }
@@ -621,8 +937,16 @@ RiddleParser::LiteralContext* RiddleParser::literal() {
       case RiddleParser::Float: {
         _localctx = _tracker.createInstance<RiddleParser::FloatLitContext>(_localctx);
         enterOuterAlt(_localctx, 2);
-        setState(35);
+        setState(67);
         match(RiddleParser::Float);
+        break;
+      }
+
+      case RiddleParser::CHAR: {
+        _localctx = _tracker.createInstance<RiddleParser::CharLitContext>(_localctx);
+        enterOuterAlt(_localctx, 3);
+        setState(68);
+        match(RiddleParser::CHAR);
         break;
       }
 

@@ -30,11 +30,17 @@ public:
 
     virtual std::any visitStatement(RiddleParser::StatementContext *context) = 0;
 
+    virtual std::any visitVarDecl(RiddleParser::VarDeclContext *context) = 0;
+
     virtual std::any visitExpression(RiddleParser::ExpressionContext *context) = 0;
+
+    virtual std::any visitObject(RiddleParser::ObjectContext *context) = 0;
 
     virtual std::any visitIntLit(RiddleParser::IntLitContext *context) = 0;
 
     virtual std::any visitFloatLit(RiddleParser::FloatLitContext *context) = 0;
+
+    virtual std::any visitCharLit(RiddleParser::CharLitContext *context) = 0;
 
 
 };

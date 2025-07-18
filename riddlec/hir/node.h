@@ -18,6 +18,7 @@
 #include <string>
 #include <utility>
 
+#include "context.h"
 #include "type.h"
 
 namespace riddle::hir {
@@ -53,12 +54,21 @@ namespace riddle::hir {
         [[nodiscard]] int getValue() const;
     };
 
+    class HirFloatLiteral final : public HirExpression {
+    protected:
+        float value;
+    public:
+        explicit HirFloatLiteral(float value);
+
+        [[nodiscard]] float getValue() const;
+    };
+
     class HirCharLiteral final : public HirExpression {
     protected:
         char value;
 
     public:
-        explicit HirCharLiteral(const char value): value(value) {}
+        explicit HirCharLiteral(char value);
 
         [[nodiscard]] char getValue() const;
     };

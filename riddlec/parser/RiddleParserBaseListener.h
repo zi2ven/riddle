@@ -31,14 +31,23 @@ public:
   virtual void enterStatement(RiddleParser::StatementContext * /*ctx*/) override { }
   virtual void exitStatement(RiddleParser::StatementContext * /*ctx*/) override { }
 
+  virtual void enterVarDecl(RiddleParser::VarDeclContext * /*ctx*/) override { }
+  virtual void exitVarDecl(RiddleParser::VarDeclContext * /*ctx*/) override { }
+
   virtual void enterExpression(RiddleParser::ExpressionContext * /*ctx*/) override { }
   virtual void exitExpression(RiddleParser::ExpressionContext * /*ctx*/) override { }
+
+  virtual void enterObject(RiddleParser::ObjectContext * /*ctx*/) override { }
+  virtual void exitObject(RiddleParser::ObjectContext * /*ctx*/) override { }
 
   virtual void enterIntLit(RiddleParser::IntLitContext * /*ctx*/) override { }
   virtual void exitIntLit(RiddleParser::IntLitContext * /*ctx*/) override { }
 
   virtual void enterFloatLit(RiddleParser::FloatLitContext * /*ctx*/) override { }
   virtual void exitFloatLit(RiddleParser::FloatLitContext * /*ctx*/) override { }
+
+  virtual void enterCharLit(RiddleParser::CharLitContext * /*ctx*/) override { }
+  virtual void exitCharLit(RiddleParser::CharLitContext * /*ctx*/) override { }
 
 
   virtual void enterEveryRule(antlr4::ParserRuleContext * /*ctx*/) override { }

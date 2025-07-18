@@ -40,13 +40,25 @@ statementEnd
 
 statement
     : expression
+    | varDecl
+    ;
+
+varDecl
+    : Var name=Identifier (Colon type=expression)? (Assign value=expression)?
+    | Val name=Identifier (Colon type=expression)? (Assign value=expression)?
     ;
 
 expression
     : literal
+    | object
+    ;
+
+object
+    : Identifier
     ;
 
 literal
     : Decimal #intLit
     | Float   #floatLit
+    | CHAR    #charLit
     ;

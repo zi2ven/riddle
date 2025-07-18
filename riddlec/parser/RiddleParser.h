@@ -36,7 +36,7 @@ public:
 
   enum {
     RuleProgram = 0, RuleTerminator = 1, RuleStatementEnd = 2, RuleStatement = 3, 
-    RuleExpression = 4, RuleLiteral = 5
+    RuleVarDecl = 4, RuleExpression = 5, RuleObject = 6, RuleLiteral = 7
   };
 
   explicit RiddleParser(antlr4::TokenStream *input);
@@ -74,7 +74,9 @@ public:
   class TerminatorContext;
   class StatementEndContext;
   class StatementContext;
+  class VarDeclContext;
   class ExpressionContext;
+  class ObjectContext;
   class LiteralContext; 
 
   class  ProgramContext : public antlr4::ParserRuleContext {
@@ -132,6 +134,7 @@ public:
     StatementContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     ExpressionContext *expression();
+    VarDeclContext *varDecl();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -142,11 +145,36 @@ public:
 
   StatementContext* statement();
 
+  class  VarDeclContext : public antlr4::ParserRuleContext {
+  public:
+    antlr4::Token *name = nullptr;
+    RiddleParser::ExpressionContext *type = nullptr;
+    RiddleParser::ExpressionContext *value = nullptr;
+    VarDeclContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *Var();
+    antlr4::tree::TerminalNode *Identifier();
+    antlr4::tree::TerminalNode *Colon();
+    antlr4::tree::TerminalNode *Assign();
+    std::vector<ExpressionContext *> expression();
+    ExpressionContext* expression(size_t i);
+    antlr4::tree::TerminalNode *Val();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  VarDeclContext* varDecl();
+
   class  ExpressionContext : public antlr4::ParserRuleContext {
   public:
     ExpressionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     LiteralContext *literal();
+    ObjectContext *object();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -156,6 +184,21 @@ public:
   };
 
   ExpressionContext* expression();
+
+  class  ObjectContext : public antlr4::ParserRuleContext {
+  public:
+    ObjectContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *Identifier();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  ObjectContext* object();
 
   class  LiteralContext : public antlr4::ParserRuleContext {
   public:
@@ -186,6 +229,17 @@ public:
     IntLitContext(LiteralContext *ctx);
 
     antlr4::tree::TerminalNode *Decimal();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  CharLitContext : public LiteralContext {
+  public:
+    CharLitContext(LiteralContext *ctx);
+
+    antlr4::tree::TerminalNode *CHAR();
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
 

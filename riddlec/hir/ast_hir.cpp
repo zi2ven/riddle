@@ -21,7 +21,7 @@
 #include "parser/RiddleParser.h"
 
 namespace riddle::ast {
-    RiddleParser::ProgramContext* parseCode(const std::string &code) {
+    RiddleParser::ProgramContext *parseCode(const std::string &code) {
         using namespace antlr4;
         ANTLRInputStream input(code);
         RiddleLexer lexer(&input);
@@ -30,7 +30,18 @@ namespace riddle::ast {
         return parser.program();
     }
 
+    using namespace riddle::hir;
+
     std::any ASTLower::visitIntLit(RiddleParser::IntLitContext *context) {
-        return hir::HirIntLiteral(stoi(context->getText()));
+        return makeHir<HirIntLiteral>(std::stoi(context->getText()));
+    }
+
+    std::any ASTLower::visitFloatLit(RiddleParser::FloatLitContext *context) {
+        return makeHir<HirFloatLiteral>(std::stoi(context->getText()));
+    }
+
+    std::any ASTLower::visitCharLit(RiddleParser::CharLitContext *context) {
+        const auto lit = context->getText();
+        return makeHir<HirCharLiteral>(lit.substr(1, lit.size() - 2));
     }
 }
