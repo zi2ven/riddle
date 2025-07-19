@@ -36,6 +36,8 @@ public:
 
     virtual std::any visitObject(RiddleParser::ObjectContext *context) = 0;
 
+    virtual std::any visitTypeLit(RiddleParser::TypeLitContext *context) = 0;
+
     virtual std::any visitIntLit(RiddleParser::IntLitContext *context) = 0;
 
     virtual std::any visitFloatLit(RiddleParser::FloatLitContext *context) = 0;

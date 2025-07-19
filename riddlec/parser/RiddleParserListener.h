@@ -38,6 +38,9 @@ public:
   virtual void enterObject(RiddleParser::ObjectContext *ctx) = 0;
   virtual void exitObject(RiddleParser::ObjectContext *ctx) = 0;
 
+  virtual void enterTypeLit(RiddleParser::TypeLitContext *ctx) = 0;
+  virtual void exitTypeLit(RiddleParser::TypeLitContext *ctx) = 0;
+
   virtual void enterIntLit(RiddleParser::IntLitContext *ctx) = 0;
   virtual void exitIntLit(RiddleParser::IntLitContext *ctx) = 0;
 

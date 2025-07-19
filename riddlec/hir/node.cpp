@@ -20,23 +20,17 @@ namespace riddle::hir {
         type = std::make_shared<IntegerType>(32);
     }
 
-    int HirIntLiteral::getValue() const {
-        return value;
-    }
-
     HirFloatLiteral::HirFloatLiteral(const float value): value(value) {
         type = std::make_shared<FloatType>(FloatType::FloatKind::Float);
-    }
-
-    float HirFloatLiteral::getValue() const {
-        return value;
     }
 
     HirCharLiteral::HirCharLiteral(const char value): value(value) {
         type = std::make_shared<CharType>();
     }
 
-    char HirCharLiteral::getValue() const {
-        return value;
-    }
+    HirVarDecl::HirVarDecl(const std::string &name,
+                           Type *type,
+                           HirExpression *value,
+                           const bool isVal): HirDeclaration(name),
+                                        isVal(isVal), type(type), value(value) {}
 }

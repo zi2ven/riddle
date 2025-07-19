@@ -10,7 +10,7 @@ options {
 
 @parser::members {
     bool lineTerminatorAhead() {
-        ssize_t i = 1;  // 从当前token的前一个开始
+        ssize_t i = 1;
         auto* tokens = dynamic_cast<antlr4::BufferedTokenStream*>(_input);
 
         std::vector<antlr4::Token*> hidden = tokens->getHiddenTokensToLeft(_input->index());
@@ -44,8 +44,8 @@ statement
     ;
 
 varDecl
-    : Var name=Identifier (Colon type=expression)? (Assign value=expression)?
-    | Val name=Identifier (Colon type=expression)? (Assign value=expression)?
+    : Var name=Identifier (Colon type=typeLit)? (Assign value=expression)?
+    | Val name=Identifier (Colon type=typeLit)? (Assign value=expression)?
     ;
 
 expression
@@ -54,6 +54,10 @@ expression
     ;
 
 object
+    : Identifier
+    ;
+
+typeLit
     : Identifier
     ;
 

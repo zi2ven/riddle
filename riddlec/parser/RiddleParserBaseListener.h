@@ -40,6 +40,9 @@ public:
   virtual void enterObject(RiddleParser::ObjectContext * /*ctx*/) override { }
   virtual void exitObject(RiddleParser::ObjectContext * /*ctx*/) override { }
 
+  virtual void enterTypeLit(RiddleParser::TypeLitContext * /*ctx*/) override { }
+  virtual void exitTypeLit(RiddleParser::TypeLitContext * /*ctx*/) override { }
+
   virtual void enterIntLit(RiddleParser::IntLitContext * /*ctx*/) override { }
   virtual void exitIntLit(RiddleParser::IntLitContext * /*ctx*/) override { }
 

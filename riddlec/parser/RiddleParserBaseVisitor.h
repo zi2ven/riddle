@@ -46,6 +46,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitTypeLit(RiddleParser::TypeLitContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitIntLit(RiddleParser::IntLitContext *ctx) override {
     return visitChildren(ctx);
   }

@@ -15,6 +15,26 @@
  *
  */
 
-int main(int argc, char *argv[]) {
+#include <fstream>
+#include <print>
 
+#include "hir/ast_hir.h"
+
+int main(int argc, char *argv[]) {
+    if (argc < 2)std::print("No File");
+
+    std::ifstream ifs(argv[1]);
+    if (!ifs.is_open()) {
+        throw std::runtime_error("Cannot open file");
+    }
+    std::stringstream buffer;
+    buffer << ifs.rdbuf();
+    std::string code = buffer.str();
+    antlr4::ANTLRInputStream input(code);
+    RiddleLexer lexer(&input);
+    antlr4::CommonTokenStream tokens(&lexer);
+    RiddleParser parser(&tokens);
+    auto ast = parser.program();
+    auto lower = riddle::ast::ASTLower();
+    lower.visit(ast);
 }

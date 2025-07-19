@@ -14,15 +14,12 @@
 //
 
 #pragma once
-#include <string>
 
 #include "context.h"
 #include "parser/RiddleParser.h"
 #include "parser/RiddleParserBaseVisitor.h"
 
 namespace riddle::ast {
-    RiddleParser::ProgramContext* parseCode(const std::string &code);
-
     class ASTLower final : public RiddleParserBaseVisitor {
         hir::HirContext context;
     public:
@@ -31,8 +28,12 @@ namespace riddle::ast {
             return context.make<T>(std::forward<Args>(args)...);
         }
 
+        std::any visitProgram(RiddleParser::ProgramContext *context) override;
+        std::any visitStatementEnd(RiddleParser::StatementEndContext *context) override;
+        std::any visitTypeLit(RiddleParser::TypeLitContext *context) override;
         std::any visitIntLit(RiddleParser::IntLitContext *context) override;
         std::any visitFloatLit(RiddleParser::FloatLitContext *context) override;
         std::any visitCharLit(RiddleParser::CharLitContext *context) override;
+        std::any visitVarDecl(RiddleParser::VarDeclContext *context) override;
     };
 }

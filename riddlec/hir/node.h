@@ -17,8 +17,8 @@
 #include <memory>
 #include <string>
 #include <utility>
+#include <vector>
 
-#include "context.h"
 #include "type.h"
 
 namespace riddle::hir {
@@ -31,45 +31,54 @@ namespace riddle::hir {
 
     class HirStatement : HirElement {};
 
-    class HirDefinition : public HirStatement {
+    class HirProgram final : HirElement{
+    public:
+        std::vector<HirStatement*> stmts;
+    };
+
+    class HirDeclaration : public HirStatement {
     public:
         std::string name;
 
     protected:
-        explicit HirDefinition(std::string name): name(std::move(name)) {}
+        explicit HirDeclaration(std::string name): name(std::move(name)) {}
     };
 
     class HirExpression : public HirStatement {
     public:
-        std::shared_ptr<type> type;
+        std::shared_ptr<Type> type;
     };
 
     class HirIntLiteral final : public HirExpression {
-    protected:
-        int value;
-
     public:
         explicit HirIntLiteral(int value);
 
-        [[nodiscard]] int getValue() const;
+        int value;
     };
 
     class HirFloatLiteral final : public HirExpression {
-    protected:
-        float value;
     public:
         explicit HirFloatLiteral(float value);
 
-        [[nodiscard]] float getValue() const;
+        float value;
     };
 
     class HirCharLiteral final : public HirExpression {
-    protected:
-        char value;
-
     public:
         explicit HirCharLiteral(char value);
 
-        [[nodiscard]] char getValue() const;
+        char value;
     };
+
+    class HirVarDecl final : public HirDeclaration {
+    public:
+        HirVarDecl(const std::string &name, Type *type, HirExpression *value, bool isVal);
+
+        bool isVal;
+
+        Type* type;
+        HirExpression* value;
+    };
+
+
 }

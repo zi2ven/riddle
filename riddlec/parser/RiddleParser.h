@@ -36,7 +36,8 @@ public:
 
   enum {
     RuleProgram = 0, RuleTerminator = 1, RuleStatementEnd = 2, RuleStatement = 3, 
-    RuleVarDecl = 4, RuleExpression = 5, RuleObject = 6, RuleLiteral = 7
+    RuleVarDecl = 4, RuleExpression = 5, RuleObject = 6, RuleTypeLit = 7, 
+    RuleLiteral = 8
   };
 
   explicit RiddleParser(antlr4::TokenStream *input);
@@ -57,7 +58,7 @@ public:
 
 
       bool lineTerminatorAhead() {
-          ssize_t i = 1;  // 从当前token的前一个开始
+          ssize_t i = 1;
           auto* tokens = dynamic_cast<antlr4::BufferedTokenStream*>(_input);
 
           std::vector<antlr4::Token*> hidden = tokens->getHiddenTokensToLeft(_input->index());
@@ -77,6 +78,7 @@ public:
   class VarDeclContext;
   class ExpressionContext;
   class ObjectContext;
+  class TypeLitContext;
   class LiteralContext; 
 
   class  ProgramContext : public antlr4::ParserRuleContext {
@@ -148,7 +150,7 @@ public:
   class  VarDeclContext : public antlr4::ParserRuleContext {
   public:
     antlr4::Token *name = nullptr;
-    RiddleParser::ExpressionContext *type = nullptr;
+    RiddleParser::TypeLitContext *type = nullptr;
     RiddleParser::ExpressionContext *value = nullptr;
     VarDeclContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
@@ -156,8 +158,8 @@ public:
     antlr4::tree::TerminalNode *Identifier();
     antlr4::tree::TerminalNode *Colon();
     antlr4::tree::TerminalNode *Assign();
-    std::vector<ExpressionContext *> expression();
-    ExpressionContext* expression(size_t i);
+    TypeLitContext *typeLit();
+    ExpressionContext *expression();
     antlr4::tree::TerminalNode *Val();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -199,6 +201,21 @@ public:
   };
 
   ObjectContext* object();
+
+  class  TypeLitContext : public antlr4::ParserRuleContext {
+  public:
+    TypeLitContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *Identifier();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  TypeLitContext* typeLit();
 
   class  LiteralContext : public antlr4::ParserRuleContext {
   public:

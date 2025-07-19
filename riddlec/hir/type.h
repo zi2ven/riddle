@@ -18,16 +18,16 @@
 #include <utility>
 
 namespace riddle::hir {
-    class type {
+    class Type {
     public:
-        virtual ~type() = default;
+        virtual ~Type() = default;
 
         virtual std::string getName() = 0;
 
         virtual size_t getSize() = 0;
     };
 
-    class IntegerType : public type {
+    class IntegerType : public Type {
     protected:
         unsigned bits;
 
@@ -39,7 +39,7 @@ namespace riddle::hir {
         size_t getSize() override;
     };
 
-    class FloatType final : public type {
+    class FloatType final : public Type {
     public:
         enum class FloatKind : unsigned char {
             Float,
