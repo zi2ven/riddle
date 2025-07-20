@@ -13,4 +13,28 @@
 // limitations under the License.
 //
 
-#include "context.h"
+#pragma once
+
+#include "node.h"
+
+namespace riddle::hir {
+
+    class HirVisitor {
+    public:
+        virtual ~HirVisitor() = default;
+
+        void visit(HirElement* node);
+
+#define DEF_VISIT(NodeType) \
+    virtual void visit##NodeType(NodeType* node);
+
+        DEF_VISIT(HirProgram)
+        DEF_VISIT(HirIntLiteral)
+        DEF_VISIT(HirFloatLiteral)
+        DEF_VISIT(HirCharLiteral)
+        DEF_VISIT(HirSymbol)
+        DEF_VISIT(HirVarDecl)
+    };
+
+#undef DEF_VISIT
+}

@@ -16,24 +16,44 @@
 #pragma once
 
 #include "context.h"
+#include "node.h"
 #include "parser/RiddleParser.h"
 #include "parser/RiddleParserBaseVisitor.h"
 
 namespace riddle::ast {
     class ASTLower final : public RiddleParserBaseVisitor {
         hir::HirContext context;
+        std::string_view filename;
+
     public:
         template<class T, typename... Args>
-        T* makeHir(Args&&... args) {
+        T *makeHir(Args &&... args) {
             return context.make<T>(std::forward<Args>(args)...);
         }
 
+        template<class T>
+        static T *hir_cast(const std::any &value) {
+            return dynamic_cast<T *>(std::any_cast<hir::HirElement *>(value));
+        }
+
+        void setLocation(SourceLocation &location, const antlr4::ParserRuleContext *ctx) const;
+
+        explicit ASTLower(const std::string &filename): filename(filename) {}
+
         std::any visitProgram(RiddleParser::ProgramContext *context) override;
+
         std::any visitStatementEnd(RiddleParser::StatementEndContext *context) override;
+
         std::any visitTypeLit(RiddleParser::TypeLitContext *context) override;
+
         std::any visitIntLit(RiddleParser::IntLitContext *context) override;
+
         std::any visitFloatLit(RiddleParser::FloatLitContext *context) override;
+
         std::any visitCharLit(RiddleParser::CharLitContext *context) override;
+
         std::any visitVarDecl(RiddleParser::VarDeclContext *context) override;
+
+        std::any visitObject(RiddleParser::ObjectContext *context) override;
     };
 }

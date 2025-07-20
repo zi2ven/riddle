@@ -15,22 +15,48 @@
 
 #include "node.h"
 
+#include "visitor.h"
+
 namespace riddle::hir {
+    void HirProgram::accept(HirVisitor *visitor) {
+        return visitor->visitHirProgram(this);
+    }
+
     HirIntLiteral::HirIntLiteral(const int value): value(value) {
         type = std::make_shared<IntegerType>(32);
+    }
+
+    void HirIntLiteral::accept(HirVisitor *visitor) {
+        return visitor->visitHirIntLiteral(this);
     }
 
     HirFloatLiteral::HirFloatLiteral(const float value): value(value) {
         type = std::make_shared<FloatType>(FloatType::FloatKind::Float);
     }
 
+    void HirFloatLiteral::accept(HirVisitor *visitor) {
+        return visitor->visitHirFloatLiteral(this);
+    }
+
     HirCharLiteral::HirCharLiteral(const char value): value(value) {
         type = std::make_shared<CharType>();
+    }
+
+    void HirCharLiteral::accept(HirVisitor *visitor) {
+        return visitor->visitHirCharLiteral(this);
+    }
+
+    void HirSymbol::accept(HirVisitor *visitor) {
+        return visitor->visitHirSymbol(this);
     }
 
     HirVarDecl::HirVarDecl(const std::string &name,
                            Type *type,
                            HirExpression *value,
                            const bool isVal): HirDeclaration(name),
-                                        isVal(isVal), type(type), value(value) {}
+                                              isVal(isVal), type(type), value(value) {}
+
+    void HirVarDecl::accept(HirVisitor *visitor) {
+        return visitor->visitHirVarDecl(this);
+    }
 }

@@ -20,25 +20,33 @@
 #include <vector>
 
 #include "type.h"
+#include "support/location .h"
 
 namespace riddle::hir {
+    class HirVisitor;
+
     class HirElement {
     public:
         HirElement() = default;
 
         virtual ~HirElement() = default;
+
+        virtual void accept(HirVisitor *visitor) = 0;
     };
 
-    class HirStatement : HirElement {};
+    class HirStatement : public HirElement {};
 
-    class HirProgram final : HirElement{
+    class HirProgram final : public HirElement {
     public:
-        std::vector<HirStatement*> stmts;
+        std::vector<HirStatement *> stmts;
+
+        void accept(HirVisitor *visitor) override;
     };
 
     class HirDeclaration : public HirStatement {
     public:
         std::string name;
+        SourceLocation location;
 
     protected:
         explicit HirDeclaration(std::string name): name(std::move(name)) {}
@@ -54,6 +62,8 @@ namespace riddle::hir {
         explicit HirIntLiteral(int value);
 
         int value;
+
+        void accept(HirVisitor *visitor) override;
     };
 
     class HirFloatLiteral final : public HirExpression {
@@ -61,6 +71,8 @@ namespace riddle::hir {
         explicit HirFloatLiteral(float value);
 
         float value;
+
+        void accept(HirVisitor *visitor) override;
     };
 
     class HirCharLiteral final : public HirExpression {
@@ -68,6 +80,26 @@ namespace riddle::hir {
         explicit HirCharLiteral(char value);
 
         char value;
+
+        void accept(HirVisitor *visitor) override;
+    };
+
+    class HirSymbol final : public HirExpression {
+    public:
+        enum class SymbolKind {
+            Unknown,
+            Variable,
+            Function,
+            Type,
+        };
+
+        std::string name;
+        SymbolKind kind = SymbolKind::Unknown;
+        HirDeclaration *declaration = nullptr;
+
+        explicit HirSymbol(std::string n): name(std::move(n)) {}
+
+        void accept(HirVisitor *visitor) override;
     };
 
     class HirVarDecl final : public HirDeclaration {
@@ -76,9 +108,9 @@ namespace riddle::hir {
 
         bool isVal;
 
-        Type* type;
-        HirExpression* value;
+        Type *type;
+        HirExpression *value;
+
+        void accept(HirVisitor *visitor) override;
     };
-
-
 }

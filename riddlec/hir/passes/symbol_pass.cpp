@@ -13,4 +13,16 @@
 // limitations under the License.
 //
 
-#include "context.h"
+#include "symbol_pass.h"
+
+void riddle::hir::SymbolPass::visitHirSymbol(HirSymbol *node) {
+    const auto obj = table.getObject(node->name);
+
+    node->declaration = obj->decl;
+    node->kind = obj->kind;
+}
+
+void riddle::hir::SymbolPass::visitHirVarDecl(HirVarDecl *node) {
+    auto obj = std::make_unique<SymbolTable::Object>(node->name, HirSymbol::SymbolKind::Variable, node);
+    table.addObject(std::move(obj));
+}

@@ -19,6 +19,8 @@
 #include <print>
 
 #include "hir/ast_hir.h"
+#include "hir/passes/symbol_pass.h"
+
 
 int main(int argc, char *argv[]) {
     if (argc < 2)std::print("No File");
@@ -35,6 +37,8 @@ int main(int argc, char *argv[]) {
     antlr4::CommonTokenStream tokens(&lexer);
     RiddleParser parser(&tokens);
     auto ast = parser.program();
-    auto lower = riddle::ast::ASTLower();
-    lower.visit(ast);
+    auto lower = riddle::ast::ASTLower(argv[1]);
+    auto hir = std::any_cast<riddle::hir::HirProgram*>(lower.visit(ast));
+    auto sps = riddle::hir::SymbolPass();
+    sps.visit(hir);
 }

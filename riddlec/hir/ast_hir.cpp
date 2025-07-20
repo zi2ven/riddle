@@ -22,6 +22,12 @@
 namespace riddle::ast {
     using namespace riddle::hir;
 
+    void ASTLower::setLocation(SourceLocation &location, const antlr4::ParserRuleContext *ctx) const {
+        location.line = ctx->start->getLine();
+        location.column = ctx->start->getCharPositionInLine();
+        location.filename = filename;
+    }
+
     std::any ASTLower::visitProgram(RiddleParser::ProgramContext *context) {
         const auto program = makeHir<HirProgram>();
         for (const auto i: context->children) {
@@ -29,7 +35,7 @@ namespace riddle::ast {
             if (!r.has_value()) {
                 continue;
             }
-            const auto result = std::any_cast<HirStatement*>(r);
+            const auto result = hir_cast<HirStatement>(r);
             program->stmts.push_back(result);
         }
         return program;
@@ -61,19 +67,19 @@ namespace riddle::ast {
     }
 
     std::any ASTLower::visitIntLit(RiddleParser::IntLitContext *context) {
-        HirStatement* result = makeHir<HirIntLiteral>(std::stoi(context->getText()));
+        HirElement *result = makeHir<HirIntLiteral>(std::stoi(context->getText()));
         return result;
     }
 
     std::any ASTLower::visitFloatLit(RiddleParser::FloatLitContext *context) {
-        HirStatement* result = makeHir<HirFloatLiteral>(std::stoi(context->getText()));
+        HirElement *result = makeHir<HirFloatLiteral>(std::stoi(context->getText()));
         return result;
     }
 
     std::any ASTLower::visitCharLit(RiddleParser::CharLitContext *context) {
         const auto lit = context->getText();
         const char ch = lit[1];
-        HirStatement* result = makeHir<HirCharLiteral>(ch);
+        HirElement *result = makeHir<HirCharLiteral>(ch);
         return result;
     }
 
@@ -83,7 +89,23 @@ namespace riddle::ast {
         if (context->type) {
             type = std::any_cast<Type *>(visitTypeLit(context->type));
         }
-        HirStatement* result = makeHir<HirVarDecl>(name, type, nullptr, context->children[0]->getText() == "val");
+        HirExpression *init = nullptr;
+        if (context->value) {
+            init = hir_cast<HirExpression>(visit(context->value));
+        }
+        const auto decl = makeHir<HirVarDecl>(name, type, init, context->children[0]->getText() == "val");
+
+        setLocation(decl->location,context);
+
+        HirElement *result = decl;
+        return result;
+    }
+
+    std::any ASTLower::visitObject(RiddleParser::ObjectContext *context) {
+        const auto name = context->Identifier()->getText();
+
+        HirElement* result = makeHir<HirSymbol>(name);
+
         return result;
     }
 }
