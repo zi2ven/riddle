@@ -29,17 +29,20 @@ public:
   virtual void enterStatement(RiddleParser::StatementContext *ctx) = 0;
   virtual void exitStatement(RiddleParser::StatementContext *ctx) = 0;
 
+  virtual void enterFuncDecl(RiddleParser::FuncDeclContext *ctx) = 0;
+  virtual void exitFuncDecl(RiddleParser::FuncDeclContext *ctx) = 0;
+
   virtual void enterVarDecl(RiddleParser::VarDeclContext *ctx) = 0;
   virtual void exitVarDecl(RiddleParser::VarDeclContext *ctx) = 0;
 
   virtual void enterExpression(RiddleParser::ExpressionContext *ctx) = 0;
   virtual void exitExpression(RiddleParser::ExpressionContext *ctx) = 0;
 
+  virtual void enterBlock(RiddleParser::BlockContext *ctx) = 0;
+  virtual void exitBlock(RiddleParser::BlockContext *ctx) = 0;
+
   virtual void enterObject(RiddleParser::ObjectContext *ctx) = 0;
   virtual void exitObject(RiddleParser::ObjectContext *ctx) = 0;
-
-  virtual void enterTypeLit(RiddleParser::TypeLitContext *ctx) = 0;
-  virtual void exitTypeLit(RiddleParser::TypeLitContext *ctx) = 0;
 
   virtual void enterIntLit(RiddleParser::IntLitContext *ctx) = 0;
   virtual void exitIntLit(RiddleParser::IntLitContext *ctx) = 0;

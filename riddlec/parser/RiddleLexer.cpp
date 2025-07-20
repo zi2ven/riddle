@@ -57,7 +57,7 @@ void riddlelexerLexerInitialize() {
 #endif
   auto staticData = std::make_unique<RiddleLexerStaticData>(
     std::vector<std::string>{
-      "Var", "Val", "For", "While", "Continue", "Break", "If", "Else", "Func", 
+      "Var", "Val", "For", "While", "Continue", "Break", "If", "Else", "Fun", 
       "Return", "Import", "Package", "Class", "True", "False", "Null", "Try", 
       "Catch", "Extern", "Override", "Static", "Const", "Public", "Protected", 
       "Private", "Virtual", "Operator", "Enum", "Union", "Semi", "Endl", 
@@ -92,7 +92,7 @@ void riddlelexerLexerInitialize() {
     },
     std::vector<std::string>{
       "", "Var", "Val", "For", "While", "Continue", "Break", "If", "Else", 
-      "Func", "Return", "Import", "Package", "Class", "True", "False", "Null", 
+      "Fun", "Return", "Import", "Package", "Class", "True", "False", "Null", 
       "Try", "Catch", "Extern", "Override", "Static", "Const", "Public", 
       "Protected", "Private", "Virtual", "Operator", "Enum", "Union", "Semi", 
       "Endl", "LeftParen", "RightParen", "LeftBracket", "RightBracket", 

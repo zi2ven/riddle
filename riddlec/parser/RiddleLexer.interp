@@ -101,7 +101,7 @@ Continue
 Break
 If
 Else
-Func
+Fun
 Return
 Import
 Package
@@ -193,7 +193,7 @@ Continue
 Break
 If
 Else
-Func
+Fun
 Return
 Import
 Package

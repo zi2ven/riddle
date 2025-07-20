@@ -29,24 +29,24 @@ namespace riddle::hir {
         }
     }
 
-    void HirVisitor::visitHirIntLiteral(HirIntLiteral *node) {
-        return;
-    }
+    void HirVisitor::visitHirIntLiteral(HirIntLiteral *node) {}
 
-    void HirVisitor::visitHirFloatLiteral(HirFloatLiteral *node) {
-        return;
-    }
+    void HirVisitor::visitHirFloatLiteral(HirFloatLiteral *node) {}
 
-    void HirVisitor::visitHirCharLiteral(HirCharLiteral *node) {
-        return;
-    }
+    void HirVisitor::visitHirCharLiteral(HirCharLiteral *node) {}
 
-    void HirVisitor::visitHirSymbol(HirSymbol *node) {
-        return;
-    }
+    void HirVisitor::visitHirSymbol(HirSymbol *node) {}
 
     void HirVisitor::visitHirVarDecl(HirVarDecl *node) {
         visit(node->value);
     }
+
+    void HirVisitor::visitHirFuncDecl(HirFuncDecl *node) {
+        visit(node->returnType);
+        for (const auto i:node->body) {
+            visit(i);
+        }
+    }
+
 
 }

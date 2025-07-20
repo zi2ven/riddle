@@ -86,5 +86,6 @@ namespace riddle::hir {
     public:
         void visitHirSymbol(HirSymbol *node) override;
         void visitHirVarDecl(HirVarDecl *node) override;
+        void visitHirFuncDecl(HirFuncDecl *node) override;
     };
 }

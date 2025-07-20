@@ -41,23 +41,31 @@ statementEnd
 statement
     : expression
     | varDecl
+    | funcDecl
+    ;
+
+//todo 实现函数参数
+funcDecl
+    : Fun name=Identifier LeftParen RightParen Sub Greater returnType=expression body=block
     ;
 
 varDecl
-    : Var name=Identifier (Colon type=typeLit)? (Assign value=expression)?
-    | Val name=Identifier (Colon type=typeLit)? (Assign value=expression)?
+    : Var name=Identifier (Colon type=expression)? (Assign value=expression)?
+    | Val name=Identifier (Colon type=expression)? (Assign value=expression)?
     ;
 
 expression
     : literal
     | object
+    | block
     ;
+
+block
+    : LeftCurly statementEnd* RightCurly
+    ;
+
 
 object
-    : Identifier
-    ;
-
-typeLit
     : Identifier
     ;
 

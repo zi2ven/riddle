@@ -44,8 +44,6 @@ namespace riddle::ast {
 
         std::any visitStatementEnd(RiddleParser::StatementEndContext *context) override;
 
-        std::any visitTypeLit(RiddleParser::TypeLitContext *context) override;
-
         std::any visitIntLit(RiddleParser::IntLitContext *context) override;
 
         std::any visitFloatLit(RiddleParser::FloatLitContext *context) override;
@@ -55,5 +53,7 @@ namespace riddle::ast {
         std::any visitVarDecl(RiddleParser::VarDeclContext *context) override;
 
         std::any visitObject(RiddleParser::ObjectContext *context) override;
+
+        std::any visitFuncDecl(RiddleParser::FuncDeclContext *context) override;
     };
 }

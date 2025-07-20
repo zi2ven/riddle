@@ -45,27 +45,6 @@ namespace riddle::ast {
         return visit(context->children[0]);
     }
 
-    std::any ASTLower::visitTypeLit(RiddleParser::TypeLitContext *context) {
-        // todo 管理此处的 Type
-        static std::unordered_map<std::string, Type *> type{
-            {"int", new IntegerType(32)},
-            {"char", new CharType()},
-            {"short", new IntegerType(16)},
-            {"byte", new IntegerType(8)},
-            {"long", new IntegerType(64)},
-            {"float", new FloatType(FloatType::FloatKind::Float)},
-            {"double", new FloatType(FloatType::FloatKind::Double)}
-        };
-
-        const auto str = context->getText();
-
-        if (!type.contains(str)) {
-            throw std::runtime_error(std::format("unknown type '{}'", str));
-        }
-
-        return type.at(str);
-    }
-
     std::any ASTLower::visitIntLit(RiddleParser::IntLitContext *context) {
         HirElement *result = makeHir<HirIntLiteral>(std::stoi(context->getText()));
         return result;
@@ -85,9 +64,9 @@ namespace riddle::ast {
 
     std::any ASTLower::visitVarDecl(RiddleParser::VarDeclContext *context) {
         const auto name = context->name->getText();
-        Type *type = nullptr;
+        HirExpression *type = nullptr;
         if (context->type) {
-            type = std::any_cast<Type *>(visitTypeLit(context->type));
+            type = hir_cast<HirExpression>(visit(context->type));
         }
         HirExpression *init = nullptr;
         if (context->value) {
@@ -95,7 +74,7 @@ namespace riddle::ast {
         }
         const auto decl = makeHir<HirVarDecl>(name, type, init, context->children[0]->getText() == "val");
 
-        setLocation(decl->location,context);
+        setLocation(decl->location, context);
 
         HirElement *result = decl;
         return result;
@@ -104,8 +83,25 @@ namespace riddle::ast {
     std::any ASTLower::visitObject(RiddleParser::ObjectContext *context) {
         const auto name = context->Identifier()->getText();
 
-        HirElement* result = makeHir<HirSymbol>(name);
+        HirElement *result = makeHir<HirSymbol>(name);
 
+        return result;
+    }
+
+    std::any ASTLower::visitFuncDecl(RiddleParser::FuncDeclContext *context) {
+        const auto name = context->name->getText();
+        const auto returnType = hir_cast<HirExpression>(visit(context->returnType));
+
+        const auto decl = makeHir<HirFuncDecl>(name, returnType);
+
+        for (const auto i: context->body->children) {
+            if (antlrcpp::is<antlr4::tree::TerminalNode *>(i)) {
+                continue;
+            }
+            decl->body.push_back(hir_cast<HirStatement>(visit(i)));
+        }
+
+        HirElement *result = decl;
         return result;
     }
 }

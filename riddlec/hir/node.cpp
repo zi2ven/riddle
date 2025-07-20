@@ -50,13 +50,11 @@ namespace riddle::hir {
         return visitor->visitHirSymbol(this);
     }
 
-    HirVarDecl::HirVarDecl(const std::string &name,
-                           Type *type,
-                           HirExpression *value,
-                           const bool isVal): HirDeclaration(name),
-                                              isVal(isVal), type(type), value(value) {}
-
     void HirVarDecl::accept(HirVisitor *visitor) {
         return visitor->visitHirVarDecl(this);
+    }
+
+    void HirFuncDecl::accept(HirVisitor *visitor) {
+        return visitor->visitHirFuncDecl(this);
     }
 }

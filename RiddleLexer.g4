@@ -8,7 +8,7 @@ Continue:'continue';
 Break:'break';
 If:'if';
 Else:'else';
-Func:'fun'; //函数定义
+Fun:'fun'; //函数定义
 Return: 'return' ;
 Import: 'import' ;
 Package: 'package';

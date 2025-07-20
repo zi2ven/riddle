@@ -13,7 +13,7 @@ class  RiddleLexer : public antlr4::Lexer {
 public:
   enum {
     Var = 1, Val = 2, For = 3, While = 4, Continue = 5, Break = 6, If = 7, 
-    Else = 8, Func = 9, Return = 10, Import = 11, Package = 12, Class = 13, 
+    Else = 8, Fun = 9, Return = 10, Import = 11, Package = 12, Class = 13, 
     True = 14, False = 15, Null = 16, Try = 17, Catch = 18, Extern = 19, 
     Override = 20, Static = 21, Const = 22, Public = 23, Protected = 24, 
     Private = 25, Virtual = 26, Operator = 27, Enum = 28, Union = 29, Semi = 30, 

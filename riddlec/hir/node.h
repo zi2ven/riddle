@@ -104,12 +104,29 @@ namespace riddle::hir {
 
     class HirVarDecl final : public HirDeclaration {
     public:
-        HirVarDecl(const std::string &name, Type *type, HirExpression *value, bool isVal);
+        HirVarDecl(const std::string &name,
+                               HirExpression *typeLit,
+                               HirExpression *value,
+                               const bool isVal): HirDeclaration(name),
+                                                  isVal(isVal), typeLit(typeLit), value(value) {}
 
         bool isVal;
 
-        Type *type;
+        Type *type{};
+        HirExpression *typeLit;
         HirExpression *value;
+
+        void accept(HirVisitor *visitor) override;
+    };
+
+    class HirFuncDecl final : public HirDeclaration {
+    public:
+        HirExpression *returnType;
+
+        std::vector<HirStatement*> body;
+
+        HirFuncDecl(const std::string &name,
+                    HirExpression *returnType): HirDeclaration(name), returnType(returnType) {}
 
         void accept(HirVisitor *visitor) override;
     };

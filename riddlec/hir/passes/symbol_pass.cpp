@@ -26,3 +26,12 @@ void riddle::hir::SymbolPass::visitHirVarDecl(HirVarDecl *node) {
     auto obj = std::make_unique<SymbolTable::Object>(node->name, HirSymbol::SymbolKind::Variable, node);
     table.addObject(std::move(obj));
 }
+
+void riddle::hir::SymbolPass::visitHirFuncDecl(HirFuncDecl *node) {
+    visit(node->returnType);
+    table.join();
+    for (const auto i:node->body) {
+        visit(i);
+    }
+    table.exit();
+}

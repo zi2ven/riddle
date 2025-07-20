@@ -34,6 +34,7 @@ namespace riddle::hir {
         DEF_VISIT(HirCharLiteral)
         DEF_VISIT(HirSymbol)
         DEF_VISIT(HirVarDecl)
+        DEF_VISIT(HirFuncDecl)
     };
 
 #undef DEF_VISIT
