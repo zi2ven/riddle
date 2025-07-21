@@ -84,6 +84,7 @@ namespace riddle::hir {
         SymbolTable table;
 
     public:
+        SymbolPass();
         void visitHirSymbol(HirSymbol *node) override;
         void visitHirVarDecl(HirVarDecl *node) override;
         void visitHirFuncDecl(HirFuncDecl *node) override;

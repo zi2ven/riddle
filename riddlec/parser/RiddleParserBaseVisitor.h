@@ -34,6 +34,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitFuncParam(RiddleParser::FuncParamContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitFuncDecl(RiddleParser::FuncDeclContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -42,15 +46,7 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitExpression(RiddleParser::ExpressionContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitBlock(RiddleParser::BlockContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitObject(RiddleParser::ObjectContext *ctx) override {
+  virtual std::any visitFloatLit(RiddleParser::FloatLitContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -58,11 +54,23 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitFloatLit(RiddleParser::FloatLitContext *ctx) override {
+  virtual std::any visitBlockExpr(RiddleParser::BlockExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitCallExpr(RiddleParser::CallExprContext *ctx) override {
     return visitChildren(ctx);
   }
 
   virtual std::any visitCharLit(RiddleParser::CharLitContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitObject(RiddleParser::ObjectContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitBlock(RiddleParser::BlockContext *ctx) override {
     return visitChildren(ctx);
   }
 

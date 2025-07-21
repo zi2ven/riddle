@@ -54,6 +54,10 @@ namespace riddle::ast {
 
         std::any visitObject(RiddleParser::ObjectContext *context) override;
 
+        std::any visitFuncParam(RiddleParser::FuncParamContext *context) override;
+
         std::any visitFuncDecl(RiddleParser::FuncDeclContext *context) override;
+
+        std::any visitCallExpr(RiddleParser::CallExprContext *context) override;
     };
 }

@@ -36,8 +36,8 @@ public:
 
   enum {
     RuleProgram = 0, RuleTerminator = 1, RuleStatementEnd = 2, RuleStatement = 3, 
-    RuleFuncDecl = 4, RuleVarDecl = 5, RuleExpression = 6, RuleBlock = 7, 
-    RuleObject = 8, RuleLiteral = 9
+    RuleFuncParam = 4, RuleFuncDecl = 5, RuleVarDecl = 6, RuleExpression = 7, 
+    RuleBlock = 8
   };
 
   explicit RiddleParser(antlr4::TokenStream *input);
@@ -75,12 +75,11 @@ public:
   class TerminatorContext;
   class StatementEndContext;
   class StatementContext;
+  class FuncParamContext;
   class FuncDeclContext;
   class VarDeclContext;
   class ExpressionContext;
-  class BlockContext;
-  class ObjectContext;
-  class LiteralContext; 
+  class BlockContext; 
 
   class  ProgramContext : public antlr4::ParserRuleContext {
   public:
@@ -149,6 +148,25 @@ public:
 
   StatementContext* statement();
 
+  class  FuncParamContext : public antlr4::ParserRuleContext {
+  public:
+    antlr4::Token *name = nullptr;
+    RiddleParser::ExpressionContext *type = nullptr;
+    FuncParamContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *Colon();
+    antlr4::tree::TerminalNode *Identifier();
+    ExpressionContext *expression();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  FuncParamContext* funcParam();
+
   class  FuncDeclContext : public antlr4::ParserRuleContext {
   public:
     antlr4::Token *name = nullptr;
@@ -164,6 +182,10 @@ public:
     antlr4::tree::TerminalNode *Identifier();
     ExpressionContext *expression();
     BlockContext *block();
+    std::vector<FuncParamContext *> funcParam();
+    FuncParamContext* funcParam(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> Comma();
+    antlr4::tree::TerminalNode* Comma(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -201,20 +223,90 @@ public:
   class  ExpressionContext : public antlr4::ParserRuleContext {
   public:
     ExpressionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    LiteralContext *literal();
-    ObjectContext *object();
-    BlockContext *block();
+   
+    ExpressionContext() = default;
+    void copyFrom(ExpressionContext *context);
+    using antlr4::ParserRuleContext::copyFrom;
 
+    virtual size_t getRuleIndex() const override;
+
+   
+  };
+
+  class  FloatLitContext : public ExpressionContext {
+  public:
+    FloatLitContext(ExpressionContext *ctx);
+
+    antlr4::tree::TerminalNode *Float();
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
+  };
+
+  class  IntLitContext : public ExpressionContext {
+  public:
+    IntLitContext(ExpressionContext *ctx);
+
+    antlr4::tree::TerminalNode *Decimal();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  BlockExprContext : public ExpressionContext {
+  public:
+    BlockExprContext(ExpressionContext *ctx);
+
+    BlockContext *block();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  CallExprContext : public ExpressionContext {
+  public:
+    CallExprContext(ExpressionContext *ctx);
+
+    RiddleParser::ExpressionContext *func = nullptr;
+    antlr4::tree::TerminalNode *LeftParen();
+    antlr4::tree::TerminalNode *RightParen();
+    std::vector<ExpressionContext *> expression();
+    ExpressionContext* expression(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> Comma();
+    antlr4::tree::TerminalNode* Comma(size_t i);
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  CharLitContext : public ExpressionContext {
+  public:
+    CharLitContext(ExpressionContext *ctx);
+
+    antlr4::tree::TerminalNode *CHAR();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  ObjectContext : public ExpressionContext {
+  public:
+    ObjectContext(ExpressionContext *ctx);
+
+    antlr4::tree::TerminalNode *Identifier();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
   ExpressionContext* expression();
-
+  ExpressionContext* expression(int precedence);
   class  BlockContext : public antlr4::ParserRuleContext {
   public:
     BlockContext(antlr4::ParserRuleContext *parent, size_t invokingState);
@@ -233,73 +325,11 @@ public:
 
   BlockContext* block();
 
-  class  ObjectContext : public antlr4::ParserRuleContext {
-  public:
-    ObjectContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *Identifier();
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  ObjectContext* object();
-
-  class  LiteralContext : public antlr4::ParserRuleContext {
-  public:
-    LiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-   
-    LiteralContext() = default;
-    void copyFrom(LiteralContext *context);
-    using antlr4::ParserRuleContext::copyFrom;
-
-    virtual size_t getRuleIndex() const override;
-
-   
-  };
-
-  class  FloatLitContext : public LiteralContext {
-  public:
-    FloatLitContext(LiteralContext *ctx);
-
-    antlr4::tree::TerminalNode *Float();
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  IntLitContext : public LiteralContext {
-  public:
-    IntLitContext(LiteralContext *ctx);
-
-    antlr4::tree::TerminalNode *Decimal();
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  CharLitContext : public LiteralContext {
-  public:
-    CharLitContext(LiteralContext *ctx);
-
-    antlr4::tree::TerminalNode *CHAR();
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  LiteralContext* literal();
-
 
   bool sempred(antlr4::RuleContext *_localctx, size_t ruleIndex, size_t predicateIndex) override;
 
   bool terminatorSempred(TerminatorContext *_localctx, size_t predicateIndex);
+  bool expressionSempred(ExpressionContext *_localctx, size_t predicateIndex);
 
   // By default the static state used to implement the parser is lazily initialized during the first
   // call to the constructor. You can call this function if you wish to initialize the static state

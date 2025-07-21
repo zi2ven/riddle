@@ -15,6 +15,17 @@
 
 #include "symbol_pass.h"
 
+riddle::hir::SymbolPass::SymbolPass() {
+    constexpr auto bt = HirSymbol::SymbolKind::BuiltinType;
+    table.addObject(std::make_unique<SymbolTable::Object>("int", bt, nullptr));
+    table.addObject(std::make_unique<SymbolTable::Object>("long", bt, nullptr));
+    table.addObject(std::make_unique<SymbolTable::Object>("short", bt, nullptr));
+    table.addObject(std::make_unique<SymbolTable::Object>("char", bt, nullptr));
+    table.addObject(std::make_unique<SymbolTable::Object>("byte", bt, nullptr));
+    table.addObject(std::make_unique<SymbolTable::Object>("float", bt, nullptr));
+    table.addObject(std::make_unique<SymbolTable::Object>("double", bt, nullptr));
+}
+
 void riddle::hir::SymbolPass::visitHirSymbol(HirSymbol *node) {
     const auto obj = table.getObject(node->name);
 
@@ -28,9 +39,13 @@ void riddle::hir::SymbolPass::visitHirVarDecl(HirVarDecl *node) {
 }
 
 void riddle::hir::SymbolPass::visitHirFuncDecl(HirFuncDecl *node) {
+    auto obj = std::make_unique<SymbolTable::Object>(node->name, HirSymbol::SymbolKind::Function, node);
+    table.addObject(std::move(obj));
+
     visit(node->returnType);
+
     table.join();
-    for (const auto i:node->body) {
+    for (const auto i: node->body) {
         visit(i);
     }
     table.exit();

@@ -44,9 +44,12 @@ statement
     | funcDecl
     ;
 
-//todo 实现函数参数
+funcParam
+    : name=Identifier Colon type=expression
+    ;
+
 funcDecl
-    : Fun name=Identifier LeftParen RightParen Sub Greater returnType=expression body=block
+    : Fun name=Identifier LeftParen (funcParam (Comma funcParam)*)? RightParen Sub Greater returnType=expression body=block
     ;
 
 varDecl
@@ -55,22 +58,12 @@ varDecl
     ;
 
 expression
-    : literal
-    | object
-    | block
+    : func=expression LeftParen (expression (Comma expression)*)? RightParen #callExpr
+    | Identifier    #object
+    | block         #blockExpr
+    | Decimal       #intLit
+    | Float         #floatLit
+    | CHAR          #charLit
     ;
 
-block
-    : LeftCurly statementEnd* RightCurly
-    ;
-
-
-object
-    : Identifier
-    ;
-
-literal
-    : Decimal #intLit
-    | Float   #floatLit
-    | CHAR    #charLit
-    ;
+block: LeftCurly statementEnd* RightCurly;

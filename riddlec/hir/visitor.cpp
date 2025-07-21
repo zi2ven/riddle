@@ -24,7 +24,7 @@ namespace riddle::hir {
     }
 
     void HirVisitor::visitHirProgram(HirProgram *node) {
-        for (const auto i:node->stmts) {
+        for (const auto i: node->stmts) {
             visit(i);
         }
     }
@@ -43,10 +43,15 @@ namespace riddle::hir {
 
     void HirVisitor::visitHirFuncDecl(HirFuncDecl *node) {
         visit(node->returnType);
-        for (const auto i:node->body) {
+        for (const auto i: node->body) {
             visit(i);
         }
     }
 
-
+    void HirVisitor::visitHirCall(HirCall *node) {
+        visit(node->func);
+        for (const auto i: node->params) {
+            visit(i);
+        }
+    }
 }

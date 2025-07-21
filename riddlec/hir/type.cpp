@@ -57,4 +57,13 @@ namespace riddle::hir {
     std::string CharType::getName() {
         return "char";
     }
+
+    std::string FunctionType::getName() {
+        return "function";
+    }
+
+    size_t FunctionType::getSize() {
+        // todo 实现对 target 宽度的解析
+        return sizeof(void *) * 8;
+    }
 }

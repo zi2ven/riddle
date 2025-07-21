@@ -57,4 +57,8 @@ namespace riddle::hir {
     void HirFuncDecl::accept(HirVisitor *visitor) {
         return visitor->visitHirFuncDecl(this);
     }
+
+    void HirCall::accept(HirVisitor *visitor) {
+        return visitor->visitHirCall(this);
+    }
 }

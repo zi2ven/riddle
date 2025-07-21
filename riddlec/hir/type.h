@@ -14,8 +14,10 @@
 //
 
 #pragma once
+#include <memory>
 #include <string>
 #include <utility>
+#include <vector>
 
 namespace riddle::hir {
     class Type {
@@ -66,5 +68,19 @@ namespace riddle::hir {
         CharType(): IntegerType(CHAR_WIDTH) {}
 
         std::string getName() override;
+    };
+
+    class FunctionType final : public Type {
+    public:
+        std::shared_ptr<Type> returnType;
+        std::vector<std::shared_ptr<Type>> params;
+
+        FunctionType(std::shared_ptr<Type> returnType,
+                     const std::vector<std::shared_ptr<Type>> &params): returnType(std::move(returnType)),
+                                                                 params(params) {}
+
+        std::string getName() override;
+
+        size_t getSize() override;
     };
 }

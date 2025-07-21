@@ -47,6 +47,7 @@ namespace riddle::hir {
     public:
         std::string name;
         SourceLocation location;
+        std::shared_ptr<Type> true_type{};
 
     protected:
         explicit HirDeclaration(std::string name): name(std::move(name)) {}
@@ -91,6 +92,7 @@ namespace riddle::hir {
             Variable,
             Function,
             Type,
+            BuiltinType,
         };
 
         std::string name;
@@ -105,14 +107,13 @@ namespace riddle::hir {
     class HirVarDecl final : public HirDeclaration {
     public:
         HirVarDecl(const std::string &name,
-                               HirExpression *typeLit,
-                               HirExpression *value,
-                               const bool isVal): HirDeclaration(name),
-                                                  isVal(isVal), typeLit(typeLit), value(value) {}
+                   HirExpression *typeLit,
+                   HirExpression *value,
+                   const bool isVal): HirDeclaration(name),
+                                      isVal(isVal), typeLit(typeLit), value(value) {}
 
         bool isVal;
 
-        Type *type{};
         HirExpression *typeLit;
         HirExpression *value;
 
@@ -122,11 +123,29 @@ namespace riddle::hir {
     class HirFuncDecl final : public HirDeclaration {
     public:
         HirExpression *returnType;
-
-        std::vector<HirStatement*> body;
+        std::vector<HirVarDecl *> params;
+        bool isVar;
+        std::vector<HirStatement *> body;
 
         HirFuncDecl(const std::string &name,
-                    HirExpression *returnType): HirDeclaration(name), returnType(returnType) {}
+                    HirExpression *returnType,
+                    std::vector<HirVarDecl *> params = {},
+                    const bool isVar = false): HirDeclaration(name),
+                                               returnType(returnType),
+                                               params(std::move(params)),
+                                               isVar(isVar) {}
+
+        void accept(HirVisitor *visitor) override;
+    };
+
+    class HirCall final : public HirExpression {
+    public:
+        HirExpression *func;
+        std::vector<HirExpression *> params;
+
+        HirCall(HirExpression *func,
+                std::vector<HirExpression *> params): func(func),
+                                                      params(std::move(params)) {}
 
         void accept(HirVisitor *visitor) override;
     };
