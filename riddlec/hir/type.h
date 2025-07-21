@@ -22,11 +22,33 @@
 namespace riddle::hir {
     class Type {
     public:
+        enum class Kind {
+            Integer,
+            Float,
+            Function,
+            Array,
+            Class
+        };
+
+    protected:
+        Kind kind;
+
+    public:
+        explicit Type(const Kind kind): kind(kind) {}
+
         virtual ~Type() = default;
 
         virtual std::string getName() = 0;
 
         virtual size_t getSize() = 0;
+
+        [[nodiscard]] Kind getKind() const {
+            return kind;
+        }
+
+        virtual bool equal(Type *other) {
+            return this->getKind() == other->getKind();
+        }
     };
 
     class IntegerType : public Type {
@@ -34,11 +56,15 @@ namespace riddle::hir {
         unsigned bits;
 
     public:
-        explicit IntegerType(const unsigned bits): bits(bits) {}
+        explicit IntegerType(const unsigned bits): Type(Kind::Integer), bits(bits) {}
 
         std::string getName() override;
 
         size_t getSize() override;
+
+        bool equal(Type *other) override {
+            return this->getKind() == other->getKind() && this->getSize() == other->getSize();
+        }
     };
 
     class FloatType final : public Type {
@@ -51,14 +77,18 @@ namespace riddle::hir {
         };
 
     protected:
-        FloatKind kind;
+        FloatKind float_kind;
 
     public:
-        explicit FloatType(const FloatKind kind): kind(kind) {}
+        explicit FloatType(const FloatKind kind): Type(Kind::Float), float_kind(kind) {}
 
         std::string getName() override;
 
         size_t getSize() override;
+
+        bool equal(Type *other) override {
+            return this->getKind() == other->getKind() && this->getSize() == other->getSize();
+        }
     };
 
     class CharType final : public IntegerType {
@@ -76,11 +106,14 @@ namespace riddle::hir {
         std::vector<std::shared_ptr<Type>> params;
 
         FunctionType(std::shared_ptr<Type> returnType,
-                     const std::vector<std::shared_ptr<Type>> &params): returnType(std::move(returnType)),
-                                                                 params(params) {}
+                     const std::vector<std::shared_ptr<Type>> &params): Type(Kind::Function),
+                                                                        returnType(std::move(returnType)),
+                                                                        params(params) {}
 
         std::string getName() override;
 
         size_t getSize() override;
+
+        bool equal(Type *other) override;
     };
 }

@@ -40,5 +40,5 @@ int main(int argc, char *argv[]) {
     auto lower = riddle::ast::ASTLower(argv[1]);
     auto hir = std::any_cast<riddle::hir::HirProgram*>(lower.visit(ast));
     auto sps = riddle::hir::SymbolPass();
-    sps.visit(hir);
+    sps.run(hir);
 }

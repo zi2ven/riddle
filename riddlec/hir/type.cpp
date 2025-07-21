@@ -50,6 +50,7 @@ namespace riddle::hir {
                 return 16;
             case FloatKind::Huge:
                 return 128;
+            default: break;
         }
         return -1;
     }
@@ -65,5 +66,23 @@ namespace riddle::hir {
     size_t FunctionType::getSize() {
         // todo 实现对 target 宽度的解析
         return sizeof(void *) * 8;
+    }
+
+    bool FunctionType::equal(Type *other) {
+        {
+            if (this->getKind() != other->getKind()) { return false; }
+            const auto fty = dynamic_cast<FunctionType *>(other);
+            if (!fty) {
+                return false;
+            }
+            if (fty->params.size() != params.size()) { return false; }
+            if (!fty->returnType->equal(this->returnType.get())) { return false; }
+            for (unsigned i = 0; i < fty->params.size(); ++i) {
+                if (!fty->params[i]->equal(this->params[i].get())) {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 }

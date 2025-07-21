@@ -19,6 +19,7 @@
 #include <unordered_set>
 #include <utility>
 
+#include "pass.h"
 #include "hir/visitor.h"
 
 namespace riddle::hir {
@@ -79,14 +80,21 @@ namespace riddle::hir {
         }
     };
 
-    class SymbolPass final : public HirVisitor {
-    protected:
+    class SymbolPass final : public HirBasePass, public HirVisitor {
+    public:
         SymbolTable table;
 
-    public:
         SymbolPass();
+
+        void run(HirProgram *program) override {
+            this->visitHirProgram(program);
+        }
+
+    protected:
         void visitHirSymbol(HirSymbol *node) override;
+
         void visitHirVarDecl(HirVarDecl *node) override;
+
         void visitHirFuncDecl(HirFuncDecl *node) override;
     };
 }
