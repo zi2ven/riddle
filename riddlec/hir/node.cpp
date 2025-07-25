@@ -18,7 +18,7 @@
 #include "visitor.h"
 
 namespace riddle::hir {
-    void HirProgram::accept(HirVisitor *visitor) {
+    std::any HirProgram::accept(HirVisitor *visitor) {
         return visitor->visitHirProgram(this);
     }
 
@@ -26,7 +26,7 @@ namespace riddle::hir {
         type = std::make_shared<IntegerType>(32);
     }
 
-    void HirIntLiteral::accept(HirVisitor *visitor) {
+    std::any HirIntLiteral::accept(HirVisitor *visitor) {
         return visitor->visitHirIntLiteral(this);
     }
 
@@ -34,7 +34,7 @@ namespace riddle::hir {
         type = std::make_shared<FloatType>(FloatType::FloatKind::Float);
     }
 
-    void HirFloatLiteral::accept(HirVisitor *visitor) {
+    std::any HirFloatLiteral::accept(HirVisitor *visitor) {
         return visitor->visitHirFloatLiteral(this);
     }
 
@@ -42,23 +42,23 @@ namespace riddle::hir {
         type = std::make_shared<CharType>();
     }
 
-    void HirCharLiteral::accept(HirVisitor *visitor) {
+    std::any HirCharLiteral::accept(HirVisitor *visitor) {
         return visitor->visitHirCharLiteral(this);
     }
 
-    void HirSymbol::accept(HirVisitor *visitor) {
+    std::any HirSymbol::accept(HirVisitor *visitor) {
         return visitor->visitHirSymbol(this);
     }
 
-    void HirVarDecl::accept(HirVisitor *visitor) {
+    std::any HirVarDecl::accept(HirVisitor *visitor) {
         return visitor->visitHirVarDecl(this);
     }
 
-    void HirFuncDecl::accept(HirVisitor *visitor) {
+    std::any HirFuncDecl::accept(HirVisitor *visitor) {
         return visitor->visitHirFuncDecl(this);
     }
 
-    void HirCall::accept(HirVisitor *visitor) {
+    std::any HirCall::accept(HirVisitor *visitor) {
         return visitor->visitHirCall(this);
     }
 }

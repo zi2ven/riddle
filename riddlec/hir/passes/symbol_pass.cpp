@@ -26,19 +26,21 @@ riddle::hir::SymbolPass::SymbolPass() {
     table.addObject(std::make_unique<SymbolTable::Object>("double", bt, nullptr));
 }
 
-void riddle::hir::SymbolPass::visitHirSymbol(HirSymbol *node) {
+std::any riddle::hir::SymbolPass::visitHirSymbol(HirSymbol *node) {
     const auto obj = table.getObject(node->name);
 
     node->declaration = obj->decl;
     node->kind = obj->kind;
+    return {};
 }
 
-void riddle::hir::SymbolPass::visitHirVarDecl(HirVarDecl *node) {
+std::any riddle::hir::SymbolPass::visitHirVarDecl(HirVarDecl *node) {
     auto obj = std::make_unique<SymbolTable::Object>(node->name, HirSymbol::SymbolKind::Variable, node);
     table.addObject(std::move(obj));
+    return {};
 }
 
-void riddle::hir::SymbolPass::visitHirFuncDecl(HirFuncDecl *node) {
+std::any riddle::hir::SymbolPass::visitHirFuncDecl(HirFuncDecl *node) {
     auto obj = std::make_unique<SymbolTable::Object>(node->name, HirSymbol::SymbolKind::Function, node);
     table.addObject(std::move(obj));
 
@@ -49,4 +51,5 @@ void riddle::hir::SymbolPass::visitHirFuncDecl(HirFuncDecl *node) {
         visit(i);
     }
     table.exit();
+    return {};
 }

@@ -91,10 +91,10 @@ namespace riddle::hir {
         }
 
     protected:
-        void visitHirSymbol(HirSymbol *node) override;
+        std::any visitHirSymbol(HirSymbol *node) override;
 
-        void visitHirVarDecl(HirVarDecl *node) override;
+        std::any visitHirVarDecl(HirVarDecl *node) override;
 
-        void visitHirFuncDecl(HirFuncDecl *node) override;
+        std::any visitHirFuncDecl(HirFuncDecl *node) override;
     };
 }

@@ -14,22 +14,21 @@
 //
 
 #pragma once
-
-#include "pass.h"
+#include <llvm/IR/Module.h>
+#include <llvm/IR/IRBuilder.h>
+#include "config/llvm_config.h"
 #include "hir/visitor.h"
 
 namespace riddle::hir {
-    class TypePass final : public HirBasePass, public HirVisitor {
-        std::shared_ptr<IntegerType> intTy = std::make_shared<IntegerType>(32);
-        std::shared_ptr<FloatType> floatTy = std::make_shared<FloatType>(FloatType::FloatKind::Float);
+    class LLVMGen final : public HirVisitor {
     public:
-        void run(HirProgram *program) override {
-            this->visitHirProgram(program);
-        }
+        std::unique_ptr<llvm::Module> module = std::make_unique<llvm::Module>("", *config::context);
+        llvm::IRBuilder<> builder;
 
-    protected:
-        std::any visitHirIntLiteral(HirIntLiteral *node) override;
-        std::any visitHirFloatLiteral(HirFloatLiteral *node) override;
-        std::any visitHirCall(HirCall *node) override;
+        LLVMGen(): builder(*config::context) {}
+
+        llvm::Type *parseType(Type *type);
+
+        std::any visitHirFuncDecl(HirFuncDecl *node) override;
     };
 }

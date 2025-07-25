@@ -14,6 +14,7 @@
 //
 
 #pragma once
+#include <any>
 #include <memory>
 #include <string>
 #include <utility>
@@ -31,7 +32,7 @@ namespace riddle::hir {
 
         virtual ~HirElement() = default;
 
-        virtual void accept(HirVisitor *visitor) = 0;
+        virtual std::any accept(HirVisitor *visitor) = 0;
     };
 
     class HirStatement : public HirElement {};
@@ -40,14 +41,13 @@ namespace riddle::hir {
     public:
         std::vector<HirStatement *> stmts;
 
-        void accept(HirVisitor *visitor) override;
+        std::any accept(HirVisitor *visitor) override;
     };
 
     class HirDeclaration : public HirStatement {
     public:
         std::string name;
         SourceLocation location;
-        std::shared_ptr<Type> true_type{};
 
     protected:
         explicit HirDeclaration(std::string name): name(std::move(name)) {}
@@ -64,7 +64,7 @@ namespace riddle::hir {
 
         int value;
 
-        void accept(HirVisitor *visitor) override;
+        std::any accept(HirVisitor *visitor) override;
     };
 
     class HirFloatLiteral final : public HirExpression {
@@ -73,7 +73,7 @@ namespace riddle::hir {
 
         float value;
 
-        void accept(HirVisitor *visitor) override;
+        std::any accept(HirVisitor *visitor) override;
     };
 
     class HirCharLiteral final : public HirExpression {
@@ -82,7 +82,7 @@ namespace riddle::hir {
 
         char value;
 
-        void accept(HirVisitor *visitor) override;
+        std::any accept(HirVisitor *visitor) override;
     };
 
     class HirSymbol final : public HirExpression {
@@ -97,11 +97,12 @@ namespace riddle::hir {
 
         std::string name;
         SymbolKind kind = SymbolKind::Unknown;
+        // 后续加入重载决策后此处可能会有多个候选集
         HirDeclaration *declaration = nullptr;
 
         explicit HirSymbol(std::string n): name(std::move(n)) {}
 
-        void accept(HirVisitor *visitor) override;
+        std::any accept(HirVisitor *visitor) override;
     };
 
     class HirVarDecl final : public HirDeclaration {
@@ -110,14 +111,14 @@ namespace riddle::hir {
                    HirExpression *typeLit,
                    HirExpression *value,
                    const bool isVal): HirDeclaration(name),
-                                      isVal(isVal), typeLit(typeLit), value(value) {}
+                                      isVal(isVal), type(typeLit), value(value) {}
 
         bool isVal;
 
-        HirExpression *typeLit;
+        HirExpression *type;
         HirExpression *value;
 
-        void accept(HirVisitor *visitor) override;
+        std::any accept(HirVisitor *visitor) override;
     };
 
     class HirFuncDecl final : public HirDeclaration {
@@ -135,7 +136,7 @@ namespace riddle::hir {
                                                params(std::move(params)),
                                                isVar(isVar) {}
 
-        void accept(HirVisitor *visitor) override;
+        std::any accept(HirVisitor *visitor) override;
     };
 
     class HirCall final : public HirExpression {
@@ -147,6 +148,6 @@ namespace riddle::hir {
                 std::vector<HirExpression *> params): func(func),
                                                       params(std::move(params)) {}
 
-        void accept(HirVisitor *visitor) override;
+        std::any accept(HirVisitor *visitor) override;
     };
 }

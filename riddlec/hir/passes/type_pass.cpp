@@ -15,15 +15,17 @@
 
 #include "type_pass.h"
 
-void riddle::hir::TypePass::visitHirIntLiteral(HirIntLiteral *node) {
+std::any riddle::hir::TypePass::visitHirIntLiteral(HirIntLiteral *node) {
     node->type = this->intTy;
+    return {};
 }
 
-void riddle::hir::TypePass::visitHirFloatLiteral(HirFloatLiteral *node) {
+std::any riddle::hir::TypePass::visitHirFloatLiteral(HirFloatLiteral *node) {
     node->type = this->floatTy;
+    return {};
 }
 
-void riddle::hir::TypePass::visitHirCall(HirCall *node) {
+std::any riddle::hir::TypePass::visitHirCall(HirCall *node) {
     //todo 支持重载决策
     visit(node->func);
     for (const auto i: node->params) {
@@ -43,4 +45,5 @@ void riddle::hir::TypePass::visitHirCall(HirCall *node) {
     }
 
     node->type = fty->returnType;
+    return {};
 }

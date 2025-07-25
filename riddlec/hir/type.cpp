@@ -27,7 +27,7 @@ namespace riddle::hir {
     }
 
     std::string FloatType::getName() {
-        switch (kind) {
+        switch (float_kind) {
             case FloatKind::Float:
                 return "f32";
             case FloatKind::Double:
@@ -36,12 +36,13 @@ namespace riddle::hir {
                 return "f16";
             case FloatKind::Huge:
                 return "f128";
+            default: break;
         }
         return "<unknown>";
     }
 
     size_t FloatType::getSize() {
-        switch (kind) {
+        switch (float_kind) {
             case FloatKind::Float:
                 return 32;
             case FloatKind::Double:

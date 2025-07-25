@@ -19,39 +19,43 @@
 #include "node.h"
 
 namespace riddle::hir {
-    void HirVisitor::visit(HirElement *node) {
-        node->accept(this);
+    std::any HirVisitor::visit(HirElement *node) {
+        return node->accept(this);
     }
 
-    void HirVisitor::visitHirProgram(HirProgram *node) {
+    std::any HirVisitor::visitHirProgram(HirProgram *node) {
         for (const auto i: node->stmts) {
             visit(i);
         }
+        return {};
     }
 
-    void HirVisitor::visitHirIntLiteral(HirIntLiteral *node) {}
+    std::any HirVisitor::visitHirIntLiteral(HirIntLiteral *node) {return {};}
 
-    void HirVisitor::visitHirFloatLiteral(HirFloatLiteral *node) {}
+    std::any HirVisitor::visitHirFloatLiteral(HirFloatLiteral *node) {return {};}
 
-    void HirVisitor::visitHirCharLiteral(HirCharLiteral *node) {}
+    std::any HirVisitor::visitHirCharLiteral(HirCharLiteral *node) {return {};}
 
-    void HirVisitor::visitHirSymbol(HirSymbol *node) {}
+    std::any HirVisitor::visitHirSymbol(HirSymbol *node) {return {};}
 
-    void HirVisitor::visitHirVarDecl(HirVarDecl *node) {
+    std::any HirVisitor::visitHirVarDecl(HirVarDecl *node) {
         visit(node->value);
+        return {};
     }
 
-    void HirVisitor::visitHirFuncDecl(HirFuncDecl *node) {
+    std::any HirVisitor::visitHirFuncDecl(HirFuncDecl *node) {
         visit(node->returnType);
         for (const auto i: node->body) {
             visit(i);
         }
+        return {};
     }
 
-    void HirVisitor::visitHirCall(HirCall *node) {
+    std::any HirVisitor::visitHirCall(HirCall *node) {
         visit(node->func);
         for (const auto i: node->params) {
             visit(i);
         }
+        return {};
     }
 }

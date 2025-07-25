@@ -14,31 +14,8 @@
 //
 
 #pragma once
+#include <llvm/IR/LLVMContext.h>
 
-#include <any>
-
-#include "node.h"
-
-namespace riddle::hir {
-
-    class HirVisitor {
-    public:
-        virtual ~HirVisitor() = default;
-
-        std::any visit(HirElement* node);
-
-#define DEF_VISIT(NodeType) \
-    virtual std::any visit##NodeType(NodeType* node);
-
-        DEF_VISIT(HirProgram)
-        DEF_VISIT(HirIntLiteral)
-        DEF_VISIT(HirFloatLiteral)
-        DEF_VISIT(HirCharLiteral)
-        DEF_VISIT(HirSymbol)
-        DEF_VISIT(HirVarDecl)
-        DEF_VISIT(HirFuncDecl)
-        DEF_VISIT(HirCall)
-    };
-
-#undef DEF_VISIT
+namespace riddle::config {
+    inline auto context = new llvm::LLVMContext;
 }
