@@ -104,11 +104,13 @@ namespace riddle::hir {
     public:
         std::shared_ptr<Type> returnType;
         std::vector<std::shared_ptr<Type>> params;
+        bool isVar;
 
         FunctionType(std::shared_ptr<Type> returnType,
-                     const std::vector<std::shared_ptr<Type>> &params): Type(Kind::Function),
-                                                                        returnType(std::move(returnType)),
-                                                                        params(params) {}
+                     std::vector<std::shared_ptr<Type>> params,
+                     const bool isVar = false): Type(Kind::Function),
+                                          returnType(std::move(returnType)),
+                                          params(std::move(params)), isVar(isVar) {}
 
         std::string getName() override;
 

@@ -128,6 +128,8 @@ namespace riddle::hir {
         bool isVar;
         std::vector<HirStatement *> body;
 
+        std::shared_ptr<FunctionType> functionType;
+
         HirFuncDecl(const std::string &name,
                     HirExpression *returnType,
                     std::vector<HirVarDecl *> params = {},

@@ -30,5 +30,7 @@ namespace riddle::hir {
         llvm::Type *parseType(Type *type);
 
         std::any visitHirFuncDecl(HirFuncDecl *node) override;
+
+        void dump() const;
     };
 }

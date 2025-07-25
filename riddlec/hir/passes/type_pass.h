@@ -15,6 +15,8 @@
 
 #pragma once
 
+#include <unordered_map>
+
 #include "pass.h"
 #include "hir/visitor.h"
 
@@ -22,14 +24,21 @@ namespace riddle::hir {
     class TypePass final : public HirBasePass, public HirVisitor {
         std::shared_ptr<IntegerType> intTy = std::make_shared<IntegerType>(32);
         std::shared_ptr<FloatType> floatTy = std::make_shared<FloatType>(FloatType::FloatKind::Float);
+
+        std::unordered_map<std::string, std::shared_ptr<Type>> typeMap;
     public:
+        TypePass();
+
         void run(HirProgram *program) override {
             this->visitHirProgram(program);
         }
 
     protected:
+        std::shared_ptr<Type> parseBasicType(std::string_view name);
+        std::any visitHirSymbol(HirSymbol *node) override;
         std::any visitHirIntLiteral(HirIntLiteral *node) override;
         std::any visitHirFloatLiteral(HirFloatLiteral *node) override;
         std::any visitHirCall(HirCall *node) override;
+        std::any visitHirFuncDecl(HirFuncDecl *node) override;
     };
 }

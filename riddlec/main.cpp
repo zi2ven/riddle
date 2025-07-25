@@ -19,7 +19,9 @@
 #include <print>
 
 #include "hir/ast_hir.h"
+#include "hir/passes/llvm_pass.h"
 #include "hir/passes/symbol_pass.h"
+#include "hir/passes/type_pass.h"
 
 
 int main(int argc, char *argv[]) {
@@ -41,4 +43,9 @@ int main(int argc, char *argv[]) {
     auto hir = std::any_cast<riddle::hir::HirProgram*>(lower.visit(ast));
     auto sps = riddle::hir::SymbolPass();
     sps.run(hir);
+    auto tps = riddle::hir::TypePass();
+    tps.run(hir);
+    auto llvmPass = riddle::hir::LLVMGen();
+    llvmPass.visit(hir);
+    llvmPass.dump();
 }

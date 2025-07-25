@@ -15,6 +15,37 @@
 
 #include "type_pass.h"
 
+riddle::hir::TypePass::TypePass() {
+    typeMap = {
+        {"int", intTy},
+        {"float", floatTy}
+    };
+}
+
+std::shared_ptr<riddle::hir::Type> riddle::hir::TypePass::parseBasicType(const std::string_view name) {
+    if (!typeMap.contains(name.data())) {
+        throw std::runtime_error("Error parsing built-in symbol");
+    }
+    return typeMap.at(name.data());
+}
+
+std::any riddle::hir::TypePass::visitHirSymbol(HirSymbol *node) {
+    // todo 实现自定义 type
+    switch (node->kind) {
+        case HirSymbol::SymbolKind::BuiltinType: {
+            node->type = parseBasicType(node->name);
+            break;
+        }
+        case HirSymbol::SymbolKind::Function: {
+            node->type = dynamic_cast<HirFuncDecl *>(node->declaration)->functionType;
+            break;
+        }
+        default: break;
+    }
+
+    return {};
+}
+
 std::any riddle::hir::TypePass::visitHirIntLiteral(HirIntLiteral *node) {
     node->type = this->intTy;
     return {};
@@ -32,7 +63,7 @@ std::any riddle::hir::TypePass::visitHirCall(HirCall *node) {
         visit(i);
     }
 
-    const auto fty = dynamic_cast<FunctionType *>(node->type.get());
+    const auto fty = dynamic_cast<FunctionType *>(node->func->type.get());
     // 检查 object 是否为 func
     if (!fty) {
         throw std::runtime_error("object not a function");
@@ -45,5 +76,22 @@ std::any riddle::hir::TypePass::visitHirCall(HirCall *node) {
     }
 
     node->type = fty->returnType;
+    return {};
+}
+
+std::any riddle::hir::TypePass::visitHirFuncDecl(HirFuncDecl *node) {
+    visit(node->returnType);
+
+    std::vector<std::shared_ptr<Type>> params;
+    for (const auto i: node->params) {
+        visit(i);
+        params.emplace_back(i->type->type);
+    }
+
+    node->functionType = std::make_shared<FunctionType>(node->returnType->type, std::move(params));
+
+    for (const auto i: node->body) {
+        visit(i);
+    }
     return {};
 }

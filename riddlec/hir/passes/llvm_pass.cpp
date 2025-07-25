@@ -16,6 +16,9 @@
 #include "llvm_pass.h"
 
 llvm::Type *riddle::hir::LLVMGen::parseType(Type *type) {
+    if (type == nullptr) {
+        throw std::invalid_argument("Invalid type");
+    }
     switch (type->getKind()) {
         case Type::Kind::Integer:
             return builder.getIntNTy(type->getSize());
@@ -58,4 +61,8 @@ std::any riddle::hir::LLVMGen::visitHirFuncDecl(HirFuncDecl *node) {
     }
 
     return {};
+}
+
+void riddle::hir::LLVMGen::dump() const {
+    module->print(llvm::outs(), nullptr);
 }
