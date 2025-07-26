@@ -42,6 +42,34 @@ llvm::Type *riddle::hir::LLVMGen::parseType(Type *type) {
     throw std::runtime_error("unknown type");
 }
 
+std::any riddle::hir::LLVMGen::visitHirVarDecl(HirVarDecl *node) {
+    const auto type = parseType(node->type->type.get());
+    llvm::Value *value = nullptr;
+    if (node->value) {
+        value = std::any_cast<llvm::Value *>(visit(node->value));
+    }
+
+    if (node->isGlobal) {
+        const auto init = llvm::dyn_cast<llvm::Constant>(value);
+        if (!init) {
+            throw std::runtime_error("global variable must be constant");
+        }
+        const auto gb = new llvm::GlobalVariable(
+            *module,
+            type,
+            node->isVal,
+            llvm::GlobalValue::ExternalLinkage,
+            init,
+            node->name
+        );
+    } else {
+        builder.CreateAlloca(type);
+    }
+
+
+    return {};
+}
+
 std::any riddle::hir::LLVMGen::visitHirFuncDecl(HirFuncDecl *node) {
     const auto returnType = parseType(node->returnType->type.get());
     std::vector<llvm::Type *> paramTypes;
@@ -61,6 +89,21 @@ std::any riddle::hir::LLVMGen::visitHirFuncDecl(HirFuncDecl *node) {
     }
 
     return {};
+}
+
+std::any riddle::hir::LLVMGen::visitHirIntLiteral(HirIntLiteral *node) {
+    llvm::Value *value = builder.getInt32(node->value);
+    return value;
+}
+
+std::any riddle::hir::LLVMGen::visitHirFloatLiteral(HirFloatLiteral *node) {
+    llvm::Value *value = llvm::ConstantFP::get(builder.getFloatTy(), node->value);
+    return value;
+}
+
+std::any riddle::hir::LLVMGen::visitHirCharLiteral(HirCharLiteral *node) {
+    llvm::Value *value = builder.getInt16(node->value);
+    return value;
 }
 
 void riddle::hir::LLVMGen::dump() const {

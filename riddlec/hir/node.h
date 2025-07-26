@@ -23,6 +23,14 @@
 #include "type.h"
 #include "support/location .h"
 
+namespace llvm {
+    class Function;
+}
+
+namespace llvm {
+    class Value;
+}
+
 namespace riddle::hir {
     class HirVisitor;
 
@@ -114,9 +122,12 @@ namespace riddle::hir {
                                       isVal(isVal), type(typeLit), value(value) {}
 
         bool isVal;
+        bool isGlobal = false;
 
         HirExpression *type;
         HirExpression *value;
+
+        llvm::Value* llvmAlloca = nullptr;
 
         std::any accept(HirVisitor *visitor) override;
     };
@@ -129,6 +140,8 @@ namespace riddle::hir {
         std::vector<HirStatement *> body;
 
         std::shared_ptr<FunctionType> functionType;
+
+        llvm::Function* llvmFunc = nullptr;
 
         HirFuncDecl(const std::string &name,
                     HirExpression *returnType,

@@ -15,7 +15,9 @@
 
 #include "type_pass.h"
 
-riddle::hir::TypePass::TypePass() {
+#include "hir/context.h"
+
+riddle::hir::TypePass::TypePass(HirContext &context): context(context) {
     typeMap = {
         {"int", intTy},
         {"float", floatTy}
@@ -93,5 +95,22 @@ std::any riddle::hir::TypePass::visitHirFuncDecl(HirFuncDecl *node) {
     for (const auto i: node->body) {
         visit(i);
     }
+    return {};
+}
+
+std::any riddle::hir::TypePass::visitHirVarDecl(HirVarDecl *node) {
+    if (node->type) {
+        visit(node->type);
+    }
+
+    if (node->value) {
+        visit(node->value);
+    }
+
+    if (!node->type && node->value) {
+        node->type = context.make<HirSymbol>("@mid-type");
+        node->type->type = node->value->type;
+    }
+
     return {};
 }

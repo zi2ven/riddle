@@ -18,16 +18,18 @@
 #include <unordered_map>
 
 #include "pass.h"
+#include "hir/context.h"
 #include "hir/visitor.h"
 
 namespace riddle::hir {
     class TypePass final : public HirBasePass, public HirVisitor {
+        HirContext &context;
         std::shared_ptr<IntegerType> intTy = std::make_shared<IntegerType>(32);
         std::shared_ptr<FloatType> floatTy = std::make_shared<FloatType>(FloatType::FloatKind::Float);
 
         std::unordered_map<std::string, std::shared_ptr<Type>> typeMap;
     public:
-        TypePass();
+        explicit TypePass(HirContext &context);
 
         void run(HirProgram *program) override {
             this->visitHirProgram(program);
@@ -40,5 +42,6 @@ namespace riddle::hir {
         std::any visitHirFloatLiteral(HirFloatLiteral *node) override;
         std::any visitHirCall(HirCall *node) override;
         std::any visitHirFuncDecl(HirFuncDecl *node) override;
+        std::any visitHirVarDecl(HirVarDecl *node) override;
     };
 }

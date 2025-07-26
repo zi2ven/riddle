@@ -29,7 +29,11 @@ namespace riddle::hir {
 
         llvm::Type *parseType(Type *type);
 
+        std::any visitHirVarDecl(HirVarDecl *node) override;
         std::any visitHirFuncDecl(HirFuncDecl *node) override;
+        std::any visitHirIntLiteral(HirIntLiteral *node) override;
+        std::any visitHirFloatLiteral(HirFloatLiteral *node) override;
+        std::any visitHirCharLiteral(HirCharLiteral *node) override;
 
         void dump() const;
     };

@@ -38,12 +38,13 @@ int main(int argc, char *argv[]) {
     RiddleLexer lexer(&input);
     antlr4::CommonTokenStream tokens(&lexer);
     RiddleParser parser(&tokens);
+    riddle::hir::HirContext context;
     auto ast = parser.program();
-    auto lower = riddle::ast::ASTLower(argv[1]);
-    auto hir = std::any_cast<riddle::hir::HirProgram*>(lower.visit(ast));
+    auto lower = riddle::ast::ASTLower(context, argv[1]);
+    auto hir = std::any_cast<riddle::hir::HirProgram *>(lower.visit(ast));
     auto sps = riddle::hir::SymbolPass();
     sps.run(hir);
-    auto tps = riddle::hir::TypePass();
+    auto tps = riddle::hir::TypePass(context);
     tps.run(hir);
     auto llvmPass = riddle::hir::LLVMGen();
     llvmPass.visit(hir);

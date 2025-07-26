@@ -22,7 +22,7 @@
 
 namespace riddle::ast {
     class ASTLower final : public RiddleParserBaseVisitor {
-        hir::HirContext context;
+        hir::HirContext &context;
         std::string_view filename;
 
     public:
@@ -38,7 +38,7 @@ namespace riddle::ast {
 
         void setLocation(SourceLocation &location, const antlr4::ParserRuleContext *ctx) const;
 
-        explicit ASTLower(const std::string &filename): filename(filename) {}
+        explicit ASTLower(hir::HirContext &context, const std::string &filename): filename(filename), context(context) {}
 
         std::any visitProgram(RiddleParser::ProgramContext *context) override;
 
