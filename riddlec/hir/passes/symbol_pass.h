@@ -83,6 +83,7 @@ namespace riddle::hir {
     class SymbolPass final : public HirBasePass, public HirVisitor {
     public:
         SymbolTable table;
+        std::stack<HirFuncDecl*> funcStack;
 
         SymbolPass();
 

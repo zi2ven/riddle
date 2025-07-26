@@ -62,8 +62,9 @@ std::any riddle::hir::LLVMGen::visitHirVarDecl(HirVarDecl *node) {
             init,
             node->name
         );
+        node->llvmAlloca = gb;
     } else {
-        builder.CreateAlloca(type);
+        builder.CreateStore(value, node->llvmAlloca);
     }
 
 
@@ -83,6 +84,13 @@ std::any riddle::hir::LLVMGen::visitHirFuncDecl(HirFuncDecl *node) {
 
     const auto bb = llvm::BasicBlock::Create(builder.getContext(), "entry", func);
     builder.SetInsertPoint(bb);
+
+    // pre alloca
+
+    for (const auto i: node->definedVar) {
+        const auto type = parseType(i->type->type.get());
+        i->llvmAlloca = builder.CreateAlloca(type);
+    }
 
     for (const auto i: node->body) {
         visit(i);

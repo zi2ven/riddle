@@ -37,6 +37,11 @@ std::any riddle::hir::SymbolPass::visitHirSymbol(HirSymbol *node) {
 std::any riddle::hir::SymbolPass::visitHirVarDecl(HirVarDecl *node) {
     auto obj = std::make_unique<SymbolTable::Object>(node->name, HirSymbol::SymbolKind::Variable, node);
     table.addObject(std::move(obj));
+    if (funcStack.empty()) {
+        node->isGlobal = true;
+        return {};
+    }
+    funcStack.top()->definedVar.emplace_back(node);
     return {};
 }
 
@@ -46,10 +51,12 @@ std::any riddle::hir::SymbolPass::visitHirFuncDecl(HirFuncDecl *node) {
 
     visit(node->returnType);
 
+    funcStack.push(node);
     table.join();
     for (const auto i: node->body) {
         visit(i);
     }
+    funcStack.pop();
     table.exit();
     return {};
 }
