@@ -138,7 +138,14 @@ std::any riddle::hir::LLVMGen::visitHirCall(HirCall *node) {
         throw std::runtime_error("Object not Func");
     }
     //todo 实现参数
-    builder.CreateCall(func);
+
+    std::vector<llvm::Value *> params;
+    params.reserve(node->params.size());
+    for (const auto i: node->params) {
+        params.emplace_back(std::any_cast<llvm::Value *>(visit(i)));
+    }
+
+    builder.CreateCall(func, params);
 
     return HirVisitor::visitHirCall(node);
 }

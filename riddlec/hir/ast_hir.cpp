@@ -111,7 +111,7 @@ namespace riddle::ast {
             params.emplace_back(param);
         }
 
-        const auto decl = makeHir<HirFuncDecl>(name, returnType, params);
+        const auto decl = makeHir<HirFuncDecl>(name, returnType, std::move(params));
 
         for (const auto i: context->body->children) {
             if (antlrcpp::is<antlr4::tree::TerminalNode *>(i)) {
