@@ -244,6 +244,19 @@ public:
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
+  class  BracketExprContext : public ExpressionContext {
+  public:
+    BracketExprContext(ExpressionContext *ctx);
+
+    antlr4::tree::TerminalNode *LeftParen();
+    ExpressionContext *expression();
+    antlr4::tree::TerminalNode *RightParen();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
   class  IntLitContext : public ExpressionContext {
   public:
     IntLitContext(ExpressionContext *ctx);

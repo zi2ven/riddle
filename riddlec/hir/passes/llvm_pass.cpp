@@ -82,6 +82,8 @@ std::any riddle::hir::LLVMGen::visitHirFuncDecl(HirFuncDecl *node) {
     const auto fty = llvm::FunctionType::get(returnType, paramTypes, node->isVar);
     const auto func = llvm::Function::Create(fty, llvm::GlobalValue::ExternalLinkage, node->name, module.get());
 
+    node->llvmFunc = func;
+
     const auto bb = llvm::BasicBlock::Create(builder.getContext(), "entry", func);
     builder.SetInsertPoint(bb);
 
@@ -110,8 +112,35 @@ std::any riddle::hir::LLVMGen::visitHirFloatLiteral(HirFloatLiteral *node) {
 }
 
 std::any riddle::hir::LLVMGen::visitHirCharLiteral(HirCharLiteral *node) {
-    llvm::Value *value = builder.getInt16(node->value);
+    llvm::Value *value = builder.getInt8(node->value);
     return value;
+}
+
+std::any riddle::hir::LLVMGen::visitHirSymbol(HirSymbol *node) {
+    llvm::Value *result = nullptr;
+    switch (node->kind) {
+        case HirSymbol::SymbolKind::Function:
+            result = dynamic_cast<HirFuncDecl *>(node->declaration)->llvmFunc;
+            break;
+        case HirSymbol::SymbolKind::Variable:
+            result = dynamic_cast<HirVarDecl *>(node->declaration)->llvmAlloca;
+            break;
+        default: throw std::logic_error("Not Impl");
+    }
+    return result;
+}
+
+std::any riddle::hir::LLVMGen::visitHirCall(HirCall *node) {
+    const auto obj = std::any_cast<llvm::Value *>(visit(node->func));
+    const auto func = llvm::dyn_cast<llvm::Function>(obj);
+
+    if (func == nullptr) {
+        throw std::runtime_error("Object not Func");
+    }
+    //todo 实现参数
+    builder.CreateCall(func);
+
+    return HirVisitor::visitHirCall(node);
 }
 
 void riddle::hir::LLVMGen::dump() const {

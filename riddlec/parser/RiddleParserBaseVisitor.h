@@ -50,6 +50,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitBracketExpr(RiddleParser::BracketExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitIntLit(RiddleParser::IntLitContext *ctx) override {
     return visitChildren(ctx);
   }

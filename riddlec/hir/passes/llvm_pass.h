@@ -34,6 +34,8 @@ namespace riddle::hir {
         std::any visitHirIntLiteral(HirIntLiteral *node) override;
         std::any visitHirFloatLiteral(HirFloatLiteral *node) override;
         std::any visitHirCharLiteral(HirCharLiteral *node) override;
+        std::any visitHirSymbol(HirSymbol *node) override;
+        std::any visitHirCall(HirCall *node) override;
 
         void dump() const;
     };

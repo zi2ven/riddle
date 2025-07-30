@@ -28,6 +28,10 @@ namespace riddle::ast {
         location.filename = filename;
     }
 
+    std::any ASTLower::visitBracketExpr(RiddleParser::BracketExprContext *context) {
+        return visit(context->expression());
+    }
+
     std::any ASTLower::visitProgram(RiddleParser::ProgramContext *context) {
         const auto program = makeHir<HirProgram>();
         for (const auto i: context->children) {

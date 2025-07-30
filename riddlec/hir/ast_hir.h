@@ -40,6 +40,8 @@ namespace riddle::ast {
 
         explicit ASTLower(hir::HirContext &context, const std::string &filename): filename(filename), context(context) {}
 
+        std::any visitBracketExpr(RiddleParser::BracketExprContext *context) override;
+
         std::any visitProgram(RiddleParser::ProgramContext *context) override;
 
         std::any visitStatementEnd(RiddleParser::StatementEndContext *context) override;

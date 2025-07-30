@@ -41,6 +41,9 @@ public:
   virtual void enterFloatLit(RiddleParser::FloatLitContext *ctx) = 0;
   virtual void exitFloatLit(RiddleParser::FloatLitContext *ctx) = 0;
 
+  virtual void enterBracketExpr(RiddleParser::BracketExprContext *ctx) = 0;
+  virtual void exitBracketExpr(RiddleParser::BracketExprContext *ctx) = 0;
+
   virtual void enterIntLit(RiddleParser::IntLitContext *ctx) = 0;
   virtual void exitIntLit(RiddleParser::IntLitContext *ctx) = 0;
 

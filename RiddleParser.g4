@@ -64,6 +64,7 @@ expression
     | Decimal       #intLit
     | Float         #floatLit
     | CHAR          #charLit
+    | LeftParen expression RightParen  #bracketExpr
     ;
 
 block: LeftCurly statementEnd* RightCurly;

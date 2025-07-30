@@ -43,6 +43,9 @@ public:
   virtual void enterFloatLit(RiddleParser::FloatLitContext * /*ctx*/) override { }
   virtual void exitFloatLit(RiddleParser::FloatLitContext * /*ctx*/) override { }
 
+  virtual void enterBracketExpr(RiddleParser::BracketExprContext * /*ctx*/) override { }
+  virtual void exitBracketExpr(RiddleParser::BracketExprContext * /*ctx*/) override { }
+
   virtual void enterIntLit(RiddleParser::IntLitContext * /*ctx*/) override { }
   virtual void exitIntLit(RiddleParser::IntLitContext * /*ctx*/) override { }
 
