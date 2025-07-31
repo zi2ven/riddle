@@ -128,17 +128,19 @@ namespace riddle::ast {
         auto name = context->name->getText();
         const auto decl = makeHir<HirClassDecl>(name);
 
-        for (const auto i:context->declBlock()->children) {
-            const auto child = std::any_cast<HirElement*>(visit(i));
-            if (const auto var = dynamic_cast<HirVarDecl*>(child)) {
-                decl->members.emplace_back(var);
+        for (const auto i: context->declBlock()->children) {
+            if (antlrcpp::is<antlr4::tree::TerminalNode *>(i)) {
+                continue;
             }
-            else if (const auto func = dynamic_cast<HirFuncDecl*>(child)) {
+            const auto child = std::any_cast<HirElement *>(visit(i));
+            if (const auto var = dynamic_cast<HirVarDecl *>(child)) {
+                decl->members.emplace_back(var);
+            } else if (const auto func = dynamic_cast<HirFuncDecl *>(child)) {
                 decl->methods.emplace_back(func);
             }
         }
 
-        HirElement* result = decl;
+        HirElement *result = decl;
         return result;
     }
 
@@ -156,6 +158,18 @@ namespace riddle::ast {
         }
 
         HirElement *result = makeHir<HirCall>(func, std::move(params));
+        return result;
+    }
+
+    std::any ASTLower::visitReturnStmt(RiddleParser::ReturnStmtContext *context) {
+        HirExpression *value = nullptr;
+
+        if (context->expression()) {
+            value = hir_cast<HirExpression>(visit(context->expression()));
+        }
+
+        HirElement *result = makeHir<HirReturn>(value);
+
         return result;
     }
 }

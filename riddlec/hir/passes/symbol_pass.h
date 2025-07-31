@@ -88,7 +88,7 @@ namespace riddle::hir {
     class SymbolPass final : public HirBasePass, public HirVisitor {
     public:
         SymbolTable table;
-        std::stack<HirFuncDecl *> funcStack;
+        std::stack<std::variant<HirFuncDecl *, HirClassDecl *>> parentStack;
 
         SymbolPass();
 
@@ -105,16 +105,24 @@ namespace riddle::hir {
 
         std::any visitHirFuncDecl(HirFuncDecl *node) override;
 
-        void predeclare(const std::vector<HirStatement*> &nodes) {
-            for (const auto sub : nodes) {
-                if (auto *var  = dynamic_cast<HirVarDecl *>(sub)) {
+        template<class T>
+        void predeclare(const T &nodes) {
+            for (const auto sub: nodes) {
+                if (auto *var = dynamic_cast<HirVarDecl *>(sub)) {
                     table.addObject(std::make_unique<SymbolTable::Object>(
                         var->name, HirSymbol::SymbolKind::Variable, var));
                 } else if (auto *fun = dynamic_cast<HirFuncDecl *>(sub)) {
                     table.addObject(std::make_unique<SymbolTable::Object>(
                         fun->name, HirSymbol::SymbolKind::Function, fun));
+                } else if (auto *clazz = dynamic_cast<HirClassDecl *>(sub)) {
+                    table.addObject(std::make_unique<SymbolTable::Object>(
+                        clazz->name, HirSymbol::SymbolKind::Class, clazz));
                 }
             }
         }
+
+        std::any visitHirReturn(HirReturn *node) override;
+
+        std::any visitHirClassDecl(HirClassDecl *node) override;
     };
 }

@@ -34,6 +34,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitReturnStmt(RiddleParser::ReturnStmtContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitFuncParam(RiddleParser::FuncParamContext *ctx) override {
     return visitChildren(ctx);
   }

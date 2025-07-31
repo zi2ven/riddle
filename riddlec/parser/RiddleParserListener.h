@@ -29,6 +29,9 @@ public:
   virtual void enterStatement(RiddleParser::StatementContext *ctx) = 0;
   virtual void exitStatement(RiddleParser::StatementContext *ctx) = 0;
 
+  virtual void enterReturnStmt(RiddleParser::ReturnStmtContext *ctx) = 0;
+  virtual void exitReturnStmt(RiddleParser::ReturnStmtContext *ctx) = 0;
+
   virtual void enterFuncParam(RiddleParser::FuncParamContext *ctx) = 0;
   virtual void exitFuncParam(RiddleParser::FuncParamContext *ctx) = 0;
 

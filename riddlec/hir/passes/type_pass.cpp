@@ -32,46 +32,49 @@ namespace riddle::hir {
         return typeMap.at(name.data());
     }
 
-    void TypePass::collectTopLevelTypes(HirProgram *program) {
-        for (auto decl: program->stmts) {
-            /* 1. 函数原型 */
+    void TypePass::collectTopLevelTypes(const HirProgram *program) {
+        for (const auto decl: program->stmts) {
             if (auto *fn = dynamic_cast<HirFuncDecl *>(decl)) {
-                /* 先解析返回类型 */
                 visit(fn->returnType);
 
-                /* 解析形参类型 */
                 std::vector<std::shared_ptr<Type>> ptys;
-                for (auto p: fn->params) {
-                    visit(p); // 形参自己的 HirVarDecl
+                for (const auto p: fn->params) {
+                    visit(p);
                     ptys.emplace_back(p->type->type);
                 }
 
-                /* 生成并缓存函数类型 */
                 fn->functionType = std::make_shared<FunctionType>(fn->returnType->type, std::move(ptys));
-            }
-            /* 2. 全局变量显式类型（推断型留到第二遍） */
-            else if (auto *gv = dynamic_cast<HirVarDecl *>(decl); gv && gv->type) {
+            } else if (const auto *gv = dynamic_cast<HirVarDecl *>(decl); gv && gv->type) {
                 visit(gv->type);
+            } else if (auto *cls = dynamic_cast<HirClassDecl *>(decl)) {
+                std::unordered_map<std::string, std::shared_ptr<Type>> fields;
+                for (const auto mem: cls->members) {
+                    visit(mem);
+                    fields.emplace(mem->name, mem->type->type);
+                }
+                auto ct = std::make_shared<ClassType>(std::move(fields));
+                cls->classType = ct;
+                typeMap.emplace(cls->name, ct);
             }
         }
     }
 
-    /* ---------- HirBasePass::run ---------- */
     void TypePass::run(HirProgram *program) {
-        /* 仅收集顶层函数 */
         collectTopLevelTypes(program);
-
-        /* 完整遍历，做类型检查  */
         visit(program);
     }
 
     std::any TypePass::visitHirProgram(HirProgram *node) {
-        for (auto d: node->stmts) visit(d);
+        for (const auto d: node->stmts) visit(d);
         return {};
     }
 
     std::any TypePass::visitHirSymbol(HirSymbol *node) {
         switch (node->kind) {
+            case HirSymbol::SymbolKind::Class: {
+                node->type = typeMap.at(node->name);
+                break;
+            }
             case HirSymbol::SymbolKind::BuiltinType:
                 node->type = parseBasicType(node->name);
                 break;
@@ -87,21 +90,18 @@ namespace riddle::hir {
             case HirSymbol::SymbolKind::Variable: {
                 auto *vd = dynamic_cast<HirVarDecl *>(node->declaration);
 
-                /* 若尚未推断出类型，则现场推断 */
                 if (!vd->type) {
                     if (!vd->value)
                         throw std::runtime_error(
                             std::format("variable '{}' has neither type nor initializer", node->name));
 
-                    /* 检测循环引用 */
                     if (inferring.contains(vd))
                         throw std::runtime_error("circular variable initialization involving '" + node->name + "'");
 
-                    inferring.emplace(vd);      // 标记正在推断
-                    visit(vd->value);           // 推断初始值类型
+                    inferring.emplace(vd);
+                    visit(vd->value);
                     inferring.erase(vd);
-
-                    vd->type       = context.make<HirSymbol>("@inferred-global");
+                    vd->type = context.make<HirSymbol>("@inferred-global");
                     vd->type->type = vd->value->type;
                 }
 
@@ -131,9 +131,9 @@ namespace riddle::hir {
 
     std::any TypePass::visitHirCall(HirCall *node) {
         visit(node->func);
-        for (auto p: node->params) visit(p);
+        for (const auto p: node->params) visit(p);
 
-        auto *fty = dynamic_cast<FunctionType *>(node->func->type.get());
+        const auto *fty = dynamic_cast<FunctionType *>(node->func->type.get());
         if (!fty) throw std::runtime_error("corrupted function type");
 
         if (fty->params.size() != node->params.size())
@@ -150,9 +150,9 @@ namespace riddle::hir {
 
     std::any TypePass::visitHirFuncDecl(HirFuncDecl *node) {
         visit(node->returnType);
-        for (auto p: node->params) visit(p);
+        for (const auto p: node->params) visit(p);
 
-        for (auto stmt: node->body) visit(stmt);
+        for (const auto stmt: node->body) visit(stmt);
         return {};
     }
 
@@ -165,5 +165,15 @@ namespace riddle::hir {
             node->type->type = node->value->type;
         }
         return {};
+    }
+
+    std::any TypePass::visitHirClassDecl(HirClassDecl *node) {
+        for (const auto m: node->methods) visit(m);
+        return {};
+    }
+
+    std::any TypePass::visitHirReturn(HirReturn *node) {
+        // todo 实现类型检测
+        return HirVisitor::visitHirReturn(node);
     }
 }

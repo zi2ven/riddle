@@ -23,13 +23,12 @@
 #include "hir/visitor.h"
 
 namespace riddle::hir {
-
     class TypePass final : public HirBasePass, public HirVisitor {
         HirContext &context;
         std::unordered_map<std::string, std::shared_ptr<Type>> typeMap;
-        std::unordered_set<HirVarDecl*> inferring;
+        std::unordered_set<HirVarDecl *> inferring;
 
-        void collectTopLevelTypes(HirProgram *program);
+        void collectTopLevelTypes(const HirProgram *program);
 
     public:
         explicit TypePass(HirContext &context);
@@ -39,14 +38,24 @@ namespace riddle::hir {
     protected:
         std::shared_ptr<Type> parseBasicType(std::string_view name);
 
-        std::any visitHirProgram       (HirProgram       *node) override;
-        std::any visitHirSymbol        (HirSymbol        *node) override;
-        std::any visitHirIntLiteral    (HirIntLiteral    *node) override;
-        std::any visitHirFloatLiteral  (HirFloatLiteral  *node) override;
-        std::any visitHirBooleanLiteral(HirBooleanLiteral*node) override;
-        std::any visitHirCall          (HirCall          *node) override;
-        std::any visitHirFuncDecl      (HirFuncDecl      *node) override;
-        std::any visitHirVarDecl       (HirVarDecl       *node) override;
-    };
+        std::any visitHirProgram(HirProgram *node) override;
 
+        std::any visitHirSymbol(HirSymbol *node) override;
+
+        std::any visitHirIntLiteral(HirIntLiteral *node) override;
+
+        std::any visitHirFloatLiteral(HirFloatLiteral *node) override;
+
+        std::any visitHirBooleanLiteral(HirBooleanLiteral *node) override;
+
+        std::any visitHirCall(HirCall *node) override;
+
+        std::any visitHirFuncDecl(HirFuncDecl *node) override;
+
+        std::any visitHirVarDecl(HirVarDecl *node) override;
+
+        std::any visitHirClassDecl(HirClassDecl *node) override;
+
+        std::any visitHirReturn(HirReturn *node) override;
+    };
 } // namespace riddle::hir

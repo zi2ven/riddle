@@ -30,6 +30,8 @@ public:
 
     virtual std::any visitStatement(RiddleParser::StatementContext *context) = 0;
 
+    virtual std::any visitReturnStmt(RiddleParser::ReturnStmtContext *context) = 0;
+
     virtual std::any visitFuncParam(RiddleParser::FuncParamContext *context) = 0;
 
     virtual std::any visitFuncDecl(RiddleParser::FuncDeclContext *context) = 0;

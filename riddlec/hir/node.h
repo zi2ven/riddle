@@ -25,9 +25,6 @@
 
 namespace llvm {
     class Function;
-}
-
-namespace llvm {
     class Value;
 }
 
@@ -108,6 +105,7 @@ namespace riddle::hir {
             Unknown,
             Variable,
             Function,
+            Class,
             Type,
             BuiltinType,
         };
@@ -167,8 +165,10 @@ namespace riddle::hir {
 
     class HirClassDecl final : public HirDeclaration {
     public:
-        std::vector<HirVarDecl*> members;
-        std::vector<HirFuncDecl*> methods;
+        std::vector<HirVarDecl *> members;
+        std::vector<HirFuncDecl *> methods;
+
+        std::shared_ptr<ClassType> classType;
 
         explicit HirClassDecl(const std::string &name): HirDeclaration(name) {}
 
@@ -183,6 +183,15 @@ namespace riddle::hir {
         HirCall(HirExpression *func,
                 std::vector<HirExpression *> params): func(func),
                                                       params(std::move(params)) {}
+
+        std::any accept(HirVisitor *visitor) override;
+    };
+
+    class HirReturn final : public HirStatement {
+    public:
+        HirExpression *value;
+
+        explicit HirReturn(HirExpression *value): value(value) {}
 
         std::any accept(HirVisitor *visitor) override;
     };

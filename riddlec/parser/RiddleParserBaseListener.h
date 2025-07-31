@@ -31,6 +31,9 @@ public:
   virtual void enterStatement(RiddleParser::StatementContext * /*ctx*/) override { }
   virtual void exitStatement(RiddleParser::StatementContext * /*ctx*/) override { }
 
+  virtual void enterReturnStmt(RiddleParser::ReturnStmtContext * /*ctx*/) override { }
+  virtual void exitReturnStmt(RiddleParser::ReturnStmtContext * /*ctx*/) override { }
+
   virtual void enterFuncParam(RiddleParser::FuncParamContext * /*ctx*/) override { }
   virtual void exitFuncParam(RiddleParser::FuncParamContext * /*ctx*/) override { }
 

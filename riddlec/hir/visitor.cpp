@@ -54,10 +54,10 @@ namespace riddle::hir {
     }
 
     std::any HirVisitor::visitHirClassDecl(HirClassDecl *node) {
-        for (const auto i:node->members) {
+        for (const auto i: node->members) {
             visit(i);
         }
-        for (const auto i:node->methods) {
+        for (const auto i: node->methods) {
             visit(i);
         }
         return {};
@@ -69,6 +69,11 @@ namespace riddle::hir {
         for (const auto i: node->params) {
             visit(i);
         }
+        return {};
+    }
+
+    std::any HirVisitor::visitHirReturn(HirReturn *node) {
+        if (node->value) { visit(node->value); }
         return {};
     }
 }

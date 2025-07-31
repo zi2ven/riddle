@@ -16,8 +16,13 @@
 #pragma once
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <utility>
 #include <vector>
+
+namespace llvm {
+    class StructType;
+}
 
 namespace riddle::hir {
     class Type {
@@ -109,8 +114,22 @@ namespace riddle::hir {
         FunctionType(std::shared_ptr<Type> returnType,
                      std::vector<std::shared_ptr<Type>> params,
                      const bool isVar = false): Type(Kind::Function),
-                                          returnType(std::move(returnType)),
-                                          params(std::move(params)), isVar(isVar) {}
+                                                returnType(std::move(returnType)),
+                                                params(std::move(params)), isVar(isVar) {}
+
+        std::string getName() override;
+
+        size_t getSize() override;
+
+        bool equal(Type *other) override;
+    };
+
+    class ClassType final : public Type {
+    public:
+        llvm::StructType* llvmType = nullptr;
+        std::unordered_map<std::string, std::shared_ptr<Type>> members;
+
+        explicit ClassType(std::unordered_map<std::string, std::shared_ptr<Type>> members): Type(Kind::Class), members(std::move(members)) {}
 
         std::string getName() override;
 

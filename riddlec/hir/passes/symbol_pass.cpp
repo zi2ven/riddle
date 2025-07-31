@@ -33,8 +33,6 @@ riddle::hir::SymbolPass::SymbolPass() {
 
 std::any riddle::hir::SymbolPass::visitHirProgram(HirProgram *node) {
     predeclare(node->stmts);
-
-    /* 第二遍 —— 正式遍历 */
     for (const auto decl: node->stmts) visit(decl);
     return {};
 }
@@ -48,20 +46,21 @@ std::any riddle::hir::SymbolPass::visitHirSymbol(HirSymbol *node) {
 }
 
 std::any riddle::hir::SymbolPass::visitHirVarDecl(HirVarDecl *node) {
-    bool declared = true;
-    if (table.getObject(node->name) == nullptr) {
-        declared = false;
+    if (parentStack.empty() || std::holds_alternative<HirClassDecl *>(parentStack.top())) {
+        bool declared = true;
+        if (table.getObject(node->name) == nullptr) {
+            declared = false;
+        }
+        if (!declared) {
+            table.addObject(std::make_unique<SymbolTable::Object>(
+                node->name, HirSymbol::SymbolKind::Variable, node));
+        }
     }
 
-    if (!declared) {
-        table.addObject(std::make_unique<SymbolTable::Object>(
-            node->name, HirSymbol::SymbolKind::Variable, node));
-    }
-
-    if (funcStack.empty()) {
+    if (parentStack.empty()) {
         node->isGlobal = true;
-    } else {
-        if (!node->isParam) funcStack.top()->definedVar.emplace_back(node);
+    } else if (std::holds_alternative<HirFuncDecl *>(parentStack.top())) {
+        if (!node->isParam) std::get<HirFuncDecl *>(parentStack.top())->definedVar.emplace_back(node);
     }
 
     if (node->type) visit(node->type);
@@ -72,7 +71,7 @@ std::any riddle::hir::SymbolPass::visitHirVarDecl(HirVarDecl *node) {
 std::any riddle::hir::SymbolPass::visitHirFuncDecl(HirFuncDecl *node) {
     visit(node->returnType);
 
-    funcStack.push(node);
+    parentStack.emplace(node);
     table.join(false);
     for (const auto i: node->params) {
         i->isParam = true;
@@ -81,7 +80,27 @@ std::any riddle::hir::SymbolPass::visitHirFuncDecl(HirFuncDecl *node) {
     for (const auto i: node->body) {
         visit(i);
     }
-    funcStack.pop();
+    parentStack.pop();
+    table.exit();
+    return {};
+}
+
+std::any riddle::hir::SymbolPass::visitHirReturn(HirReturn *node) {
+    visit(node->value);
+    return {};
+}
+
+std::any riddle::hir::SymbolPass::visitHirClassDecl(HirClassDecl *node) {
+    parentStack.emplace(node);
+    table.join(true);
+
+    predeclare(node->members);
+    predeclare(node->methods);
+
+    for (const auto m: node->members) visit(m);
+    for (const auto f: node->methods) visit(f);
+
+    parentStack.pop();
     table.exit();
     return {};
 }

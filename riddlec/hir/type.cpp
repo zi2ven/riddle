@@ -16,6 +16,7 @@
 #include "type.h"
 
 #include <format>
+#include <ranges>
 
 namespace riddle::hir {
     std::string IntegerType::getName() {
@@ -85,5 +86,25 @@ namespace riddle::hir {
             }
             return true;
         }
+    }
+
+    std::string ClassType::getName() {
+        return "class";
+    }
+
+    size_t ClassType::getSize() {
+        size_t size = 0;
+        for (const auto& i: members | std::views::values) {
+            size += i->getSize();
+        }
+        return size;
+    }
+
+    bool ClassType::equal(Type *other) {
+        auto *o = dynamic_cast<ClassType *>(other);
+        if (!o) {
+            return false;
+        }
+        return std::equal(this->members.begin(), this->members.end(), o->members.begin());
     }
 }

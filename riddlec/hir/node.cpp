@@ -73,4 +73,8 @@ namespace riddle::hir {
     std::any HirCall::accept(HirVisitor *visitor) {
         return visitor->visitHirCall(this);
     }
+
+    std::any HirReturn::accept(HirVisitor *visitor) {
+        return visitor->visitHirReturn(this);
+    }
 }

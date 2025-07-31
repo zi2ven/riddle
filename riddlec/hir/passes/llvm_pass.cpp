@@ -36,6 +36,8 @@ llvm::Type *riddle::hir::LLVMGen::parseType(Type *type) {
             }
             break;
         }
+        case Type::Kind::Class:
+            return dynamic_cast<ClassType *>(type)->llvmType;
         case Type::Kind::Function: throw std::runtime_error("function type can't used");
         default: break;
     }
@@ -72,7 +74,7 @@ std::any riddle::hir::LLVMGen::visitHirVarDecl(HirVarDecl *node) {
 }
 
 std::any riddle::hir::LLVMGen::visitHirFuncDecl(HirFuncDecl *node) {
-    if (module->getFunction(node->name)!=nullptr) {
+    if (module->getFunction(node->name) != nullptr) {
         return {};
     }
 
@@ -142,7 +144,7 @@ std::any riddle::hir::LLVMGen::visitHirSymbol(HirSymbol *node) {
             break;
         case HirSymbol::SymbolKind::Variable:
             result = dynamic_cast<HirVarDecl *>(node->declaration)->llvmAlloca;
-            result = builder.CreateLoad(parseType(node->type.get()),result);
+            result = builder.CreateLoad(parseType(node->type.get()), result);
             break;
         default: throw std::logic_error("Not Impl");
     }
@@ -156,17 +158,38 @@ std::any riddle::hir::LLVMGen::visitHirCall(HirCall *node) {
     if (func == nullptr) {
         throw std::runtime_error("Object not Func");
     }
-    //todo 实现参数
-
     std::vector<llvm::Value *> params;
     params.reserve(node->params.size());
     for (const auto i: node->params) {
         params.emplace_back(std::any_cast<llvm::Value *>(visit(i)));
     }
 
-    llvm::Value* result = builder.CreateCall(func, params);
+    llvm::Value *result = builder.CreateCall(func, params);
 
     return result;
+}
+
+std::any riddle::hir::LLVMGen::visitHirReturn(HirReturn *node) {
+    llvm::Value *result;
+    if (node->value) {
+        const auto value = std::any_cast<llvm::Value *>(visit(node->value));
+        result = builder.CreateRet(value);
+    } else {
+        result = builder.CreateRetVoid();
+    }
+
+    return result;
+}
+
+std::any riddle::hir::LLVMGen::visitHirClassDecl(HirClassDecl *node) {
+    std::vector<llvm::Type *> tys;
+    for (const auto i: node->members) {
+        tys.emplace_back(parseType(i->type->type.get()));
+    }
+
+    node->classType->llvmType = llvm::StructType::create(builder.getContext(), tys, node->name);
+
+    return {};
 }
 
 void riddle::hir::LLVMGen::dump() const {

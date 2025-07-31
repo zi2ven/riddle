@@ -40,6 +40,7 @@ namespace riddle::hir {
         DEF_VISIT(HirFuncDecl)
         DEF_VISIT(HirClassDecl)
         DEF_VISIT(HirCall)
+        DEF_VISIT(HirReturn)
     };
 
 #undef DEF_VISIT

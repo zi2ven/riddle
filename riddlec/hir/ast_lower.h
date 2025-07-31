@@ -63,5 +63,7 @@ namespace riddle::ast {
         std::any visitClassDecl(RiddleParser::ClassDeclContext *context) override;
 
         std::any visitCallExpr(RiddleParser::CallExprContext *context) override;
+
+        std::any visitReturnStmt(RiddleParser::ReturnStmtContext *context) override;
     };
 }

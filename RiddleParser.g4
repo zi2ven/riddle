@@ -43,6 +43,11 @@ statement
     | varDecl
     | funcDecl
     | classDecl
+    | returnStmt
+    ;
+
+returnStmt
+    : Return expression?
     ;
 
 funcParam
@@ -63,7 +68,7 @@ classDecl
     ;
 
 declBlock
-    : (funcDecl | varDecl | classDecl)*
+    : LeftCurly (funcDecl | varDecl | classDecl)* RightCurly
     ;
 
 expression
