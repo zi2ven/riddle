@@ -41,7 +41,7 @@ std::any riddle::hir::SymbolPass::visitHirVarDecl(HirVarDecl *node) {
         node->isGlobal = true;
         return {};
     }
-    funcStack.top()->definedVar.emplace_back(node);
+    if (!node->isParam) funcStack.top()->definedVar.emplace_back(node);
     if (node->type)visit(node->type);
     if (node->value)visit(node->value);
     return {};
@@ -56,6 +56,7 @@ std::any riddle::hir::SymbolPass::visitHirFuncDecl(HirFuncDecl *node) {
     funcStack.push(node);
     table.join();
     for (const auto i: node->params) {
+        i->isParam = true;
         visit(i);
     }
     for (const auto i: node->body) {

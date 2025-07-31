@@ -55,6 +55,7 @@ namespace riddle::hir {
             if (locals.top().contains(object->name)) {
                 throw std::runtime_error(std::format("symbol already exists: {}", object->name));
             }
+            locals.top().emplace(object->name);
             symbols[object->name].push(std::move(object));
         }
 

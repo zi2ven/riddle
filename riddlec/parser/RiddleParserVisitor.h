@@ -36,7 +36,13 @@ public:
 
     virtual std::any visitVarDecl(RiddleParser::VarDeclContext *context) = 0;
 
+    virtual std::any visitClassDecl(RiddleParser::ClassDeclContext *context) = 0;
+
+    virtual std::any visitDeclBlock(RiddleParser::DeclBlockContext *context) = 0;
+
     virtual std::any visitFloatLit(RiddleParser::FloatLitContext *context) = 0;
+
+    virtual std::any visitBoolLit(RiddleParser::BoolLitContext *context) = 0;
 
     virtual std::any visitBracketExpr(RiddleParser::BracketExprContext *context) = 0;
 

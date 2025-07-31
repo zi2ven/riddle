@@ -18,7 +18,7 @@
 #include <fstream>
 #include <print>
 
-#include "hir/ast_hir.h"
+#include "hir/ast_lower.h"
 #include "hir/passes/llvm_pass.h"
 #include "hir/passes/symbol_pass.h"
 #include "hir/passes/type_pass.h"

@@ -40,8 +40,17 @@ public:
   virtual void enterVarDecl(RiddleParser::VarDeclContext * /*ctx*/) override { }
   virtual void exitVarDecl(RiddleParser::VarDeclContext * /*ctx*/) override { }
 
+  virtual void enterClassDecl(RiddleParser::ClassDeclContext * /*ctx*/) override { }
+  virtual void exitClassDecl(RiddleParser::ClassDeclContext * /*ctx*/) override { }
+
+  virtual void enterDeclBlock(RiddleParser::DeclBlockContext * /*ctx*/) override { }
+  virtual void exitDeclBlock(RiddleParser::DeclBlockContext * /*ctx*/) override { }
+
   virtual void enterFloatLit(RiddleParser::FloatLitContext * /*ctx*/) override { }
   virtual void exitFloatLit(RiddleParser::FloatLitContext * /*ctx*/) override { }
+
+  virtual void enterBoolLit(RiddleParser::BoolLitContext * /*ctx*/) override { }
+  virtual void exitBoolLit(RiddleParser::BoolLitContext * /*ctx*/) override { }
 
   virtual void enterBracketExpr(RiddleParser::BracketExprContext * /*ctx*/) override { }
   virtual void exitBracketExpr(RiddleParser::BracketExprContext * /*ctx*/) override { }

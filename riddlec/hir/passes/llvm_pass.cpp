@@ -89,6 +89,12 @@ std::any riddle::hir::LLVMGen::visitHirFuncDecl(HirFuncDecl *node) {
 
     // pre alloca
 
+    size_t index = 0;
+    for (const auto i: node->params) {
+        i->llvmAlloca = func->getArg(index);
+        ++index;
+    }
+
     for (const auto i: node->definedVar) {
         const auto type = parseType(i->type->type.get());
         i->llvmAlloca = builder.CreateAlloca(type);
@@ -124,6 +130,7 @@ std::any riddle::hir::LLVMGen::visitHirSymbol(HirSymbol *node) {
             break;
         case HirSymbol::SymbolKind::Variable:
             result = dynamic_cast<HirVarDecl *>(node->declaration)->llvmAlloca;
+            result = builder.CreateLoad(parseType(node->type.get()),result);
             break;
         default: throw std::logic_error("Not Impl");
     }
@@ -145,9 +152,9 @@ std::any riddle::hir::LLVMGen::visitHirCall(HirCall *node) {
         params.emplace_back(std::any_cast<llvm::Value *>(visit(i)));
     }
 
-    builder.CreateCall(func, params);
+    llvm::Value* result = builder.CreateCall(func, params);
 
-    return HirVisitor::visitHirCall(node);
+    return result;
 }
 
 void riddle::hir::LLVMGen::dump() const {

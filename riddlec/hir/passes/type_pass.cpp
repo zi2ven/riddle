@@ -19,8 +19,9 @@
 
 riddle::hir::TypePass::TypePass(HirContext &context): context(context) {
     typeMap = {
-        {"int", intTy},
-        {"float", floatTy}
+        {"int", std::make_shared<IntegerType>(32)},
+        {"float", std::make_shared<FloatType>(FloatType::FloatKind::Float)},
+        {"bool", std::make_shared<IntegerType>(1)},
     };
 }
 
@@ -42,6 +43,9 @@ std::any riddle::hir::TypePass::visitHirSymbol(HirSymbol *node) {
             node->type = dynamic_cast<HirFuncDecl *>(node->declaration)->functionType;
             break;
         }
+        case HirSymbol::SymbolKind::Variable: {
+            node->type = dynamic_cast<HirVarDecl *>(node->declaration)->type->type;
+        }
         default: break;
     }
 
@@ -49,12 +53,17 @@ std::any riddle::hir::TypePass::visitHirSymbol(HirSymbol *node) {
 }
 
 std::any riddle::hir::TypePass::visitHirIntLiteral(HirIntLiteral *node) {
-    node->type = this->intTy;
+    node->type = typeMap.at("int");
     return {};
 }
 
 std::any riddle::hir::TypePass::visitHirFloatLiteral(HirFloatLiteral *node) {
-    node->type = this->floatTy;
+    node->type = typeMap.at("float");
+    return {};
+}
+
+std::any riddle::hir::TypePass::visitHirBooleanLiteral(HirBooleanLiteral *node) {
+    node->type = typeMap.at("bool");
     return {};
 }
 

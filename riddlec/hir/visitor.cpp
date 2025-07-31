@@ -30,13 +30,15 @@ namespace riddle::hir {
         return {};
     }
 
-    std::any HirVisitor::visitHirIntLiteral(HirIntLiteral *node) {return {};}
+    std::any HirVisitor::visitHirIntLiteral(HirIntLiteral *node) { return {}; }
 
-    std::any HirVisitor::visitHirFloatLiteral(HirFloatLiteral *node) {return {};}
+    std::any HirVisitor::visitHirFloatLiteral(HirFloatLiteral *node) { return {}; }
 
-    std::any HirVisitor::visitHirCharLiteral(HirCharLiteral *node) {return {};}
+    std::any HirVisitor::visitHirCharLiteral(HirCharLiteral *node) { return {}; }
 
-    std::any HirVisitor::visitHirSymbol(HirSymbol *node) {return {};}
+    std::any HirVisitor::visitHirBooleanLiteral(HirBooleanLiteral *node) { return {}; }
+
+    std::any HirVisitor::visitHirSymbol(HirSymbol *node) { return {}; }
 
     std::any HirVisitor::visitHirVarDecl(HirVarDecl *node) {
         visit(node->value);
@@ -50,6 +52,17 @@ namespace riddle::hir {
         }
         return {};
     }
+
+    std::any HirVisitor::visitHirClassDecl(HirClassDecl *node) {
+        for (const auto i:node->members) {
+            visit(i);
+        }
+        for (const auto i:node->methods) {
+            visit(i);
+        }
+        return {};
+    }
+
 
     std::any HirVisitor::visitHirCall(HirCall *node) {
         visit(node->func);

@@ -38,8 +38,17 @@ public:
   virtual void enterVarDecl(RiddleParser::VarDeclContext *ctx) = 0;
   virtual void exitVarDecl(RiddleParser::VarDeclContext *ctx) = 0;
 
+  virtual void enterClassDecl(RiddleParser::ClassDeclContext *ctx) = 0;
+  virtual void exitClassDecl(RiddleParser::ClassDeclContext *ctx) = 0;
+
+  virtual void enterDeclBlock(RiddleParser::DeclBlockContext *ctx) = 0;
+  virtual void exitDeclBlock(RiddleParser::DeclBlockContext *ctx) = 0;
+
   virtual void enterFloatLit(RiddleParser::FloatLitContext *ctx) = 0;
   virtual void exitFloatLit(RiddleParser::FloatLitContext *ctx) = 0;
+
+  virtual void enterBoolLit(RiddleParser::BoolLitContext *ctx) = 0;
+  virtual void exitBoolLit(RiddleParser::BoolLitContext *ctx) = 0;
 
   virtual void enterBracketExpr(RiddleParser::BracketExprContext *ctx) = 0;
   virtual void exitBracketExpr(RiddleParser::BracketExprContext *ctx) = 0;

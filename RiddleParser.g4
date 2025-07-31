@@ -42,6 +42,7 @@ statement
     : expression
     | varDecl
     | funcDecl
+    | classDecl
     ;
 
 funcParam
@@ -57,13 +58,22 @@ varDecl
     | Val name=Identifier (Colon type=expression)? (Assign value=expression)?
     ;
 
+classDecl
+    : Class name=Identifier declBlock
+    ;
+
+declBlock
+    : (funcDecl | varDecl | classDecl)*
+    ;
+
 expression
     : func=expression LeftParen (expression (Comma expression)*)? RightParen #callExpr
-    | Identifier    #object
-    | block         #blockExpr
-    | Decimal       #intLit
-    | Float         #floatLit
-    | CHAR          #charLit
+    | Identifier        #object
+    | block             #blockExpr
+    | Decimal           #intLit
+    | Float             #floatLit
+    | CHAR              #charLit
+    | (True | False)    #boolLit
     | LeftParen expression RightParen  #bracketExpr
     ;
 

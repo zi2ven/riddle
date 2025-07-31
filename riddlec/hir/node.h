@@ -93,6 +93,15 @@ namespace riddle::hir {
         std::any accept(HirVisitor *visitor) override;
     };
 
+    class HirBooleanLiteral final : public HirExpression {
+    public:
+        explicit HirBooleanLiteral(bool value);
+
+        bool value;
+
+        std::any accept(HirVisitor *visitor) override;
+    };
+
     class HirSymbol final : public HirExpression {
     public:
         enum class SymbolKind {
@@ -123,11 +132,12 @@ namespace riddle::hir {
 
         bool isVal;
         bool isGlobal = false;
+        bool isParam = false;
 
         HirExpression *type;
         HirExpression *value;
 
-        llvm::Value* llvmAlloca = nullptr;
+        llvm::Value *llvmAlloca = nullptr;
 
         std::any accept(HirVisitor *visitor) override;
     };
@@ -140,9 +150,9 @@ namespace riddle::hir {
         std::vector<HirStatement *> body;
         std::shared_ptr<FunctionType> functionType;
 
-        llvm::Function* llvmFunc = nullptr;
+        llvm::Function *llvmFunc = nullptr;
 
-        std::vector<HirVarDecl*> definedVar;
+        std::vector<HirVarDecl *> definedVar;
 
         HirFuncDecl(const std::string &name,
                     HirExpression *returnType,
@@ -151,6 +161,16 @@ namespace riddle::hir {
                                                returnType(returnType),
                                                params(std::move(params)),
                                                isVar(isVar) {}
+
+        std::any accept(HirVisitor *visitor) override;
+    };
+
+    class HirClassDecl final : public HirDeclaration {
+    public:
+        std::vector<HirVarDecl*> members;
+        std::vector<HirFuncDecl*> methods;
+
+        explicit HirClassDecl(const std::string &name): HirDeclaration(name) {}
 
         std::any accept(HirVisitor *visitor) override;
     };

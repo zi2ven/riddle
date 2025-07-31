@@ -46,7 +46,19 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitClassDecl(RiddleParser::ClassDeclContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitDeclBlock(RiddleParser::DeclBlockContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitFloatLit(RiddleParser::FloatLitContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitBoolLit(RiddleParser::BoolLitContext *ctx) override {
     return visitChildren(ctx);
   }
 

@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-#include "ast_hir.h"
+#include "ast_lower.h"
 
 #include "antlr4-runtime.h"
 #include "node.h"
@@ -121,6 +121,24 @@ namespace riddle::ast {
         }
 
         HirElement *result = decl;
+        return result;
+    }
+
+    std::any ASTLower::visitClassDecl(RiddleParser::ClassDeclContext *context) {
+        auto name = context->name->getText();
+        const auto decl = makeHir<HirClassDecl>(name);
+
+        for (const auto i:context->declBlock()->children) {
+            const auto child = std::any_cast<HirElement*>(visit(i));
+            if (const auto var = dynamic_cast<HirVarDecl*>(child)) {
+                decl->members.emplace_back(var);
+            }
+            else if (const auto func = dynamic_cast<HirFuncDecl*>(child)) {
+                decl->methods.emplace_back(func);
+            }
+        }
+
+        HirElement* result = decl;
         return result;
     }
 

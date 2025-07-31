@@ -24,8 +24,6 @@
 namespace riddle::hir {
     class TypePass final : public HirBasePass, public HirVisitor {
         HirContext &context;
-        std::shared_ptr<IntegerType> intTy = std::make_shared<IntegerType>(32);
-        std::shared_ptr<FloatType> floatTy = std::make_shared<FloatType>(FloatType::FloatKind::Float);
 
         std::unordered_map<std::string, std::shared_ptr<Type>> typeMap;
     public:
@@ -40,6 +38,7 @@ namespace riddle::hir {
         std::any visitHirSymbol(HirSymbol *node) override;
         std::any visitHirIntLiteral(HirIntLiteral *node) override;
         std::any visitHirFloatLiteral(HirFloatLiteral *node) override;
+        std::any visitHirBooleanLiteral(HirBooleanLiteral *node) override;
         std::any visitHirCall(HirCall *node) override;
         std::any visitHirFuncDecl(HirFuncDecl *node) override;
         std::any visitHirVarDecl(HirVarDecl *node) override;

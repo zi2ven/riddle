@@ -46,6 +46,14 @@ namespace riddle::hir {
         return visitor->visitHirCharLiteral(this);
     }
 
+    HirBooleanLiteral::HirBooleanLiteral(const bool value): value(value) {
+        type = std::make_shared<IntegerType>(1);
+    }
+
+    std::any HirBooleanLiteral::accept(HirVisitor *visitor) {
+        return visitor->visitHirBooleanLiteral(this);
+    }
+
     std::any HirSymbol::accept(HirVisitor *visitor) {
         return visitor->visitHirSymbol(this);
     }
@@ -56,6 +64,10 @@ namespace riddle::hir {
 
     std::any HirFuncDecl::accept(HirVisitor *visitor) {
         return visitor->visitHirFuncDecl(this);
+    }
+
+    std::any HirClassDecl::accept(HirVisitor *visitor) {
+        return visitor->visitHirClassDecl(this);
     }
 
     std::any HirCall::accept(HirVisitor *visitor) {
