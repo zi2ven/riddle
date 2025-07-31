@@ -43,8 +43,10 @@ namespace riddle::hir {
         std::stack<std::unordered_set<std::string>> locals;
 
     public:
+        std::stack<bool> forwardFlag;
+
         SymbolTable() {
-            join();
+            join(true);
         }
 
         ~SymbolTable() {
@@ -66,8 +68,9 @@ namespace riddle::hir {
             return symbols.at(name).top().get();
         }
 
-        void join() {
+        void join(bool canForward) {
             locals.emplace();
+            forwardFlag.emplace(canForward);
         }
 
         void exit() {
@@ -78,13 +81,14 @@ namespace riddle::hir {
                 }
             }
             locals.pop();
+            forwardFlag.pop();
         }
     };
 
     class SymbolPass final : public HirBasePass, public HirVisitor {
     public:
         SymbolTable table;
-        std::stack<HirFuncDecl*> funcStack;
+        std::stack<HirFuncDecl *> funcStack;
 
         SymbolPass();
 
@@ -93,10 +97,24 @@ namespace riddle::hir {
         }
 
     protected:
+        std::any visitHirProgram(HirProgram *node) override;
+
         std::any visitHirSymbol(HirSymbol *node) override;
 
         std::any visitHirVarDecl(HirVarDecl *node) override;
 
         std::any visitHirFuncDecl(HirFuncDecl *node) override;
+
+        void predeclare(const std::vector<HirStatement*> &nodes) {
+            for (const auto sub : nodes) {
+                if (auto *var  = dynamic_cast<HirVarDecl *>(sub)) {
+                    table.addObject(std::make_unique<SymbolTable::Object>(
+                        var->name, HirSymbol::SymbolKind::Variable, var));
+                } else if (auto *fun = dynamic_cast<HirFuncDecl *>(sub)) {
+                    table.addObject(std::make_unique<SymbolTable::Object>(
+                        fun->name, HirSymbol::SymbolKind::Function, fun));
+                }
+            }
+        }
     };
 }

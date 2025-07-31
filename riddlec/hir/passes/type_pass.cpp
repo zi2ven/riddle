@@ -74,9 +74,10 @@ std::any riddle::hir::TypePass::visitHirCall(HirCall *node) {
         visit(i);
     }
 
+    const auto func = dynamic_cast<HirFuncDecl*>(node->func);
     const auto fty = dynamic_cast<FunctionType *>(node->func->type.get());
     // 检查 object 是否为 func
-    if (!fty) {
+    if (!func) {
         throw std::runtime_error("object not a function");
     }
 
