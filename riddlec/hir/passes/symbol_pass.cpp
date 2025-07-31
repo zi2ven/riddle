@@ -49,7 +49,9 @@ std::any riddle::hir::SymbolPass::visitHirSymbol(HirSymbol *node) {
 
 std::any riddle::hir::SymbolPass::visitHirVarDecl(HirVarDecl *node) {
     bool declared = true;
-    try { table.getObject(node->name); } catch (...) { declared = false; }
+    if (table.getObject(node->name) == nullptr) {
+        declared = false;
+    }
 
     if (!declared) {
         table.addObject(std::make_unique<SymbolTable::Object>(

@@ -63,7 +63,7 @@ namespace riddle::hir {
 
         Object *getObject(const std::string &name) {
             if (!symbols.contains(name) || symbols.at(name).empty()) {
-                throw std::runtime_error(std::format("symbol not found: {}", name));
+                return nullptr;
             }
             return symbols.at(name).top().get();
         }

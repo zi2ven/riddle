@@ -72,6 +72,12 @@ std::any riddle::hir::LLVMGen::visitHirVarDecl(HirVarDecl *node) {
 }
 
 std::any riddle::hir::LLVMGen::visitHirFuncDecl(HirFuncDecl *node) {
+    if (module->getFunction(node->name)!=nullptr) {
+        return {};
+    }
+
+    const auto oldBB = builder.GetInsertBlock();
+
     const auto returnType = parseType(node->returnType->type.get());
     std::vector<llvm::Type *> paramTypes;
 
@@ -104,6 +110,8 @@ std::any riddle::hir::LLVMGen::visitHirFuncDecl(HirFuncDecl *node) {
         visit(i);
     }
 
+    builder.SetInsertPoint(oldBB);
+
     return {};
 }
 
@@ -127,6 +135,10 @@ std::any riddle::hir::LLVMGen::visitHirSymbol(HirSymbol *node) {
     switch (node->kind) {
         case HirSymbol::SymbolKind::Function:
             result = dynamic_cast<HirFuncDecl *>(node->declaration)->llvmFunc;
+            if (result == nullptr) {
+                visit(node->declaration);
+                result = dynamic_cast<HirFuncDecl *>(node->declaration)->llvmFunc;
+            }
             break;
         case HirSymbol::SymbolKind::Variable:
             result = dynamic_cast<HirVarDecl *>(node->declaration)->llvmAlloca;
