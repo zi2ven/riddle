@@ -45,6 +45,11 @@ llvm::Type *riddle::hir::LLVMGen::parseType(Type *type) {
 }
 
 std::any riddle::hir::LLVMGen::visitHirVarDecl(HirVarDecl *node) {
+    if (isDeclEd[node]) {
+        return {};
+    }
+    isDeclEd[node] = true;
+
     const auto type = parseType(node->type->type.get());
     llvm::Value *value = nullptr;
     if (node->value) {
@@ -74,9 +79,11 @@ std::any riddle::hir::LLVMGen::visitHirVarDecl(HirVarDecl *node) {
 }
 
 std::any riddle::hir::LLVMGen::visitHirFuncDecl(HirFuncDecl *node) {
-    if (module->getFunction(node->name) != nullptr) {
+    if (isDeclEd[node]) {
         return {};
     }
+
+    isDeclEd[node] = true;
 
     const auto oldBB = builder.GetInsertBlock();
 
@@ -182,12 +189,23 @@ std::any riddle::hir::LLVMGen::visitHirReturn(HirReturn *node) {
 }
 
 std::any riddle::hir::LLVMGen::visitHirClassDecl(HirClassDecl *node) {
+    if (isDeclEd[node]) {
+        return {};
+    }
+
+    isDeclEd[node] = true;
+
     std::vector<llvm::Type *> tys;
     for (const auto i: node->members) {
         tys.emplace_back(parseType(i->type->type.get()));
     }
 
     node->classType->llvmType = llvm::StructType::create(builder.getContext(), tys, node->name);
+
+    for (const auto i: node->methods) {
+        i->name = std::format("{}.{}", node->name, i->name);
+        visit(i);
+    }
 
     return {};
 }

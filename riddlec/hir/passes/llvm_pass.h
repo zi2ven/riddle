@@ -24,6 +24,7 @@ namespace riddle::hir {
     public:
         std::unique_ptr<llvm::Module> module = std::make_unique<llvm::Module>("", *config::context);
         llvm::IRBuilder<> builder;
+        std::unordered_map<HirDeclaration*, bool> isDeclEd;
 
         LLVMGen(): builder(*config::context) {}
 
